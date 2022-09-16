@@ -1,0 +1,311 @@
+# hmmsearch :: search profile(s) against a sequence database
+# HMMER 3.3.2 (Nov 2020); http://hmmer.org/
+# Copyright (C) 2020 Howard Hughes Medical Institute.
+# Freely distributed under the BSD open source license.
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# query HMM file:                  ABC_tran.hmm
+# target sequence database:        sample_2.faa
+# output directed to file:         sample_2_ABC_tran.txt
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+Query:       ABC_tran  [M=137]
+Accession:   PF00005.30
+Description: ABC transporter
+Scores for complete sequences (score includes all domains):
+   --- full sequence ---   --- best 1 domain ---    -#dom-
+    E-value  score  bias    E-value  score  bias    exp  N  Sequence                               Description
+    ------- ------ -----    ------- ------ -----   ---- --  --------                               -----------
+    4.4e-32  108.5   0.0    5.6e-32  108.2   0.0    1.1  1  NODE_18_length_18230_cov_4.622228_10    # 8738 # 9397 # -1 # ID=2002_10;
+    1.3e-30  103.7   0.0      2e-30  103.2   0.0    1.3  1  NODE_4208_length_2123_cov_4.612669_1    # 2 # 667 # -1 # ID=2030_1;parti
+      3e-30  102.6   0.0    3.7e-30  102.3   0.0    1.1  1  NODE_131_length_9814_cov_3.269392_3     # 1797 # 2567 # -1 # ID=2007_3;p
+    2.6e-17   60.7   0.0    3.2e-17   60.4   0.0    1.1  1  NODE_133803_length_512_cov_1.076586_1   # 3 # 479 # -1 # ID=1493_1;parti
+    5.4e-16   56.4   0.0    5.9e-16   56.3   0.0    1.0  1  NODE_1019710_length_246_cov_2.984293_1  # 1 # 246 # 1 # ID=839_1;partial
+    7.1e-16   56.0   0.0    8.3e-16   55.8   0.0    1.2  1  NODE_202835_length_442_cov_1.173127_1   # 1 # 441 # -1 # ID=1118_1;parti
+    1.8e-13   48.2   0.0    2.1e-13   48.0   0.0    1.1  1  NODE_930103_length_254_cov_0.954774_1   # 1 # 252 # -1 # ID=258_1;partia
+    6.6e-12   43.2   0.0    7.2e-12   43.0   0.0    1.0  1  NODE_1144519_length_236_cov_1.049724_1  # 3 # 236 # 1 # ID=890_1;partial
+    6.8e-11   39.9   0.0      1e-10   39.3   0.0    1.3  1  NODE_922627_length_255_cov_0.875000_1   # 1 # 255 # 1 # ID=290_1;partial
+    9.6e-09   32.9   0.3      8e-05   20.2   0.1    2.3  2  NODE_29773_length_892_cov_1.816010_1    # 2 # 892 # 1 # ID=367_1;partial
+    1.1e-08   32.7   0.2    1.2e-08   32.6   0.2    1.1  1  NODE_928966_length_254_cov_0.954774_2   # 103 # 252 # 1 # ID=812_2;parti
+    2.1e-08   31.8   0.0    2.6e-08   31.5   0.0    1.2  1  NODE_951299_length_252_cov_1.446701_1   # 2 # 250 # -1 # ID=1770_1;parti
+     0.0001   19.9   0.1    0.00012   19.7   0.1    1.3  1  NODE_463837_length_320_cov_3.226415_1   # 2 # 319 # 1 # ID=1939_1;partia
+     0.0011   16.5   0.0     0.0018   15.8   0.0    1.4  1  NODE_1012969_length_247_cov_0.989583_1  # 3 # 245 # 1 # ID=1323_1;partia
+
+
+Domain annotation for each sequence (and alignments):
+>> NODE_18_length_18230_cov_4.622228_10  # 8738 # 9397 # -1 # ID=2002_10;partial=00;start_type=GTG;rbs_motif=None;rbs_sp
+   #    score  bias  c-Evalue  i-Evalue hmmfrom  hmm to    alifrom  ali to    envfrom  env to     acc
+ ---   ------ ----- --------- --------- ------- -------    ------- -------    ------- -------    ----
+   1 !  108.2   0.0   3.5e-34   5.6e-32       1     136 [.      21     167 ..      21     168 .. 0.90
+
+  Alignments for each domain:
+  == domain 1  score: 108.2 bits;  conditional E-value: 3.5e-34
+                                           EEEEEEEEETTSEEEEEESTTSSHHHHHHHHTTSS--SEEEEEETTCEGGG...B-HHHCCHC.EEEE-SS-- CS
+                                           xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx...xxxxxxxxx.xxxxxxxxx RF
+                              ABC_tran   1 lknvslklkegekvaivGenGaGKStLlkllagllkpteGeilldgkdlke...qeleslrke.igvlpqepq 69 
+                                           l+++++++  ge++aivG +G+GKStLl llagl +  +G+++ldg+dl     +++ +lr + +g+++q  q
+  NODE_18_length_18230_cov_4.622228_10  21 LEDITFSVGSGETLAIVGASGSGKSTLLGLLAGLDDASAGSVRLDGTDLAGlgeDQRAILRGRlLGFVFQSFQ 93 
+                                           689***********************************************999967777766527******** PP
+
+                                           S-TTSBHHHH...........HHHTCHHHHHHHSTTGGTTCBGESTTSGGS-HHHHHHHHHHHHHHHTSSEEE CS
+                                           xxxxxxxxxx...........xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx RF
+                              ABC_tran  70 lfpeltvren...........esdeeiekalsklglkelkdtvvksspssLSgGqkqrvalarallkkpklll 131
+                                           l p lt+ en            + e + ++l+++gl +    ++++ p++LSgG++qrvalara+  +p+l+l
+  NODE_18_length_18230_cov_4.622228_10  94 LLPSLTALENvmlplelaaarGAGETARRWLERVGLGH----RLRHYPKHLSGGEQQRVALARAFSPDPRLVL 162
+                                           ***************99866666666778888888777....556678************************* PP
+
+                                           EESTT CS
+                                           xxxxx RF
+                              ABC_tran 132 lDEpt 136
+                                           +DEpt
+  NODE_18_length_18230_cov_4.622228_10 163 ADEPT 167
+                                           ****9 PP
+
+>> NODE_4208_length_2123_cov_4.612669_1  # 2 # 667 # -1 # ID=2030_1;partial=10;start_type=ATG;rbs_motif=None;rbs_spacer=
+   #    score  bias  c-Evalue  i-Evalue hmmfrom  hmm to    alifrom  ali to    envfrom  env to     acc
+ ---   ------ ----- --------- --------- ------- -------    ------- -------    ------- -------    ----
+   1 !  103.2   0.0   1.3e-32     2e-30       2     137 .]      23     190 ..      22     190 .. 0.86
+
+  Alignments for each domain:
+  == domain 1  score: 103.2 bits;  conditional E-value: 1.3e-32
+                                           EEEEEEEETTSEEEEEESTTSSHHHHHHHHTTSS--SEEEEEETTCEGGGB-HHHCCHCEEEE-SS--S-TTS CS
+                                           xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx RF
+                              ABC_tran   2 knvslklkegekvaivGenGaGKStLlkllagllkpteGeilldgkdlkeqeleslrkeigvlpqepqlfpel 74 
+                                           k++sl++ +g k++++G nGaGKSt+lk++ag  +   Ge+            +  + +ig+lpqepql+pe+
+  NODE_4208_length_2123_cov_4.612669_1  23 KDISLSFFPGAKIGLLGLNGAGKSTVLKIMAGVDNEFDGEV-----------QRLPNLKIGYLPQEPQLDPEK 84 
+                                           89***************************************...........678999*************** PP
+
+                                           BHHHH................................................HHHTCHHHHHHHSTTGGTTC CS
+                                           xxxxx................................................xxxxxxxxxxxxxxxxxxxx RF
+                              ABC_tran  75 tvren................................................esdeeiekalsklglkelkd 99 
+                                           tvr++                                                + ++++e a++ l+l+ + d
+  NODE_4208_length_2123_cov_4.612669_1  85 TVRQEvesgmgevmeaqakldaiyaayaepdadfdklaeeqarleailatagsDTENQMEIAADALRLPPW-D 156
+                                           ***********************************999555555555555544444445555555555553.3 PP
+
+                                           BGESTTSGGS-HHHHHHHHHHHHHHHTSSEEEEESTTT CS
+                                           xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx RF
+                              ABC_tran 100 tvvksspssLSgGqkqrvalarallkkpkllllDEpta 137
+                                             +    ++LSgG+k+rval+++ll+kp++lllDEpt+
+  NODE_4208_length_2123_cov_4.612669_1 157 AAI----KNLSGGEKRRVALCKLLLSKPDMLLLDEPTN 190
+                                           333....9*****************************8 PP
+
+>> NODE_131_length_9814_cov_3.269392_3  # 1797 # 2567 # -1 # ID=2007_3;partial=00;start_type=ATG;rbs_motif=None;rbs_spac
+   #    score  bias  c-Evalue  i-Evalue hmmfrom  hmm to    alifrom  ali to    envfrom  env to     acc
+ ---   ------ ----- --------- --------- ------- -------    ------- -------    ------- -------    ----
+   1 !  102.3   0.0   2.3e-32   3.7e-30       2     136 ..      21     168 ..      20     169 .. 0.92
+
+  Alignments for each domain:
+  == domain 1  score: 102.3 bits;  conditional E-value: 2.3e-32
+                                          EEEEEEEETTSEEEEEESTTSSHHHHHHHHTTSS--SEEEEEETTCEGGGB-HHHCCHCEEEE-SS--S-TTSB CS
+                                          xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx RF
+                             ABC_tran   2 knvslklkegekvaivGenGaGKStLlkllagllkpteGeilldgkdlkeqeleslrkeigvlpqepqlfpelt 75 
+                                          ++++l+l +ge+vai+G+nGaGKStLl++lagl + ++Ge++l g+       +++ k+ g+l q ++    +t
+  NODE_131_length_9814_cov_3.269392_3  21 RDLNLSLAAGERVAILGRNGAGKSTLLSVLAGLRTADAGEVRLGGETYAALGPRIAAKRRGWLAQRHSDAFAST 94 
+                                          689***********************************************9999999*********77777777 PP
+
+                                          HHHH.................HHHTC...HHHHHHHSTTGGTTCBGESTTSGGS-HHHHHHHHHHHHHHHTSSE CS
+                                          xxxx.................xxxxx...xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx RF
+                             ABC_tran  76 vren.................esdee...iekalsklglkelkdtvvksspssLSgGqkqrvalarallkkpkl 129
+                                          v e+                     +   +  al+ +gl el+++ v    ++LSgG++qr+a+a +l ++++l
+  NODE_131_length_9814_cov_3.269392_3  95 VLETaltgrhphlgrwdweskR---DteiARGALKAVGLAELEERDV----QTLSGGERQRLAIATLLTQAAPL 161
+                                          9999999999*****9975422...2556999***************....*********************** PP
+
+                                          EEEESTT CS
+                                          xxxxxxx RF
+                             ABC_tran 130 lllDEpt 136
+                                          +llDEp 
+  NODE_131_length_9814_cov_3.269392_3 162 YLLDEPL 168
+                                          ******7 PP
+
+>> NODE_133803_length_512_cov_1.076586_1  # 3 # 479 # -1 # ID=1493_1;partial=10;start_type=ATG;rbs_motif=None;rbs_spacer
+   #    score  bias  c-Evalue  i-Evalue hmmfrom  hmm to    alifrom  ali to    envfrom  env to     acc
+ ---   ------ ----- --------- --------- ------- -------    ------- -------    ------- -------    ----
+   1 !   60.4   0.0     2e-19   3.2e-17      40     137 .]      25     135 ..      11     135 .. 0.83
+
+  Alignments for each domain:
+  == domain 1  score: 60.4 bits;  conditional E-value: 2e-19
+                                            EEEEETTCEGGGB-HHHCCHCEEEE-SS--S-TTSBHHHH.............HHHTC...HHHHHHHSTTG CS
+                                            xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx.............xxxxx...xxxxxxxxxxx RF
+                               ABC_tran  40 Geilldgkdlkeqeleslrkeigvlpqepqlfpeltvren.............esdee...iekalsklglk 95 
+                                            G+   + +dl++ +l  +r++ig++ qe++lf+++ v+ n             e+ ++   ++++++ l + 
+  NODE_133803_length_512_cov_1.076586_1  25 GNFSTEWHDLRDLDLDAYRRQIGIVYQESFLFSNT-VAANiafgnphatqaqiEDAARiaaAHEFIQALPDG 95 
+                                            56666678888899*********************.99999*****97776664444444466666666666 PP
+
+                                            GTTCBGESTTSGGS-HHHHHHHHHHHHHHHTSSEEEEESTTT CS
+                                            xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx RF
+                               ABC_tran  96 elkdtvvksspssLSgGqkqrvalarallkkpkllllDEpta 137
+                                            +  +tv+++ +  LSgGq+qr+alarall +p++l+lD+pta
+  NODE_133803_length_512_cov_1.076586_1  96 Y--ETVLGEAGVDLSGGQRQRLALARALLLRPPILILDDPTA 135
+                                            5..99999999*****************************97 PP
+
+>> NODE_1019710_length_246_cov_2.984293_1  # 1 # 246 # 1 # ID=839_1;partial=11;start_type=Edge;rbs_motif=None;rbs_spacer
+   #    score  bias  c-Evalue  i-Evalue hmmfrom  hmm to    alifrom  ali to    envfrom  env to     acc
+ ---   ------ ----- --------- --------- ------- -------    ------- -------    ------- -------    ----
+   1 !   56.3   0.0   3.8e-18   5.9e-16      64     136 ..       1      82 []       1      82 [] 0.91
+
+  Alignments for each domain:
+  == domain 1  score: 56.3 bits;  conditional E-value: 3.8e-18
+                                             E-SS--S-TTSBHHHH.............HHHTCHHHHHHHSTTGGTTCBGESTTSGGS-HHHHHHHHHHH CS
+                                             xxxxxxxxxxxxxxxx.............xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx RF
+                                ABC_tran  64 lpqepqlfpeltvren.............esdeeiekalsklglkelkdtvvksspssLSgGqkqrvalar 121
+                                             ++q+ +l p++t+ en              + +++++al+++gl +  +++    ps+LSgGq+qrva+ar
+  NODE_1019710_length_246_cov_2.984293_1   1 VFQTFELLPRSTALENvqlplaysarlfwGAGKRAKRALERVGLGDRMHHR----PSQLSGGQRQRVAVAR 67 
+                                             68999****************9888888888888*********99955555....5*************** PP
+
+                                             HHHHTSSEEEEESTT CS
+                                             xxxxxxxxxxxxxxx RF
+                                ABC_tran 122 allkkpkllllDEpt 136
+                                             al+++p ++l+DEpt
+  NODE_1019710_length_246_cov_2.984293_1  68 ALVNEPAMILADEPT 82 
+                                             **************8 PP
+
+>> NODE_202835_length_442_cov_1.173127_1  # 1 # 441 # -1 # ID=1118_1;partial=11;start_type=Edge;rbs_motif=None;rbs_space
+   #    score  bias  c-Evalue  i-Evalue hmmfrom  hmm to    alifrom  ali to    envfrom  env to     acc
+ ---   ------ ----- --------- --------- ------- -------    ------- -------    ------- -------    ----
+   1 !   55.8   0.0   5.3e-18   8.3e-16       2      51 ..      17      67 ..      16     128 .. 0.74
+
+  Alignments for each domain:
+  == domain 1  score: 55.8 bits;  conditional E-value: 5.3e-18
+                                           EEEEEEEETTSEEEEEESTTSSHHHHHHHHTTSS--SEEEEEET.TCEGGG CS
+                                           xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx.xxxxxx RF
+                               ABC_tran  2 knvslklkegekvaivGenGaGKStLlkllagllkpteGeilld.gkdlke 51
+                                           +++s+++ +g +v+i+G+nGaGKStL+k+l+g +kp++Gei +    +l +
+  NODE_202835_length_442_cov_1.173127_1 17 DDLSFTVPPGAIVGIIGPNGAGKSTLFKMLMGIEKPDKGEIAVGpTVKLAY 67
+                                           89***************************************5542223332 PP
+
+>> NODE_930103_length_254_cov_0.954774_1  # 1 # 252 # -1 # ID=258_1;partial=11;start_type=Edge;rbs_motif=None;rbs_spacer
+   #    score  bias  c-Evalue  i-Evalue hmmfrom  hmm to    alifrom  ali to    envfrom  env to     acc
+ ---   ------ ----- --------- --------- ------- -------    ------- -------    ------- -------    ----
+   1 !   48.0   0.0   1.3e-15   2.1e-13      84     136 ..      17      68 ..       4      69 .. 0.86
+
+  Alignments for each domain:
+  == domain 1  score: 48.0 bits;  conditional E-value: 1.3e-15
+                                            CHHHHHHHSTTGGTTCBGESTTSGGS-HHHHHHHHHHHHHHHTSSEEEEESTT CS
+                                            xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx RF
+                               ABC_tran  84 eiekalsklglkelkdtvvksspssLSgGqkqrvalarallkkpkllllDEpt 136
+                                            e  k+l+++g +  +++ +++ p++LSgGq+qrv++a a+++kpk+l++DEpt
+  NODE_930103_length_254_cov_0.954774_1  17 ESVKMLDRVGVPA-PESAASRYPHQLSGGQRQRVVIAIAFACKPKVLIADEPT 68 
+                                            4557788888777.888888999*****************************9 PP
+
+>> NODE_1144519_length_236_cov_1.049724_1  # 3 # 236 # 1 # ID=890_1;partial=11;start_type=Edge;rbs_motif=None;rbs_spacer
+   #    score  bias  c-Evalue  i-Evalue hmmfrom  hmm to    alifrom  ali to    envfrom  env to     acc
+ ---   ------ ----- --------- --------- ------- -------    ------- -------    ------- -------    ----
+   1 !   43.0   0.0   4.6e-14   7.2e-12      18      79 ..       1      66 [.       1      77 [. 0.90
+
+  Alignments for each domain:
+  == domain 1  score: 43.0 bits;  conditional E-value: 4.6e-14
+                                            ESTTSSHHHHHHHHTTSS--SEEEEEETTCEGGG....B-HHHCCHCEEEE-SS--S-TTSBHHHH CS
+                                            xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx....xxxxxxxxxxxxxxxxxxxxxxxxxxxx RF
+                                ABC_tran 18 GenGaGKStLlkllagllkpteGeilldgkdlke....qeleslrkeigvlpqepqlfpeltvren 79
+                                            G++G+GKStLl++l gl +pt+Ge ++++ +l +    + +++ r ++g+++q  +l   lt+ren
+  NODE_1144519_length_236_cov_1.049724_1  1 GPSGSGKSTLLNILGGLDRPTAGEAWFRDLNLATapdaRVTQFRRDNVGFVFQFYNLIASLTAREN 66
+                                            9************************99998888889989999***********************9 PP
+
+>> NODE_922627_length_255_cov_0.875000_1  # 1 # 255 # 1 # ID=290_1;partial=11;start_type=Edge;rbs_motif=None;rbs_spacer=
+   #    score  bias  c-Evalue  i-Evalue hmmfrom  hmm to    alifrom  ali to    envfrom  env to     acc
+ ---   ------ ----- --------- --------- ------- -------    ------- -------    ------- -------    ----
+   1 !   39.3   0.0   6.4e-13     1e-10     100     137 .]       3      40 ..       1      40 [. 0.91
+
+  Alignments for each domain:
+  == domain 1  score: 39.3 bits;  conditional E-value: 6.4e-13
+                                            BGESTTSGGS-HHHHHHHHHHHHHHHTSSEEEEESTTT CS
+                                            xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx RF
+                               ABC_tran 100 tvvksspssLSgGqkqrvalarallkkpkllllDEpta 137
+                                            ++++ + s+LSgGq++r  +aral+ +p+ll++DEpta
+  NODE_922627_length_255_cov_0.875000_1   3 DRAHAEVSTLSGGQQRRTLIARALAGDPDLLVMDEPTA 40 
+                                            5666778*****************************97 PP
+
+>> NODE_29773_length_892_cov_1.816010_1  # 2 # 892 # 1 # ID=367_1;partial=11;start_type=Edge;rbs_motif=None;rbs_spacer=N
+   #    score  bias  c-Evalue  i-Evalue hmmfrom  hmm to    alifrom  ali to    envfrom  env to     acc
+ ---   ------ ----- --------- --------- ------- -------    ------- -------    ------- -------    ----
+   1 !   10.6   0.0   0.00047     0.074     105     135 ..       8      40 ..       2      42 .. 0.79
+   2 !   20.2   0.1   5.1e-07     8e-05       1      29 [.     146     174 ..     146     182 .. 0.95
+
+  Alignments for each domain:
+  == domain 1  score: 10.6 bits;  conditional E-value: 0.00047
+                                           TSGGS-HHHHHHHHHHHHHHHTSS..EEEEEST CS
+                                           xxxxxxxxxxxxxxxxxxxxxxxx..xxxxxxx RF
+                              ABC_tran 105 spssLSgGqkqrvalarallkkpk..llllDEp 135
+                                            ++sLSgG+ qr+ la  + ++ +   ++lDEp
+  NODE_29773_length_892_cov_1.816010_1   8 PARSLSGGESQRIRLATQIGSQLTgiTYILDEP 40 
+                                           3499************99988765436899999 PP
+
+  == domain 2  score: 20.2 bits;  conditional E-value: 5.1e-07
+                                           EEEEEEEEETTSEEEEEESTTSSHHHHHH CS
+                                           xxxxxxxxxxxxxxxxxxxxxxxxxxxxx RF
+                              ABC_tran   1 lknvslklkegekvaivGenGaGKStLlk 29 
+                                           lknv+l+l  g+ v ++G +G+GKS+L++
+  NODE_29773_length_892_cov_1.816010_1 146 LKNVTLQLPLGTFVCVTGVSGSGKSSLIN 174
+                                           79*************************97 PP
+
+>> NODE_928966_length_254_cov_0.954774_2  # 103 # 252 # 1 # ID=812_2;partial=01;start_type=ATG;rbs_motif=None;rbs_spacer
+   #    score  bias  c-Evalue  i-Evalue hmmfrom  hmm to    alifrom  ali to    envfrom  env to     acc
+ ---   ------ ----- --------- --------- ------- -------    ------- -------    ------- -------    ----
+   1 !   32.6   0.2   7.7e-11   1.2e-08       1      31 [.      20      50 .]      20      50 .] 0.95
+
+  Alignments for each domain:
+  == domain 1  score: 32.6 bits;  conditional E-value: 7.7e-11
+                                           EEEEEEEEETTSEEEEEESTTSSHHHHHHHH CS
+                                           xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx RF
+                               ABC_tran  1 lknvslklkegekvaivGenGaGKStLlkll 31
+                                           l+ ++l++ +g  v+ivG+nG GKStLlkl+
+  NODE_928966_length_254_cov_0.954774_2 20 LQAIQLEVAKGDFVGIVGPNGGGKSTLLKLM 50
+                                           67899************************86 PP
+
+>> NODE_951299_length_252_cov_1.446701_1  # 2 # 250 # -1 # ID=1770_1;partial=11;start_type=Edge;rbs_motif=None;rbs_space
+   #    score  bias  c-Evalue  i-Evalue hmmfrom  hmm to    alifrom  ali to    envfrom  env to     acc
+ ---   ------ ----- --------- --------- ------- -------    ------- -------    ------- -------    ----
+   1 !   31.5   0.0   1.7e-10   2.6e-08     103     137 .]      11      45 ..       1      45 [. 0.82
+
+  Alignments for each domain:
+  == domain 1  score: 31.5 bits;  conditional E-value: 1.7e-10
+                                            STTSGGS-HHHHHHHHHHHHHHHTSSEEEEESTTT CS
+                                            xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx RF
+                               ABC_tran 103 ksspssLSgGqkqrvalarallkkpkllllDEpta 137
+                                            + +   LS G  +rvala++l+ +p++lllDEpta
+  NODE_951299_length_252_cov_1.446701_1  11 GARCGALSTGLARRVALAQVLVHDPRVLLLDEPTA 45 
+                                            344499***************************97 PP
+
+>> NODE_463837_length_320_cov_3.226415_1  # 2 # 319 # 1 # ID=1939_1;partial=11;start_type=Edge;rbs_motif=None;rbs_spacer
+   #    score  bias  c-Evalue  i-Evalue hmmfrom  hmm to    alifrom  ali to    envfrom  env to     acc
+ ---   ------ ----- --------- --------- ------- -------    ------- -------    ------- -------    ----
+   1 !   19.7   0.1   7.6e-07   0.00012       1      49 [.       2      51 ..       2     105 .. 0.61
+
+  Alignments for each domain:
+  == domain 1  score: 19.7 bits;  conditional E-value: 7.6e-07
+                                           EEEEEEEEETTSEEEEEESTTSSHHHHHHH.HTTSS--SEEEEEETTCEG CS
+                                           xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx.xxxxxxxxxxxxxxxxxxx RF
+                               ABC_tran  1 lknvslklkegekvaivGenGaGKStLlkl.lagllkpteGeilldgkdl 49
+                                           l++v ++l  ++++ ++G +G+GK++L+k  l+ ll+++ ++ + ++ ++
+  NODE_463837_length_320_cov_3.226415_1  2 LRDVAVDLPLNNLICVTGVSGSGKTSLIKHvLYPLLRDKLEDNQTEESEV 51
+                                           67999***********************9614555544333333333333 PP
+
+>> NODE_1012969_length_247_cov_0.989583_1  # 3 # 245 # 1 # ID=1323_1;partial=11;start_type=Edge;rbs_motif=None;rbs_space
+   #    score  bias  c-Evalue  i-Evalue hmmfrom  hmm to    alifrom  ali to    envfrom  env to     acc
+ ---   ------ ----- --------- --------- ------- -------    ------- -------    ------- -------    ----
+   1 !   15.8   0.0   1.1e-05    0.0018     115     136 ..       1      22 [.       1      23 [. 0.96
+
+  Alignments for each domain:
+  == domain 1  score: 15.8 bits;  conditional E-value: 1.1e-05
+                                             HHHHHHHHHHHTSSEEEEESTT CS
+                                             xxxxxxxxxxxxxxxxxxxxxx RF
+                                ABC_tran 115 qrvalarallkkpkllllDEpt 136
+                                             qrv++ara++ +p+ll++DEp 
+  NODE_1012969_length_247_cov_0.989583_1   1 QRVSVARAMIPHPELLVADEPV 22 
+                                             8********************7 PP
+
+
+
+Internal pipeline statistics summary:
+-------------------------------------
+Query model(s):                            1  (137 nodes)
+Target sequences:                       2208  (242083 residues searched)
+Passed MSV filter:                        61  (0.0276268); expected 44.2 (0.02)
+Passed bias filter:                       58  (0.0262681); expected 44.2 (0.02)
+Passed Vit filter:                        24  (0.0108696); expected 2.2 (0.001)
+Passed Fwd filter:                        14  (0.00634058); expected 0.0 (1e-05)
+Initial search space (Z):               2208  [actual number of targets]
+Domain search space  (domZ):              14  [number of targets reported over threshold]
+# CPU time: 0.01u 0.00s 00:00:00.01 Elapsed: 00:00:00.00
+# Mc/sec: 6454.12
+//
+[ok]
