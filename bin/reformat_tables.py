@@ -5,7 +5,7 @@
 import os
 import pandas as pd
 
-path ='/media/aibrahim/INTENSO/Rosa-table-parsing/AMP_pipeline/amp/'
+path ='/home/aibrahim/github/Ampcombi_test/amp_results'
 
 # Main input format should be in a /maindir and /subdirectories named by tools and within that /samplesubdir
 # E.g. /maindir/toolsubdir/samplesubdir/*.tsv
@@ -103,9 +103,7 @@ for dirpath, subdirs, files in os.walk(path):
                 #read the txt-file with read_table, rename the first columns, delete unnecessary columns and rows
                 df = pd.read_table(file, delim_whitespace=True, header=[15]).reset_index().rename(columns=hmmer_dict).drop(df.iloc[:,9:17], axis=1).dropna()
                 print(df)
-        else:None
-
-
+        else:None  
 
 #ampir()
 #macrel()
