@@ -20,19 +20,19 @@ path ='/home/aibrahim/github/Ampcombi_test/amp_results'
 #   This is to reformat the ampir output result table .tsv. 
 #   Input includes only the path to the directory.
 #   """
+tool = 'ampir'
 filelist = []
-for dirpath, subdirs, files in os.walk(path):
+
+for dirpath, subdirs, files in os.walk(os.path.join(path, tool)): #walk through the subdirectories and grab the one with the tool name
     for file in files:
-        if(file.endswith(".ampir.tsv")):
+        if(file.endswith(".tsv")):
             filelist.append(os.path.join(dirpath, file)) #grab the full directory of the files
-            #print(filelist)
             for file in filelist:
-                #print(file)
                 fields = ['seq_name', 'prob_AMP']
                 df = pd.read_csv(file, sep='\t', usecols=fields) #Retain the 1st and 3rd column by name
                 df['seq_name']=df['seq_name'].str.split(" ", expand=True)[0] #Split strings in the first column and remove everythng after the first space
                 df.rename({'seq_name': 'contig_id','prob_AMP': 'prob'}, axis=1, inplace=True) #Replace the column headers
-                #print(df)
+                print(df)
         else:
             None
                 
@@ -44,12 +44,13 @@ for dirpath, subdirs, files in os.walk(path):
 #   This is to reformat the macrel output result table .tsv. 
 #   Input includes only the path to the directory.
 #   """
+tool = 'macrel'
 filelist = []
-for dirpath, subdirs, files in os.walk(path):
+
+for dirpath, subdirs, files in os.walk(os.path.join(path, tool)): #walk through the subdirectories and grab the one with the tool name
     for file in files:
-        if(file.endswith(".macrel.tsv")): ## CHECK WITH LOUISA IF SHE ALSO GETS A TEMP FILE AFTER EXTRACTION and should we rename the files in FUNCSCAN ???????
+        if(file.endswith(".tsv")):
             filelist.append(os.path.join(dirpath, file)) #grab the full directory of the files
-            #print(filelist)
             for file in filelist:
                 #print(file)
                 fields = ['Access', 'AMP_probability']
@@ -67,12 +68,13 @@ for dirpath, subdirs, files in os.walk(path):
 #   This is to reformat the amplify output result table .tsv. 
 #   Input includes only the path to the directory.
 #   """
+tool = 'amplify'
 filelist = []
-for dirpath, subdirs, files in os.walk(path):
+
+for dirpath, subdirs, files in os.walk(os.path.join(path, tool)): #walk through the subdirectories and grab the one with the tool name
     for file in files:
-        if(file.endswith(".amplify.tsv")): ## CHECK WITH LOUISA IF SHE ALSO GETS A TEMP FILE AFTER EXTRACTION and should we rename the files in FUNCSCAN ???????
+        if(file.endswith(".tsv")):
             filelist.append(os.path.join(dirpath, file)) #grab the full directory of the files
-            #print(filelist)
             for file in filelist:
                 #print(file)
                 fields = ['Sequence_ID', 'Probability_score']
@@ -90,12 +92,13 @@ for dirpath, subdirs, files in os.walk(path):
 #   This is to reformat the hmmsearch output result table .tsv. 
 #   Input includes only the path to the directory.
 #   """
+tool = 'hmmer_hmmsearch'
 filelist = []
-for dirpath, subdirs, files in os.walk(path):
+
+for dirpath, subdirs, files in os.walk(os.path.join(path, tool)): #walk through the subdirectories and grab the one with the tool name
     for file in files:
-        if(file.endswith(".hmmsearch.txt")): ## CHECK WITH LOUISA IF SHE ALSO GETS A TEMP FILE AFTER EXTRACTION and should we rename the files in FUNCSCAN ???????
+        if(file.endswith(".txt")):
             filelist.append(os.path.join(dirpath, file)) #grab the full directory of the files
-            #print(filelist)
             for file in filelist:
                 #print(file)
                 #dictionary to rename columns
@@ -104,6 +107,8 @@ for dirpath, subdirs, files in os.walk(path):
                 df = pd.read_table(file, delim_whitespace=True, header=[15]).reset_index().rename(columns=hmmer_dict).drop(df.iloc[:,9:17], axis=1).dropna()
                 print(df)
         else:None  
+
+
 
 #ampir()
 #macrel()
