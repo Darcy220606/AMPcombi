@@ -4,13 +4,28 @@
 
 import os
 import pandas as pd
+import argparse
 
-path ='/media/aibrahim/INTENSO/Rosa-table-parsing/AMP_pipeline/amp/'
-
+# Define input arguments:
+parser = argparse.ArgumentParser()
 # Main input format should be in a /maindir and /subdirectories named by tools and within that /samplesubdir
 # E.g. /maindir/toolsubdir/samplesubdir/*.tsv
+parser.add_argument("--amp-results", metavar="<AMP>", dest="amp", help="enter the path to the folder that contains the different tool's output files in sub-folders named by sample name. \n Subfolders in this results-directory have to be organized like '/amp_results/toolsubdir/samplesubdir/*.tsv'",
+                    type=str, default="../amp_results/")
+#parser.add_argument("--outdir", metavar="<OUT>", dest="out", help="enter the name of the output directory",
+#                    type=str, default="../amp_summary/")
+#parser.add_argument("--cutoff", metavar="<P>", dest="p", help="enter the probability cutoff for AMPs",
+#                    type=int, default=0.5)
 
-# Done with the funcscan result in mind 
+# print help message for user
+parser.print_help()
+
+# get command line arguments
+args = parser.parse_args()
+
+# assign input arguments to variables
+path = args.amp
+#outdir = args.out
 
 #########################################
 #  AMP_ampir
