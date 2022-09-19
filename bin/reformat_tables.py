@@ -8,6 +8,7 @@ import argparse
 
 # Define input arguments:
 parser = argparse.ArgumentParser()
+
 # Main input format should be in a /maindir and /subdirectories named by tools and within that /samplesubdir
 # E.g. /maindir/toolsubdir/samplesubdir/*.tsv
 parser.add_argument("--amp-results", metavar="<AMP>", dest="amp", help="enter the path to the folder that contains the different tool's output files in sub-folders named by sample name. \n Subfolders in this results-directory have to be organized like '/amp_results/toolsubdir/samplesubdir/*.tsv'",
@@ -118,9 +119,7 @@ for dirpath, subdirs, files in os.walk(path):
                 #read the txt-file with read_table, rename the first columns, delete unnecessary columns and rows
                 df = pd.read_table(file, delim_whitespace=True, header=[15]).reset_index().rename(columns=hmmer_dict).drop(df.iloc[:,9:17], axis=1).dropna()
                 print(df)
-        else:None
-
-
+        else:None  
 
 #ampir()
 #macrel()
