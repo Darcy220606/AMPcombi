@@ -5,17 +5,21 @@
 import os
 import pandas as pd
 import argparse
+from itertools import chain
 
 # Define input arguments:
 parser = argparse.ArgumentParser()
-# Main input format should be in a /maindir and /subdirectories named by tools and within that /samplesubdir
-# E.g. /maindir/toolsubdir/samplesubdir/*.tsv
-parser.add_argument("--amp-results", metavar="<AMP>", dest="amp", help="enter the path to the folder that contains the different tool's output files in sub-folders named by sample name. \n Subfolders in this results-directory have to be organized like '/amp_results/toolsubdir/samplesubdir/*.tsv'",
+
+parser.add_argument("--amp_results", dest="amp", nargs='?', help="enter the path to the folder that contains the different tool's output files in sub-folders named by sample name. \n If paths are to be inferred, sub-folders in this results-directory have to be organized like '/amp_results/toolsubdir/samplesubdir/tool.sample.tsv'",
                     type=str, default="../amp_results/")
-#parser.add_argument("--outdir", metavar="<OUT>", dest="out", help="enter the name of the output directory",
-#                    type=str, default="../amp_summary/")
-#parser.add_argument("--cutoff", metavar="<P>", dest="p", help="enter the probability cutoff for AMPs",
-#                    type=int, default=0.5)
+parser.add_argument("--sample_list", dest="samples", nargs='?', help="enter a list of sample-names, e.g. ['sample_1', 'sample_2', 'sample_n']. \n If not given, the sample-names will be inferred from the folder structure",
+                    type=list, default=[])
+parser.add_argument("--path_list", dest="files", nargs='?', help="enter the list of paths to the files to be summarized as a list of lists, e.g. [['path/to/my/sample1.ampir.tsv', 'path/to/my/sample1.amplify.tsv'], ['path/to/my/sample2.ampir.tsv', 'path/to/my/sample2.amplify.tsv']]. \n If not given, the file-paths will be inferred from the folder structure",
+                    type=list, default=[])
+parser.add_argument("--outdir", metavar="<OUT>", dest="out", help="enter the name of the output directory",
+                    type=str, default="../amp_summary/")
+parser.add_argument("--cutoff", metavar="<P>", dest="p", help="enter the probability cutoff for AMPs",
+                    type=int, default=0.5)
 
 # print help message for user
 parser.print_help()
@@ -25,104 +29,144 @@ args = parser.parse_args()
 
 # assign input arguments to variables
 path = args.amp
-#outdir = args.out
+samplelist = args.samples
+filepaths = args.files
+outdir = args.out
+p = args.p
+
+# additional variables
+tools = ['ampir', 'amplify', 'hmmer_hmmsearch', 'macrel'] # to include more tools, add names here
+fileending = ['ampir.tsv', 'amplify.tsv', 'macrel.tsv', 'hmmsearch.txt'] # add endings of new tools
+
+# create output directory
+os.makedirs(outdir, exist_ok=True)
+
+# TODO: Check input: either --amp-results directory OR --path-list has to be given
 
 #########################################
-#  AMP_ampir
+# GENERATE LIST OF AMP-FILE-LISTS
 #########################################
-#def ampir(path):    
-#   """
-#   This is to reformat the ampir output result table .tsv. 
-#   Input includes only the path to the directory.
-#   """
-filelist = []
-for dirpath, subdirs, files in os.walk(path):
-    for file in files:
-        if(file.endswith(".ampir.tsv")):
-            filelist.append(os.path.join(dirpath, file)) #grab the full directory of the files
-            #print(filelist)
-            for file in filelist:
-                #print(file)
-                fields = ['seq_name', 'prob_AMP']
-                df = pd.read_csv(file, sep='\t', usecols=fields) #Retain the 1st and 3rd column by name
-                df['seq_name']=df['seq_name'].str.split(" ", expand=True)[0] #Split strings in the first column and remove everythng after the first space
-                df.rename({'seq_name': 'contig_id','prob_AMP': 'prob'}, axis=1, inplace=True) #Replace the column headers
-                #print(df)
+# list has to be processed per sample (to create summary per sample)
+# list paths to target files per sample: list = [[pathlist_sample_1], ..., [pathlist_sample_n]]
+toollist = []
+pathlist = []
+
+if(samplelist==[]):
+    print('<--sample-list> was not given, sample names will be inferred from directory names')
+    for dirpath, subdirs, files in os.walk(path):
+        for dir in subdirs:
+            if (dir in tools):
+                toollist.append(dir)
+            else: 
+                samplelist.append(dir)
+    samplelist = list(set(samplelist))
+
+if(filepaths==[]):
+    print('<--path-list> was not given, paths to AMP-results-files will be inferred')
+    for sample in samplelist:
+        for dirpath, subdirs, files in os.walk(path):
+            for file in files:
+                if ((sample in dirpath)&((list(filter(file.endswith, fileending))!=[]))):
+                    pathlist.append(dirpath+'/'+file)
+        filepaths.append(pathlist)
+        pathlist = []
+
+#########################################
+# FUNCTIONS: READ TOOL OUTPUT TO DF
+#########################################
+
+#########################################
+    #  AMP_ampir
+#########################################
+def ampir(path): 
+    # Dictionary to rename columns
+    ampir_dict = {'seq_name':'contig_id', 'seq_aa':'seq_aa', 'prob_AMP':'prob_ampir'}
+    # read file as df and rename columns
+    ampir_df = pd.read_csv(path, sep='\t').rename(columns=ampir_dict) 
+    # cut contig_id to remove extra information added by tool
+    ampir_df['contig_id']=ampir_df['contig_id'].apply(lambda x: x.split()[0])
+    # apply probability cutoff
+    ampir_df = ampir_df[(ampir_df['prob_ampir']>=p)]
+    return ampir_df[['contig_id', 'prob_ampir']]
+
+#########################################
+    #  AMP_amplify
+#########################################
+def amplify(path):
+    amplify_dict = {'Sequence_ID':'contig_id', 'Sequence':'seq_aa', 'Length':'length', 'Charge':'charge', 'Probability_score':'prob_amplify', 'AMPlify_log_scaled_score':'log_score', 'Prediction':'prediction'}
+    amplify_df = pd.read_csv(path, sep='\t').rename(columns=amplify_dict).dropna()
+    # apply probability cutoff
+    amplify_df = amplify_df[(amplify_df['prob_amplify']>=p)]
+    return amplify_df[['contig_id', 'prob_amplify']]
+
+#########################################
+    #  AMP_macrel
+#########################################
+def macrel(path):
+    macrel_dict = {'Access':'contig_id', 'Sequence':'seq_aa', 'AMP_family':'amp_family', 'AMP_probability':'prob_macrel', 'Hemolytic':'hemolytic', 'Hemolytic_probability':'prob_hemo'}
+    #set header to second row to skip first line starting with #
+    macrel_df = pd.read_csv(path, sep='\t', header=[1]).rename(columns=macrel_dict)
+    # apply probability cutoff
+    macrel_df = macrel_df[(macrel_df['prob_macrel']>=p)]
+    return macrel_df[['contig_id', 'prob_macrel']]
+
+#########################################
+    #  AMP_hmmsearch
+#########################################
+def hmmsearch(path):
+    hmmer_dict = {'level_0':'evalue_hmmer', 'level_1':'score_hmmer', 'level_2':'bias', 'level_3':'eval_domain', 'level_4':'score_domain', 'level_5':'bias_domain', 'level_6':'exp_dom', '-------':'N_dom', '------':'contig_id'}
+    hmmer_df = pd.read_table(path, delim_whitespace=True, header=[15]).reset_index().rename(columns=hmmer_dict)
+    hmmer_df = hmmer_df.drop(hmmer_df.iloc[:,9:17], axis=1) #drop unnecessary columns
+    for index, row in hmmer_df.iterrows():
+        if (row.str.contains('Domain').any()):              #identify index of first row with 'Domain'
+            i = index
+            break
+    hmmer_df = hmmer_df[hmmer_df.index<i]                   #only keep rows previous to index i
+    return hmmer_df[['contig_id', 'evalue_hmmer']]
+
+#########################################
+# FUNCTION: READ DFs PER SAMPLE 
+#########################################
+# For one sample: parse filepaths and read files to dataframes, create list of dataframes
+def read_path(df_list, file_list):
+    for path in file_list:
+        if(path.endswith(fileending[0])):
+            #print('found ampir file')
+            df_list.append(ampir(path))
+        elif(path.endswith(fileending[1])):
+            #print('found amplify file')
+            df_list.append(amplify(path))
+        elif(path.endswith(fileending[2])):
+            #print('found macrel file')
+            df_list.append(macrel(path))
+        elif(path.endswith(fileending[3])):
+            #print('found hmmersearch file')
+            df_list.append(hmmsearch(path))
         else:
-            None
-                
-#########################################
-#  AMP_macrel
-#########################################
-#def macrel(path):    
-#   """
-#   This is to reformat the macrel output result table .tsv. 
-#   Input includes only the path to the directory.
-#   """
-filelist = []
-for dirpath, subdirs, files in os.walk(path):
-    for file in files:
-        if(file.endswith(".macrel.tsv")): ## CHECK WITH LOUISA IF SHE ALSO GETS A TEMP FILE AFTER EXTRACTION and should we rename the files in FUNCSCAN ???????
-            filelist.append(os.path.join(dirpath, file)) #grab the full directory of the files
-            #print(filelist)
-            for file in filelist:
-                #print(file)
-                fields = ['Access', 'AMP_probability']
-                df = pd.read_csv(file, sep='\t',skiprows=[0], usecols=fields) #Remove the first commented row and retain the the seqID and prob columns
-                df.rename({'Access': 'contig_id','AMP_probability': 'prob'}, axis=1, inplace=True) #Replace the column headers
-                #print(df)
-        else:
-            None
+            print('No AMP-output-files could be found with the given path. \n Please check your file paths and file endings or use the <--path-list> command')
+            break
 
 #########################################
-#  AMP_amplify
+# FUNCTION: MERGE DATAFRAMES
 #########################################
-#def amplify(path):    
-#   """
-#   This is to reformat the amplify output result table .tsv. 
-#   Input includes only the path to the directory.
-#   """
-filelist = []
-for dirpath, subdirs, files in os.walk(path):
-    for file in files:
-        if(file.endswith(".amplify.tsv")): ## CHECK WITH LOUISA IF SHE ALSO GETS A TEMP FILE AFTER EXTRACTION and should we rename the files in FUNCSCAN ???????
-            filelist.append(os.path.join(dirpath, file)) #grab the full directory of the files
-            #print(filelist)
-            for file in filelist:
-                #print(file)
-                fields = ['Sequence_ID', 'Probability_score']
-                df = pd.read_csv(file, sep='\t', usecols=fields) #Retain the the seqID and prob columns
-                df['Probability_score'] = df['Probability_score'].fillna(0) #Replace the NaNs with zeros
-                df.rename({'Sequence_ID': 'contig_id','Probability_score': 'prob'}, axis=1, inplace=True) #Replace the column headers
-                print(df)
-        else:None
+# merge dataframes from list to summary output per sample
+def summary(df_list, samplename):
+    merge_df = pd.DataFrame(columns=['contig_id'])
+    for df in df_list:
+        merge_df = pd.merge(merge_df, pd.DataFrame(df) , how='outer', on='contig_id')
+    merge_df = merge_df.fillna(0)
+    merge_df.to_csv(outdir+'/'+samplename+'_AMPsummary.csv', sep=',')
 
 #########################################
-#  AMP_hmmsearch
+# FUNCTION: ADD AA-SEQUENCE
 #########################################
-#def hmmsearch(path):    
-#   """
-#   This is to reformat the hmmsearch output result table .tsv. 
-#   Input includes only the path to the directory.
-#   """
-filelist = []
-for dirpath, subdirs, files in os.walk(path):
-    for file in files:
-        if(file.endswith(".hmmsearch.txt")): ## CHECK WITH LOUISA IF SHE ALSO GETS A TEMP FILE AFTER EXTRACTION and should we rename the files in FUNCSCAN ???????
-            filelist.append(os.path.join(dirpath, file)) #grab the full directory of the files
-            #print(filelist)
-            for file in filelist:
-                #print(file)
-                #dictionary to rename columns
-                hmmer_dict = {'level_0':'evalue_hmmer', 'level_1':'score_hmmer', 'level_2':'bias', 'level_3':'eval_domain', 'level_4':'score_domain', 'level_5':'bias_domain', 'level_6':'exp_dom', '-------':'N_dom', '------':'contig_id'}
-                #read the txt-file with read_table, rename the first columns, delete unnecessary columns and rows
-                df = pd.read_table(file, delim_whitespace=True, header=[15]).reset_index().rename(columns=hmmer_dict).drop(df.iloc[:,9:17], axis=1).dropna()
-                print(df)
-        else:None
+# TODO: function to add the amino-acid sequence extracted from the faa
 
-
-
-#ampir()
-#macrel()
-#amplify()
-#hmmsearch()
+#########################################
+# MAIN FUNCTION
+#########################################
+if __name__ == "__main__":
+    main_list = []
+    for i in range(0, len(samplelist)):
+        read_path(main_list, filepaths[i])
+        summary(main_list, samplelist[i])
