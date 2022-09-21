@@ -187,3 +187,4 @@ if __name__ == "__main__":
         print(f'The summary file for {samplelist[i]} was saved to {outdir}')
         # reset main_list for next sample summary
         main_list=[]
+
