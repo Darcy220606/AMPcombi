@@ -14,6 +14,7 @@ import pandas as pd
 import argparse
 import requests
 from Bio import SeqIO
+from datetime import datetime
 
 # Define input arguments:
 parser = argparse.ArgumentParser()
@@ -186,22 +187,39 @@ def summary(df_list, samplename):
 if(database==[]):
     print('<--AMP_database> was not given, DRAMP AMP database will be downloaded and used')
     DRAMP_dir = os.path.join(outdir, r'DRAMP_db')
-    os.makedirs(DRAMP_dir)
+    if not os.path.exists(DRAMP_dir):
+        os.makedirs(DRAMP_dir)
     #Download the file and store it in a results directory 
     os.chdir(DRAMP_dir) 
     url = 'http://dramp.cpu-bioinfor.org/downloads/download.php?filename=download_data/DRAMP3.0_new/general_amps.xlsx'
     r = requests.get(url, allow_redirects=True)
     with open('general_amps.xlsx', 'wb') as f:
         f.write(r.content)
-        #Convert excel to tab sep file and write it to a file in the DRAMP_db direct
-        db = pd.DataFrame(pd.read_excel("general_amps.xlsx"))
-        db.to_csv(os.path.join(DRAMP_dir, 'DRAMP_general_amps'),sep='\t')
-        
+    #Convert excel to tab sep file and write it to a file in the DRAMP_db directly with the date its downloaded
+    date = datetime.now().strftime("%Y_%m_%d")
+    ref_amps=pd.read_excel (r'general_amps.xlsx')
+    ref_amps.to_csv (f'general_amps_{date}.tsv', index = None, header=True,sep='\t')
+    urlfasta = 'http://dramp.cpu-bioinfor.org/downloads/download.php?filename=download_data/DRAMP3.0_new/general_amps.fasta'
+    r = requests.get(url, allow_redirects=True)
+    with open('general_amps.fasta', 'w') as f:
+        f.write(r.content)
+    f.to_csv (f'general_amps_{date}.fasta', index = None, header=False,sep='\t')
+
+#########################################
+# Function: Align to the reference database
+#########################################
+#def alignment(database, samplename):
+    ## TODO: run the allignemnet with bash and then merge it
+    ## TODO: STep1: grab the contig ids from the merged tables (subset with a certain threshold) 
+    ## TODO: Grab all the sequences from the fasta file and make a new one
+    ## TODO: Run the fasta in diamond and merge it to the merged df
+    
+
+  
 #########################################
 # FUNCTION: ADD AA-SEQUENCE
 #########################################
 # TODO: function to add the amino-acid sequence extracted from the faa
-
 
 #########################################
 # MAIN FUNCTION
