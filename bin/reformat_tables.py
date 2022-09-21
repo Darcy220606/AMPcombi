@@ -12,7 +12,7 @@ parser = argparse.ArgumentParser()
 
 #TODO: add -h as argument and only print helpmessages if --help/-h is called
 #TODO: print a nice AMPcombi header
-parser.add_argument("--amp_results", dest="amp", nargs='?', help="enter the path to the folder that contains the different tool's output files in sub-folders named by sample name. \n If paths are to be inferred, sub-folders in this results-directory have to be organized like '/amp_results/toolsubdir/samplesubdir/tool.sample.tsv'",
+parser.add_argument("--amp_results", dest="amp", nargs='?', help="enter the path to the folder that contains the different tool's output files in sub-folders named by sample name. \n If paths are to be inferred, sub-folders in this results-directory have to be organized like '/amp_results/toolsubdir/samplesubdir/tool.sample.filetype'",
                     type=str, default="../amp_results/")
 parser.add_argument("--sample_list", dest="samples", nargs='?', help="enter a list of sample-names, e.g. ['sample_1', 'sample_2', 'sample_n']. \n If not given, the sample-names will be inferred from the folder structure",
                     type=list, default=[])
@@ -22,7 +22,7 @@ parser.add_argument("--outdir", dest="out", help="enter the name of the output d
                     type=str, default="../amp_summary/")
 parser.add_argument("--cutoff", dest="p", help="enter the probability cutoff for AMPs",
                     type=int, default=0.5)
-parser.add_argument("--faa", dest="faa", help="enter the path to the folder containing the reference .faa files. Filenames have to contain the corresponding sample-name, i.e. sample_1.faa",
+parser.add_argument("--faa_folder", dest="faa", help="enter the path to the folder containing the reference .faa files. Filenames have to contain the corresponding sample-name, i.e. sample_1.faa",
                     type=str, default='../test_faa/')
 
 # print help message for user
@@ -37,11 +37,12 @@ samplelist = args.samples
 filepaths = args.files
 outdir = args.out
 p = args.p
+faa_path = args.faa
 
 # additional variables
 # TODO: flexibilize this input (also see below): add this to input args, user can provide a dict of 'tool':'tool-fileending'
-tools = ['ampir', 'amplify', 'hmmer_hmmsearch', 'macrel'] # to include more tools, add names here
-fileending = ['ampir.tsv', 'amplify.tsv', 'macrel.tsv', 'hmmsearch.txt'] # add endings of new tools, FLEXIBILIZE THIS
+tools = ['ampir', 'amplify', 'hmmer_hmmsearch', 'macrel', 'ensembleamppred'] # to include more tools, add names here
+fileending = ['ampir.tsv', 'amplify.tsv', 'macrel.tsv', 'hmmsearch.txt', 'ensembleamppred.txt'] # add endings of new tools, FLEXIBILIZE THIS
 
 # create output directory
 os.makedirs(outdir, exist_ok=True)
@@ -152,7 +153,7 @@ def read_path(df_list, file_list):
             print('found hmmersearch file')
             df_list.append(hmmsearch(path))
         else:
-            print('No AMP-output-files could be found with the given path. \n Please check your file paths and file endings or use the <--path-list> command')
+            print(f'No AMP-output-files could be found with the given path ({path}). \n Please check your file paths and file endings or use the <--path-list> command')
             break
 
 #########################################
@@ -160,10 +161,16 @@ def read_path(df_list, file_list):
 #########################################
 # merge dataframes from list to summary output per sample
 def summary(df_list, samplename):
+    #initiate merge_df
     merge_df = pd.DataFrame(columns=['contig_id'])
+    #merge all dfs in the df-list on contig_id
     for df in df_list:
         merge_df = pd.merge(merge_df, pd.DataFrame(df) , how='outer', on='contig_id')
+    #replace all NAs (where a tool did not identify the contig as AMP) with 0
     merge_df = merge_df.fillna(0)
+    #add amino-acid sequences
+    faa_df = faa2table(faa_path+samplename+'.faa')
+    merge_df = merge_df.merge(faa_df, how='inner', on='contig_id')
     # TODO: sort by highest p-values AND/OR put results found by most tools first before output
     merge_df.to_csv(outdir+'/'+samplename+'_AMPsummary.csv', sep=',')
     #return merge_df
@@ -171,8 +178,17 @@ def summary(df_list, samplename):
 #########################################
 # FUNCTION: ADD AA-SEQUENCE
 #########################################
-# TODO: function to add the amino-acid sequence extracted from the faa
-
+# transform faa to dataframe with two columns
+def faa2table(faa):
+    #read the amino-acid fasta with SeqIO
+    faa_seq = SeqIO.parse(open(faa), 'fasta')
+    #initiate the dataframe containing contig ids and aa-sequences in two columns
+    fasta_df = pd.DataFrame(columns=['contig_id', 'aa_sequence'])
+    #append contig information to df
+    for contig in faa_seq:
+        contig_id, sequence = contig.id, str(contig.seq)
+        fasta_df = fasta_df.append({'contig_id':contig_id, 'aa_sequence':sequence}, ignore_index=True)
+    return fasta_df
 
 #########################################
 # MAIN FUNCTION
@@ -181,10 +197,10 @@ if __name__ == "__main__":
     #print_header()
     main_list = []
     for i in range(0, len(samplelist)):
-        print(f'Processing AMP-files from sample: {samplelist[0]}')
+        print(f'Processing AMP-files from sample: {samplelist[i]}')
         read_path(main_list, filepaths[i])
         summary(main_list, samplelist[i])
-        print(f'The summary file for {samplelist[i]} was saved to {outdir}')
+        print(f'The summary file for {samplelist[i]} was saved to {outdir} \n')
         # reset main_list for next sample summary
         main_list=[]
 
