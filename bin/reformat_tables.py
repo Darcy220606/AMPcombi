@@ -5,21 +5,25 @@
 import os
 import pandas as pd
 import argparse
-from itertools import chain
+from Bio import SeqIO
 
 # Define input arguments:
 parser = argparse.ArgumentParser()
 
+#TODO: add -h as argument and only print helpmessages if --help/-h is called
+#TODO: print a nice AMPcombi header
 parser.add_argument("--amp_results", dest="amp", nargs='?', help="enter the path to the folder that contains the different tool's output files in sub-folders named by sample name. \n If paths are to be inferred, sub-folders in this results-directory have to be organized like '/amp_results/toolsubdir/samplesubdir/tool.sample.tsv'",
                     type=str, default="../amp_results/")
 parser.add_argument("--sample_list", dest="samples", nargs='?', help="enter a list of sample-names, e.g. ['sample_1', 'sample_2', 'sample_n']. \n If not given, the sample-names will be inferred from the folder structure",
                     type=list, default=[])
 parser.add_argument("--path_list", dest="files", nargs='?', help="enter the list of paths to the files to be summarized as a list of lists, e.g. [['path/to/my/sample1.ampir.tsv', 'path/to/my/sample1.amplify.tsv'], ['path/to/my/sample2.ampir.tsv', 'path/to/my/sample2.amplify.tsv']]. \n If not given, the file-paths will be inferred from the folder structure",
                     type=list, default=[])
-parser.add_argument("--outdir", metavar="<OUT>", dest="out", help="enter the name of the output directory",
+parser.add_argument("--outdir", dest="out", help="enter the name of the output directory",
                     type=str, default="../amp_summary/")
-parser.add_argument("--cutoff", metavar="<P>", dest="p", help="enter the probability cutoff for AMPs",
+parser.add_argument("--cutoff", dest="p", help="enter the probability cutoff for AMPs",
                     type=int, default=0.5)
+parser.add_argument("--faa", dest="faa", help="enter the path to the folder containing the reference .faa files. Filenames have to contain the corresponding sample-name, i.e. sample_1.faa",
+                    type=str, default='../test_faa/')
 
 # print help message for user
 parser.print_help()
@@ -35,13 +39,15 @@ outdir = args.out
 p = args.p
 
 # additional variables
+# TODO: flexibilize this input (also see below): add this to input args, user can provide a dict of 'tool':'tool-fileending'
 tools = ['ampir', 'amplify', 'hmmer_hmmsearch', 'macrel'] # to include more tools, add names here
-fileending = ['ampir.tsv', 'amplify.tsv', 'macrel.tsv', 'hmmsearch.txt'] # add endings of new tools
+fileending = ['ampir.tsv', 'amplify.tsv', 'macrel.tsv', 'hmmsearch.txt'] # add endings of new tools, FLEXIBILIZE THIS
 
 # create output directory
 os.makedirs(outdir, exist_ok=True)
 
 # TODO: Check input: either --amp-results directory OR --path-list has to be given
+# TODO: check function should print INFO to screen
 
 #########################################
 # GENERATE LIST OF AMP-FILE-LISTS
@@ -61,6 +67,7 @@ if(samplelist==[]):
                 samplelist.append(dir)
     samplelist = list(set(samplelist))
 
+
 if(filepaths==[]):
     print('<--path-list> was not given, paths to AMP-results-files will be inferred')
     for sample in samplelist:
@@ -69,6 +76,7 @@ if(filepaths==[]):
                 if ((sample in dirpath)&((list(filter(file.endswith, fileending))!=[]))):
                     pathlist.append(dirpath+'/'+file)
         filepaths.append(pathlist)
+        #reset the pathlist for next sample
         pathlist = []
 
 #########################################
@@ -128,19 +136,20 @@ def hmmsearch(path):
 # FUNCTION: READ DFs PER SAMPLE 
 #########################################
 # For one sample: parse filepaths and read files to dataframes, create list of dataframes
+# TODO: for more flexible input: toollist and fileendings could be given in a dict and then create the lists (for now hardcoded)
 def read_path(df_list, file_list):
     for path in file_list:
         if(path.endswith(fileending[0])):
-            #print('found ampir file')
+            print('found ampir file')
             df_list.append(ampir(path))
         elif(path.endswith(fileending[1])):
-            #print('found amplify file')
+            print('found amplify file')
             df_list.append(amplify(path))
         elif(path.endswith(fileending[2])):
-            #print('found macrel file')
+            print('found macrel file')
             df_list.append(macrel(path))
         elif(path.endswith(fileending[3])):
-            #print('found hmmersearch file')
+            print('found hmmersearch file')
             df_list.append(hmmsearch(path))
         else:
             print('No AMP-output-files could be found with the given path. \n Please check your file paths and file endings or use the <--path-list> command')
@@ -155,18 +164,26 @@ def summary(df_list, samplename):
     for df in df_list:
         merge_df = pd.merge(merge_df, pd.DataFrame(df) , how='outer', on='contig_id')
     merge_df = merge_df.fillna(0)
+    # TODO: sort by highest p-values AND/OR put results found by most tools first before output
     merge_df.to_csv(outdir+'/'+samplename+'_AMPsummary.csv', sep=',')
+    #return merge_df
 
 #########################################
 # FUNCTION: ADD AA-SEQUENCE
 #########################################
 # TODO: function to add the amino-acid sequence extracted from the faa
 
+
 #########################################
 # MAIN FUNCTION
 #########################################
 if __name__ == "__main__":
+    #print_header()
     main_list = []
     for i in range(0, len(samplelist)):
+        print(f'Processing AMP-files from sample: {samplelist[0]}')
         read_path(main_list, filepaths[i])
         summary(main_list, samplelist[i])
+        print(f'The summary file for {samplelist[i]} was saved to {outdir}')
+        # reset main_list for next sample summary
+        main_list=[]
