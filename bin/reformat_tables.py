@@ -1,10 +1,18 @@
 #!/bin/python3
 
+"""
+Created in September 2022
+
+This script is for combining multiple AMP prediction tools and their alignments.
+@authors: louperelo and darcy220606
+"""
+
 # TITLE: Reformat the AMP output tables
 
 import os
 import pandas as pd
 import argparse
+import requests
 from Bio import SeqIO
 
 # Define input arguments:
@@ -24,6 +32,8 @@ parser.add_argument("--cutoff", dest="p", help="enter the probability cutoff for
                     type=int, default=0.5)
 parser.add_argument("--faa", dest="faa", help="enter the path to the folder containing the reference .faa files. Filenames have to contain the corresponding sample-name, i.e. sample_1.faa",
                     type=str, default='../test_faa/')
+parser.add_argument("--AMP_database", dest="ref_db", nargs='?', help="enter the path to the folder containing the reference database files (.fa and .txt). A fasta file and the corresponding table with functional and taxonomic classifications",
+                    type=str, default=[])
 
 # print help message for user
 parser.print_help()
@@ -37,6 +47,7 @@ samplelist = args.samples
 filepaths = args.files
 outdir = args.out
 p = args.p
+database = args.ref_db
 
 # additional variables
 # TODO: flexibilize this input (also see below): add this to input args, user can provide a dict of 'tool':'tool-fileending'
@@ -168,6 +179,24 @@ def summary(df_list, samplename):
     merge_df.to_csv(outdir+'/'+samplename+'_AMPsummary.csv', sep=',')
     #return merge_df
 
+#########################################
+# Download the ref database 
+#########################################
+
+if(database==[]):
+    print('<--AMP_database> was not given, DRAMP AMP database will be downloaded and used')
+    DRAMP_dir = os.path.join(outdir, r'DRAMP_db')
+    os.makedirs(DRAMP_dir)
+    #Download the file and store it in a results directory 
+    os.chdir(DRAMP_dir) 
+    url = 'http://dramp.cpu-bioinfor.org/downloads/download.php?filename=download_data/DRAMP3.0_new/general_amps.xlsx'
+    r = requests.get(url, allow_redirects=True)
+    with open('general_amps.xlsx', 'wb') as f:
+        f.write(r.content)
+        #Convert excel to tab sep file and write it to a file in the DRAMP_db direct
+        db = pd.DataFrame(pd.read_excel("general_amps.xlsx"))
+        db.to_csv(os.path.join(DRAMP_dir, 'DRAMP_general_amps'),sep='\t')
+        
 #########################################
 # FUNCTION: ADD AA-SEQUENCE
 #########################################
