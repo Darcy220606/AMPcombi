@@ -183,7 +183,7 @@ def summary(df_list, samplename):
 # FUNCTION: ADD AA-SEQUENCE
 #########################################
 # transform faa to dataframe with two columns
-def faa2table(faa):
+def faa2table(faa_path):
     #read the amino-acid fasta with SeqIO
     faa_seq = SeqIO.parse(open(faa), 'fasta')
     #initiate the dataframe containing contig ids and aa-sequences in two columns
