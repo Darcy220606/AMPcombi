@@ -1,11 +1,20 @@
 #!/bin/python3
 
+"""
+Created in September 2022
+
+This script is for combining multiple AMP prediction tools and their alignments.
+@authors: louperelo and darcy220606
+"""
+
 # TITLE: Reformat the AMP output tables
 
 import os
 import pandas as pd
 import argparse
+import requests
 from Bio import SeqIO
+from datetime import datetime
 
 # Define input arguments:
 parser = argparse.ArgumentParser()
@@ -24,6 +33,8 @@ parser.add_argument("--cutoff", dest="p", help="enter the probability cutoff for
                     type=int, default=0.5)
 parser.add_argument("--faa_folder", dest="faa", help="enter the path to the folder containing the reference .faa files. Filenames have to contain the corresponding sample-name, i.e. sample_1.faa",
                     type=str, default='../test_faa/')
+parser.add_argument("--AMP_database", dest="ref_db", nargs='?', help="enter the path to the folder containing the reference database files (.fa and .txt). A fasta file and the corresponding table with functional and taxonomic classifications",
+                    type=str, default=[])
 
 # print help message for user
 parser.print_help()
@@ -38,6 +49,8 @@ filepaths = args.files
 outdir = args.out
 p = args.p
 faa_path = args.faa
+database = args.ref_db
+
 
 # additional variables
 # TODO: flexibilize this input (also see below): add this to input args, user can provide a dict of 'tool':'tool-fileending'
@@ -176,8 +189,45 @@ def summary(df_list, samplename):
     #return merge_df
 
 #########################################
+# Download the ref database 
+#########################################
+
+if(database==[]):
+    print('<--AMP_database> was not given, DRAMP AMP database will be downloaded and used')
+    DRAMP_dir = os.path.join(outdir, r'DRAMP_db')
+    if not os.path.exists(DRAMP_dir):
+        os.makedirs(DRAMP_dir)
+    #Download the file and store it in a results directory 
+    os.chdir(DRAMP_dir) 
+    url = 'http://dramp.cpu-bioinfor.org/downloads/download.php?filename=download_data/DRAMP3.0_new/general_amps.xlsx'
+    r = requests.get(url, allow_redirects=True)
+    with open('general_amps.xlsx', 'wb') as f:
+        f.write(r.content)
+    #Convert excel to tab sep file and write it to a file in the DRAMP_db directly with the date its downloaded
+    date = datetime.now().strftime("%Y_%m_%d")
+    ref_amps=pd.read_excel (r'general_amps.xlsx')
+    ref_amps.to_csv (f'general_amps_{date}.tsv', index = None, header=True,sep='\t')
+    urlfasta = 'http://dramp.cpu-bioinfor.org/downloads/download.php?filename=download_data/DRAMP3.0_new/general_amps.fasta'
+    r = requests.get(url, allow_redirects=True)
+    with open('general_amps.fasta', 'w') as f:
+        f.write(r.content)
+    f.to_csv (f'general_amps_{date}.fasta', index = None, header=False,sep='\t')
+
+#########################################
+# Function: Align to the reference database
+#########################################
+#def alignment(database, samplename):
+    ## TODO: run the allignemnet with bash and then merge it
+    ## TODO: STep1: grab the contig ids from the merged tables (subset with a certain threshold) 
+    ## TODO: Grab all the sequences from the fasta file and make a new one
+    ## TODO: Run the fasta in diamond and merge it to the merged df
+    
+
+  
+#########################################
 # FUNCTION: ADD AA-SEQUENCE
 #########################################
+
 # transform faa to dataframe with two columns
 def faa2table(faa):
     #read the amino-acid fasta with SeqIO
