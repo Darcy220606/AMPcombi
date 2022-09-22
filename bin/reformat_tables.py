@@ -171,9 +171,13 @@ def summary(df_list, samplename):
     #add amino-acid sequences
     faa_df = faa2table(faa_path+samplename+'.faa')
     merge_df = merge_df.merge(faa_df, how='inner', on='contig_id')
-    # TODO: sort by highest p-values AND/OR put results found by most tools first before output
+    # sort by sum of p-values over rows
+    merge_df = merge_df.set_index('contig_id')
+    merge_df['p_sum']= merge_df.sum(axis=1)#.sort_values(ascending=False)
+    merge_df = merge_df.sort_values('p_sum', ascending=False).drop('p_sum', axis=1).reset_index()
+    # write summary to outdir
     merge_df.to_csv(outdir+'/'+samplename+'_AMPsummary.csv', sep=',')
-    #return merge_df
+    return merge_df
 
 #########################################
 # FUNCTION: ADD AA-SEQUENCE
