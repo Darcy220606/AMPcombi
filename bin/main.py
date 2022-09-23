@@ -76,5 +76,5 @@ if __name__ == "__main__":
         fasta_name = outdir+'/'+samplelist[i]+'_amp.faa'
         faa_name = faa_path+samplelist[i]+'.faa'
         amp_fasta(summary_df, faa_name, fasta_name)
-        print(f'The fasta containing AMP sequences for {samplelist[i]} was saved to {faa_path} \n')
+        print(f'The fasta containing AMP sequences for {samplelist[i]} was saved to {outdir} \n')
     print('Your AMPcombi summaries are now available in the output folder!')
