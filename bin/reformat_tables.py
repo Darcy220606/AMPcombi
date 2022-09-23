@@ -7,6 +7,23 @@ from Bio import SeqIO
 from check_input import check_dfshape
 
 #########################################
+# FUNCTION: KEEP ONLY LINES WITH KEYWORD
+#########################################
+def trim_text(filepath, key):
+    lines = []
+    # read file
+    with open(filepath, 'r') as fp:
+        # read an store all lines into list
+        lines = fp.readlines()
+
+    # Write file
+    with open(filepath, 'w') as fp:
+        # iterate each line
+        for line in lines:
+            if key in line:
+                fp.write(line)
+
+#########################################
 # FUNCTIONS: READ TOOLS' OUTPUT TO DFs
 #########################################
 
@@ -38,8 +55,9 @@ def amplify(path, p):
     #  AMP_ensembleamppred
 #########################################
 def amppred(path, p):
-    amppred_dict = amppred_dict = {'level_2':'index', '#############':'prob_amppred'}
-    amppred_df = pd.read_table(path, delim_whitespace=True, header=[4]).reset_index().rename(columns=amppred_dict)
+    trim_text(path, 'Sequence')
+    amppred_dict = {4:'index', 14:'prob_amppred'} #{'level_0':1, 'level_1':2, 'level_2':'index', 'level_3':3, 'level_4':4, 'level_5':5, '############':6, 'Prediction':7, 'results':8, 'by':9, 'EnsembleAMPPred':10, '#############':'prob_amppred'}
+    amppred_df = pd.read_csv(path, sep=' ', header=None).rename(columns=amppred_dict)
     amppred_df = amppred_df[(amppred_df['prob_amppred']>=p)]
     return amppred_df[['index', 'prob_amppred']]
 
