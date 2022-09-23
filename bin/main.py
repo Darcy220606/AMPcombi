@@ -63,7 +63,7 @@ os.makedirs(outdir, exist_ok=True)
 #########################################
 if __name__ == "__main__":
     #print_header()
-    #main_list = []
+    amp_faa_paths = []
     for i in range(0, len(samplelist)):
         main_list = []
         print(f'Processing AMP-files from sample: {samplelist[i]}')
@@ -73,8 +73,12 @@ if __name__ == "__main__":
         summary_df = summary(main_list, samplelist[i], faa_path, outdir)
         print(f'The summary file for {samplelist[i]} was saved to {outdir}')
         # Generate the AMP-faa.fasta for sample i
-        out_path = outdir+'/'+samplelist[i]+'_amp.faa'
+        out_path = outdir+samplelist[i]+'_amp.faa'
         faa_name = faa_path+samplelist[i]+'.faa'
         amp_fasta(summary_df, faa_name, out_path)
+        amp_faa_paths.append(out_path)
+        #call: check download
+        #call: function that runs Diamond.bash
+        #call: read Diamond output and add to summary
         print(f'The fasta containing AMP sequences for {samplelist[i]} was saved to {outdir} \n')
     print('Your AMPcombi summaries are now available in the output folder!')
