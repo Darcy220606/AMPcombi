@@ -29,3 +29,10 @@ def check_pathlist(filepaths, samplelist, fileending, path):
         return filepaths
     else:
         return filepaths
+
+def check_dfshape(df1, df2):
+    if (df1.shape[0] != df2.shape[0]):
+        print(f'ERROR: different row number in tool output and faa file. Ensembleamppred output could not be included in the summary')
+        return False
+    else: 
+        return True

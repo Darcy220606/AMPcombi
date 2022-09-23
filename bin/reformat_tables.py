@@ -4,6 +4,7 @@
 
 import pandas as pd
 from Bio import SeqIO
+from check_input import check_dfshape
 
 #########################################
 # FUNCTIONS: READ TOOLS' OUTPUT TO DFs
@@ -34,6 +35,15 @@ def amplify(path, p):
     return amplify_df[['contig_id', 'prob_amplify']]
 
 #########################################
+    #  AMP_ensembleamppred
+#########################################
+def amppred(path, p):
+    amppred_dict = amppred_dict = {'level_2':'index', '#############':'prob_amppred'}
+    amppred_df = pd.read_table(path, delim_whitespace=True, header=[4]).reset_index().rename(columns=amppred_dict)
+    amppred_df = amppred_df[(amppred_df['prob_amppred']>=p)]
+    return amppred_df[['index', 'prob_amppred']]
+
+#########################################
     #  AMP_macrel
 #########################################
 def macrel(path, p):
@@ -62,7 +72,7 @@ def hmmsearch(path):
 # FUNCTION: READ DFs PER SAMPLE 
 #########################################
 # For one sample: parse filepaths and read files to dataframes, create list of dataframes
-def read_path(df_list, file_list, p, dict):
+def read_path(df_list, file_list, p, dict, faa_path, samplename):
     for path in file_list:
         if(path.endswith(dict['ampir'])):
             print('found ampir file')
@@ -76,6 +86,16 @@ def read_path(df_list, file_list, p, dict):
         elif(path.endswith(dict['hmmer_hmmsearch'])):
             print('found hmmersearch file')
             df_list.append(hmmsearch(path))
+        elif(path.endswith(dict['ensembleamppred'])):
+            print('found ensemblamppred file')
+            faa_filepath = faa_path+samplename+'.faa'
+            faa_df = faa2table(faa_filepath)
+            amppred_df = amppred(path, p)
+            if(check_dfshape(amppred_df, faa_df)):
+                # add contig_ids via index numbers, because ensembleamppred only gives numbered sequences without ids, in the order of sequences in faa
+                amppred_df = pd.merge(amppred_df, faa_df.reset_index(), on='index')
+                amppred_df.drop(['index', 'aa_sequence'], axis=1)
+                df_list.append(amppred_df)
         else:
             print(f'No AMP-output-files could be found with the given path ({path}). \n Please check your file paths and file endings or use the <--path-list> command')
             break
@@ -104,7 +124,7 @@ def summary(df_list, samplename, faa_path, outdir):
     return merge_df
 
 #########################################
-# FUNCTION: ADD AA-SEQUENCE
+# FUNCTION: READ FAA TO TABLE
 #########################################
 # transform faa to dataframe with two columns
 def faa2table(faa_path):

@@ -67,10 +67,12 @@ if __name__ == "__main__":
     for i in range(0, len(samplelist)):
         main_list = []
         print(f'Processing AMP-files from sample: {samplelist[i]}')
-        read_path(main_list, filepaths[i], p, tooldict)
+        # fill main_list with tool-output filepaths for sample i
+        read_path(main_list, filepaths[i], p, tooldict, faa_path, samplelist[i])
+        # use main_list to create the summary file for sample i
         summary_df = summary(main_list, samplelist[i], faa_path, outdir)
         print(f'The summary file for {samplelist[i]} was saved to {outdir}')
-        # Generate the AMP-faa.fasta for each sample
+        # Generate the AMP-faa.fasta for sample i
         fasta_name = outdir+'/'+samplelist[i]+'_amp.faa'
         faa_name = faa_path+samplelist[i]+'.faa'
         amp_fasta(summary_df, faa_name, fasta_name)
