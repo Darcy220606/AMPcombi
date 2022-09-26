@@ -24,11 +24,11 @@ parser.add_argument("--path_list", dest="files", nargs='?', help="enter the list
 parser.add_argument("--outdir", dest="out", help="enter the name of the output directory",
                     type=str, default="../amp_summary/")
 parser.add_argument("--cutoff", dest="p", help="enter the probability cutoff for AMPs",
-                    type=int, default=0.5)
+                    type=int, default=0)
 parser.add_argument("--faa_folder", dest="faa", help="enter the path to the folder containing the reference .faa files. Filenames have to contain the corresponding sample-name, i.e. sample_1.faa",
                     type=str, default='../test_faa/')
 parser.add_argument("--tooldict", dest="tools", help="enter a dictionary of the AMP-tools used with their output file endings (as they appear in the directory tree), \n Tool-names have to be written as in default:\n default={'ampir':'ampir.tsv', 'amplify':'amplify.tsv', 'macrel':'macrel.tsv', 'hmmer_hmmsearch':'hmmsearch.txt', 'ensembleamppred':'ensembleamppred.txt'}",
-                    type=dict, default={'ampir':'ampir.tsv', 'amplify':'amplify.tsv', 'macrel':'macrel.tsv', 'hmmer_hmmsearch':'hmmsearch.txt', 'ensembleamppred':'ensembleamppred.txt'})
+                    type=dict, default={'ampir':'ampir.tsv', 'amplify':'amplify.tsv', 'macrel':'macrel.tsv', 'neubi':'neubi.fasta' ,'hmmer_hmmsearch':'hmmsearch.txt', 'ensembleamppred':'ensembleamppred.txt'})
 
 # print help message for user
 parser.print_help()

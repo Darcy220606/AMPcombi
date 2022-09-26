@@ -73,6 +73,20 @@ def macrel(path, p):
     return macrel_df[['contig_id', 'prob_macrel']]
 
 #########################################
+    #  AMP_neubi
+#########################################
+def neubi(path, p):
+    neubi_seq = SeqIO.parse(open(path), 'fasta')
+    #initiate the dataframe containing contig ids, aa-sequences and probability in three columns
+    neubi_df = pd.DataFrame(columns=['contig_id', 'aa_sequence', 'prob_neubi'])
+    #append contig information to df (p is last value in header following '|' symbol)
+    for contig in neubi_seq:
+        contig_id, sequence, description = contig.id, str(contig.seq), float(contig.description.split("|",1)[1])
+        neubi_df = neubi_df.append({'contig_id':contig_id, 'aa_sequence':sequence, 'prob_neubi':description}, ignore_index=True)
+    neubi_df = neubi_df[(neubi_df['prob_neubi']>=p)]
+    return neubi_df[['contig_id', 'prob_neubi']]
+
+#########################################
     #  AMP_hmmsearch
 #########################################
 def hmmsearch(path):
@@ -101,6 +115,9 @@ def read_path(df_list, file_list, p, dict, faa_path, samplename):
         elif(path.endswith(dict['macrel'])):
             print('found macrel file')
             df_list.append(macrel(path, p))
+        elif(path.endswith(dict['neubi'])):
+            print('found neubi file')
+            df_list.append(neubi(path, p))
         elif(path.endswith(dict['hmmer_hmmsearch'])):
             print('found hmmersearch file')
             df_list.append(hmmsearch(path))
