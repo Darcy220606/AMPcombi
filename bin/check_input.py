@@ -1,6 +1,7 @@
 #!/bin/python3
 
 import os
+from amp_database import download_DRAMP
 
 # TODO: Check input: either --amp-results directory OR --path-list has to be given
 # TODO: check function should print INFO to screen
@@ -36,3 +37,22 @@ def check_dfshape(df1, df2):
         return False
     else: 
         return True
+
+def check_ref_database(database, outdir):
+    if(database==[]):
+        print('<--AMP_database> was not given, the current DRAMP general-AMP database will be downloaded and used')
+        database = os.path.join(outdir, r'amp_ref_database')
+        os.makedirs(database, exist_ok=True)
+        db = database
+        download_DRAMP(db)
+        return db
+    else:
+        db = database
+        return db
+    #else:
+        #if os.path.exists(database):
+            #db = database
+            #return db
+            #else:
+            # #if not os.path.exists(database):
+            #raise ValueError('Reference amp database does not exist, please check the path.')
