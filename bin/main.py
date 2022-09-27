@@ -24,11 +24,11 @@ parser.add_argument("--path_list", dest="files", nargs='?', help="enter the list
 parser.add_argument("--outdir", dest="out", help="enter the name of the output directory",
                     type=str, default="../amp_summary/")
 parser.add_argument("--cutoff", dest="p", help="enter the probability cutoff for AMPs",
-                    type=int, default=0.5)
+                    type=int, default=0)
 parser.add_argument("--faa_folder", dest="faa", help="enter the path to the folder containing the reference .faa files. Filenames have to contain the corresponding sample-name, i.e. sample_1.faa",
                     type=str, default='../test_faa/')
 parser.add_argument("--tooldict", dest="tools", help="enter a dictionary of the AMP-tools used with their output file endings (as they appear in the directory tree), \n Tool-names have to be written as in default:\n default={'ampir':'ampir.tsv', 'amplify':'amplify.tsv', 'macrel':'macrel.tsv', 'hmmer_hmmsearch':'hmmsearch.txt', 'ensembleamppred':'ensembleamppred.txt'}",
-                    type=dict, default={'ampir':'ampir.tsv', 'amplify':'amplify.tsv', 'macrel':'macrel.tsv', 'hmmer_hmmsearch':'hmmsearch.txt', 'ensembleamppred':'ensembleamppred.txt'})
+                    type=dict, default={'ampir':'ampir.tsv', 'amplify':'amplify.tsv', 'macrel':'macrel.tsv', 'neubi':'neubi.fasta', 'hmmer_hmmsearch':'hmmsearch.txt', 'ensembleamppred':'ensembleamppred.txt'})
 parser.add_argument("--AMP_database", dest="ref_db", nargs='?', help="Enter the path to the folder containing the reference database files (.fa and .txt); a fasta file and the corresponding table with functional and taxonomic classifications.",
                     type=str, default=[])
 #parser.add_argument('-h', '--help', action='help', nargs='?', default=argparse.SUPPRESS, help='Show this help message and exit.')
@@ -41,8 +41,8 @@ args = parser.parse_args()
 
 # assign input arguments to variables
 path = args.amp
-samplelist_in = args.samples
-filepaths_in = args.files
+samplelist = args.samples
+filepaths = args.files
 outdir = args.out
 p = args.p
 faa_path = args.faa
@@ -54,12 +54,7 @@ database = args.ref_db
 tools = [key for key in tooldict]
 # extract list of tool-output file-endings. If not given, default dict contains default endings.
 fileending = [val for val in tooldict.values()]
-# check input sample-list and create sample-list if input empty
-samplelist = check_samplelist(samplelist_in, tools, path)
-# check input filepaths and create list of list of filepaths per sample if input empty
-filepaths = check_pathlist(filepaths_in, samplelist, fileending, path)
-# check amp_ref_database filepaths and create a directory if input empty
-db = check_ref_database(database, outdir)
+
 # create output directory
 os.makedirs(outdir, exist_ok=True)
 
@@ -68,6 +63,17 @@ os.makedirs(outdir, exist_ok=True)
 #########################################
 if __name__ == "__main__":
     #print_header()
+
+    # check input parameters
+    check_input_complete(path, samplelist, filepaths, tools)
+    # check input sample-list and create sample-list if input empty
+    samplelist = check_samplelist(samplelist, tools, path)
+    # check input filepaths and create list of list of filepaths per sample if input empty
+    filepaths = check_pathlist(filepaths, samplelist, fileending, path)
+    # check amp_ref_database filepaths and create a directory if input empty
+    db = check_ref_database(database, outdir)
+
+    # generate summary for each sample
     amp_faa_paths = []
     create_diamond_ref_db(db)
     for i in range(0, len(samplelist)):
@@ -89,4 +95,3 @@ if __name__ == "__main__":
         #call: function that runs Diamond.bash -- DONE!!
         #call: read Diamond output and add to summary -- NOT yet!!
         print(f'The fasta containing AMP sequences for {samplelist[i]} was saved to {outdir} \n')
-    print('Your AMPcombi summaries are now available in the output folder!')
