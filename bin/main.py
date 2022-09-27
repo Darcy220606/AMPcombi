@@ -38,8 +38,8 @@ args = parser.parse_args()
 
 # assign input arguments to variables
 path = args.amp
-samplelist_in = args.samples
-filepaths_in = args.files
+samplelist = args.samples
+filepaths = args.files
 outdir = args.out
 p = args.p
 faa_path = args.faa
@@ -50,10 +50,6 @@ tooldict = args.tools
 tools = [key for key in tooldict]
 # extract list of tool-output file-endings. If not given, default dict contains default endings.
 fileending = [val for val in tooldict.values()]
-# check input sample-list and create sample-list if input empty
-samplelist = check_samplelist(samplelist_in, tools, path)
-# check input filepaths and create list of list of filepaths per sample if input empty
-filepaths = check_pathlist(filepaths_in, samplelist, fileending, path)
 
 # create output directory
 os.makedirs(outdir, exist_ok=True)
@@ -63,6 +59,15 @@ os.makedirs(outdir, exist_ok=True)
 #########################################
 if __name__ == "__main__":
     #print_header()
+
+    # check input parameters
+    check_input_complete(path, samplelist, filepaths, tools)
+    # check input sample-list and create sample-list if input empty
+    samplelist = check_samplelist(samplelist, tools, path)
+    # check input filepaths and create list of list of filepaths per sample if input empty
+    filepaths = check_pathlist(filepaths, samplelist, fileending, path)
+
+    # generate summary for each sample
     amp_faa_paths = []
     for i in range(0, len(samplelist)):
         main_list = []
@@ -81,4 +86,3 @@ if __name__ == "__main__":
         #call: function that runs Diamond.bash
         #call: read Diamond output and add to summary
         print(f'The fasta containing AMP sequences for {samplelist[i]} was saved to {outdir} \n')
-    print('Your AMPcombi summaries are now available in the output folder!')
