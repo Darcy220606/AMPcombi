@@ -24,7 +24,7 @@ def download_DRAMP(db):
     date = datetime.now().strftime("%Y_%m_%d")
     ref_amps=pd.read_excel (db +'/'+ r'general_amps.xlsx')
     ref_amps.to_csv (db +'/' + f'general_amps_{date}.tsv', index = None, header=True,sep='\t')
-    ##Download the (excel) file and store it in a results directory 
+    ##Download the (fasta) file and store it in a results directory 
     urlfasta = 'http://dramp.cpu-bioinfor.org/downloads/download.php?filename=download_data/DRAMP3.0_new/general_amps.fasta'
     z = requests.get(urlfasta)
     fasta_path = os.path.join(db + '/' + f'general_amps_{date}.fasta')
@@ -39,7 +39,7 @@ def download_DRAMP(db):
             letters = ['A','C','D','E','F','G','H','I','K','L','M','N','P','Q','R','S','T','V','W',',Y']
             new = ''.join(i for i in sequence if i in letters)
             f.write('>' + id + '\n' + new + '\n')
-    return os.remove(fasta_path)
+    return os.remove(fasta_path), os.remove(db +'/'+ r'general_amps.xlsx')
 
 ########################################
 #  FUNCTION: CREATE DIAMOND COMPATIBLE DATBASE FORMATS
@@ -62,11 +62,26 @@ def create_diamond_ref_db(db):
 #########################################
 def diamond_alignment(db, amp_faa_paths, amp_matches):
     #create temp folder and delete at the end
-    temp = tempfile.mkdtemp()
     cwd = os.getcwd()
     scripts_path = cwd + '/bin'
     for path in amp_faa_paths:
+        # align the query with the database
+        temp = tempfile.mkdtemp()
         subprocess.run(f'{scripts_path}/diamond_alignment.sh', text=True, input=f'{path}\n{temp}\n{db}')
         shutil.move(temp+'/diamond_matches.tsv', amp_matches)
-        #return shutil.rmtree(temp)
-        return amp_matches
+        shutil.rmtree(temp)
+        # mege the diamond_alignment with the ref_db table
+        #dd_align = pd.read_csv(amp_matches, delimiter='\t')
+        #dd_align = dd_align[['target_id','contig_id']]
+        #for file in os.listdir(db):
+        #    if file.endswith('.tsv'):
+        #        path_2 = os.path.join(os.path.abspath(db) + '/' + file)
+        #        ref_db = pd.read_csv(path_2, delimiter='\t')
+        #        merged = pd.merge(dd_align, ref_db, left_on=ref_db.iloc[:, 0], right_on=dd_align.iloc[:, 0],how='inner')
+        #        print(merged)
+
+# Step1: Merge alignment to DRAMP database
+
+    
+# Step2: merge that alignemnt table to
+# 

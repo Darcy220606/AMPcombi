@@ -1,8 +1,8 @@
 #!/bin/python3
 
 import os
-from amp_database import download_DRAMP
 import sys
+from amp_database import download_DRAMP
 
 # TODO: Check input: either --amp-results directory OR --path-list has to be given
 # TODO: check function should print INFO to screen
@@ -48,15 +48,12 @@ def check_ref_database(database, outdir):
         download_DRAMP(db)
         return db
     else:
-        db = database
-        return db
-    #else:
-        #if os.path.exists(database):
-            #db = database
-            #return db
-            #else:
-            # #if not os.path.exists(database):
-            #raise ValueError('Reference amp database does not exist, please check the path.')
+        if os.path.exists(database):
+            db = database
+            return db
+        else:
+            if not os.path.exists(database):
+                sys.exit(f'Reference amp database path {database} does not exist, please check the path.')
 
 def check_path(path):
     return os.path.exists(path) #returns True or False
