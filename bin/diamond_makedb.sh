@@ -13,9 +13,5 @@ read INPUT_FASTA
 IN=$INPUT_FASTA
 #OUT=$OUTPUT_DIR 
 
-
-eval "$(conda shell.bash hook)"
-conda activate diamond 
-
 #cd $OUT
 diamond makedb --in $IN -p 28 -d amp_ref --quiet

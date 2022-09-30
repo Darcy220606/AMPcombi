@@ -4,9 +4,6 @@
 #  Diamond alignment
 #########################################
 
-eval "$(conda shell.bash hook)"
-conda activate diamond 
-
 INPUT_FASTA=$1
 OUTPUT_DIR=$2
 REF_DIR=$3
