@@ -71,17 +71,12 @@ def diamond_alignment(db, amp_faa_paths, amp_matches):
         shutil.move(temp+'/diamond_matches.tsv', amp_matches)
         shutil.rmtree(temp)
         # mege the diamond_alignment with the ref_db table
-        #dd_align = pd.read_csv(amp_matches, delimiter='\t')
-        #dd_align = dd_align[['target_id','contig_id']]
-        #for file in os.listdir(db):
-        #    if file.endswith('.tsv'):
-        #        path_2 = os.path.join(os.path.abspath(db) + '/' + file)
-        #        ref_db = pd.read_csv(path_2, delimiter='\t')
-        #        merged = pd.merge(dd_align, ref_db, left_on=ref_db.iloc[:, 0], right_on=dd_align.iloc[:, 0],how='inner')
-        #        print(merged)
-
-# Step1: Merge alignment to DRAMP database
-
-    
-# Step2: merge that alignemnt table to
-# 
+        dd_align = pd.read_csv(amp_matches, delimiter='\t')
+        dd_align = dd_align[['target_id','contig_id','pident','evalue']]
+        for file in os.listdir(db):
+            if file.endswith('.tsv'):
+                path_2 = os.path.join(os.path.abspath(db) + '/' + file)
+                ref_db = pd.read_csv(path_2, delimiter='\t')
+                ref_db.columns.values[0] = "target_id"
+                merged = pd.merge(dd_align, ref_db, on='target_id',how='inner')
+                return merged

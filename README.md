@@ -6,6 +6,7 @@ For testing out the ampcombi tool for running amp tools.
 ## Usage
 
 Note: AMP database sequences shoud not contain any character other than ['A','C','D','E','F','G','H','I','K','L','M','N','P','Q','R','S','T','V','W',',Y']
+Note: The database files should have an extension .fasta and .tsv
 
 ## Contribute
 ### Adding a new tool to AMPcombi

@@ -26,7 +26,6 @@ parser = argparse.ArgumentParser(formatter_class=argparse.RawDescriptionHelpForm
 # For stand a lone tool JFY suggests having a similar tool function as HAMRONIZATION, i.e. seperate the tools into different sub-modules
 # -- subtools =2: parse and summaruze (classify) for parsing --amppir --amplify --n
 
-
 parser.add_argument("--amp_results", dest="amp", nargs='?', help="Enter the path to the folder that contains the different tool's output files in sub-folders named by sample name. \n If paths are to be inferred, sub-folders in this results-directory have to be organized like '/amp_results/toolsubdir/samplesubdir/tool.sample.filetype' \n (default: %(default)s)",
                     type=str, default="../amp_results/")
 parser.add_argument("--sample_list", dest="samples", nargs='?', help="Enter a list of sample-names, e.g. ['sample_1', 'sample_2', 'sample_n']. \n If not given, the sample-names will be inferred from the folder structure",
@@ -95,15 +94,17 @@ if __name__ == "__main__":
         read_path(main_list, filepaths[i], p, tooldict, faa_path, samplelist[i])
         # use main_list to create the summary file for sample i
         summary_df = summary(main_list, samplelist[i], faa_path, outdir)
-        print(f'The summary file for {samplelist[i]} was saved to {outdir}')
         # Generate the AMP-faa.fasta for sample i
         out_path = outdir+'/'+samplelist[i]+'_amp.faa'
         faa_name = faa_path+samplelist[i]+'.faa'
         amp_fasta(summary_df, faa_name, out_path)
         amp_faa_paths.append(out_path)
-        amp_matches = outdir+'/'+samplelist[i]+'_diamond_matches.txt'
-        diamond_alignment(db, amp_faa_paths, amp_matches)
-        #call: check download -- DONE!
-        #call: function that runs Diamond.bash -- DONE!!
-        #call: read Diamond output and add to summary -- NOT yet!!
         print(f'The fasta containing AMP sequences for {samplelist[i]} was saved to {outdir} \n')
+        amp_matches = outdir+'/'+samplelist[i]+'_diamond_matches.txt'
+        print(f'The diamond alignment for {samplelist[i]} in process....')
+        diamond_df = diamond_alignment(db, amp_faa_paths, amp_matches)
+        print(f'The diamond alignment for {samplelist[i]} was saved to {outdir}')
+        # Merge summary_df and diamond_df
+        complete_summary_df = pd.merge(summary_df, diamond_df, on = 'contig_id', how='left')
+        complete_summary_df.to_csv(outdir+'/'+samplelist[i]+'_ampcombi.csv', sep=',')
+        print(f'The summary file for {samplelist[i]} was saved to {outdir}')
