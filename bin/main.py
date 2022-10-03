@@ -1,16 +1,16 @@
-#!/bin/python3
+#!/usr/bin/env python3
 
 import os
 import argparse
+import warnings
 # import functions from sub-scripts to main:
 from reformat_tables import *
 from amp_fasta import *
 from check_input import *
 from amp_database import *
-import warnings
 
 # Define input arguments:
-parser = argparse.ArgumentParser(formatter_class=argparse.RawDescriptionHelpFormatter,
+parser = argparse.ArgumentParser(prog = 'ampcombi', formatter_class=argparse.RawDescriptionHelpFormatter,
                                  description=('''\
     .............................................................................
                                     *AMP-combi*
