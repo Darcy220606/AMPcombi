@@ -17,4 +17,4 @@ in `main.py``
 - add your default `tool:tool.fileending`to the default of `--tooldict`
 
 # TODO : for PYPI format adapt to this style: 
-python setup.py sdist
+[python setup.py sdist](https://the-hitchhikers-guide-to-packaging.readthedocs.io/en/latest/creation.html)
