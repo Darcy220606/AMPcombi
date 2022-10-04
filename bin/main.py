@@ -93,6 +93,7 @@ if __name__ == "__main__":
     create_diamond_ref_db(db)
     for i in range(0, len(samplelist)):
         main_list = []
+        print('\n ########################################################## ')
         print(f'Processing AMP-files from sample: {samplelist[i]}')
         # fill main_list with tool-output filepaths for sample i
         read_path(main_list, filepaths[i], p, tooldict, faa_path, samplelist[i])
@@ -107,8 +108,9 @@ if __name__ == "__main__":
         amp_matches = outdir+'/'+samplelist[i]+'_diamond_matches.txt'
         print(f'The diamond alignment for {samplelist[i]} in process....')
         diamond_df = diamond_alignment(db, amp_faa_paths, amp_matches)
-        print(f'The diamond alignment for {samplelist[i]} was saved to {outdir}')
+        print(f'The diamond alignment for {samplelist[i]} was saved to {outdir}/.')
         # Merge summary_df and diamond_df
         complete_summary_df = pd.merge(summary_df, diamond_df, on = 'contig_id', how='left')
         complete_summary_df.to_csv(outdir+'/'+samplelist[i]+'_ampcombi.csv', sep=',')
-        print(f'The summary file for {samplelist[i]} was saved to {outdir}')
+        print(f'The summary file for {samplelist[i]} was saved to {outdir}/.')
+        
