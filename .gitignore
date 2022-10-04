@@ -6,3 +6,6 @@ ampcombi_tests.ipynb
 *.pyc
 amp_summary/*
 amp_summary_anan/*
+build/*
+Ampcombi.egg-info/*
+Ampcombi_test.egg-info/*
