@@ -1,1 +1,0 @@
-contig_id	target_id	pident	evalue	nident	full_qseq	full_sseq	qseq	sseq	qcovhsp	scovhsp

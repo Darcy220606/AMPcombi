@@ -28,17 +28,17 @@ parser = argparse.ArgumentParser(prog = 'ampcombi', formatter_class=argparse.Raw
 # -- subtools =2: parse and summaruze (classify) for parsing --amppir --amplify --n
 
 parser.add_argument("--amp_results", dest="amp", nargs='?', help="Enter the path to the folder that contains the different tool's output files in sub-folders named by sample name. \n If paths are to be inferred, sub-folders in this results-directory have to be organized like '/amp_results/toolsubdir/samplesubdir/tool.sample.filetype' \n (default: %(default)s)",
-                    type=str, default="./amp_results/")
+                    type=str, default="../test_files/")
 parser.add_argument("--sample_list", dest="samples", nargs='?', help="Enter a list of sample-names, e.g. ['sample_1', 'sample_2', 'sample_n']. \n If not given, the sample-names will be inferred from the folder structure",
                     type=list, default=[])
 parser.add_argument("--path_list", dest="files", nargs='?', help="Enter the list of paths to the files to be summarized as a list of lists, e.g. [['path/to/my/sample1.ampir.tsv', 'path/to/my/sample1.amplify.tsv'], ['path/to/my/sample2.ampir.tsv', 'path/to/my/sample2.amplify.tsv']]. \n If not given, the file-paths will be inferred from the folder structure",
                     type=list, default=[])
 parser.add_argument("--outdir", dest="out", help="Enter the name of the output directory \n (default: %(default)s)",
-                    type=str, default="./amp_summary/")
+                    type=str, default="../ampcombi_results/")
 parser.add_argument("--cutoff", dest="p", help="Enter the probability cutoff for AMPs \n (default: %(default)s)",
                     type=int, default=0)
 parser.add_argument("--faa_folder", dest="faa", help="Enter the path to the folder containing the reference .faa files. Filenames have to contain the corresponding sample-name, i.e. sample_1.faa \n (default: %(default)s)",
-                    type=str, default='./test_faa/')
+                    type=str, default='../test_faa/')
 parser.add_argument("--tooldict", dest="tools", help="Enter a dictionary of the AMP-tools used with their output file endings (as they appear in the directory tree), \n Tool-names have to be written as in default:\n default={'ampir':'ampir.tsv', 'amplify':'amplify.tsv', 'macrel':'macrel.tsv', 'hmmer_hmmsearch':'hmmsearch.txt', 'ensembleamppred':'ensembleamppred.txt'}",
                     type=dict, default={'ampir':'ampir.tsv', 'amplify':'amplify.tsv', 'macrel':'macrel.tsv', 'neubi':'neubi.fasta', 'hmmer_hmmsearch':'hmmsearch.txt', 'ensembleamppred':'ensembleamppred.txt'})
 parser.add_argument("--amp_database", dest="ref_db", nargs='?', help="Enter the path to the folder containing the reference database files (.fa and .tsv); a fasta file and the corresponding table with functional and taxonomic classifications. \n (default: DRAMP database)",

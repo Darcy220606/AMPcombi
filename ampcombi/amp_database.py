@@ -46,7 +46,7 @@ def download_DRAMP(db):
 #########################################
 def create_diamond_ref_db(db):
     cwd = os.getcwd()
-    scripts_path = cwd + '/bin'
+    scripts_path = cwd #+ '/ampcombi'
     for file in os.listdir(db):
         if file.endswith('.fasta'):
             path = os.path.join(os.path.abspath(db) + '/' + file)
@@ -63,7 +63,7 @@ def create_diamond_ref_db(db):
 def diamond_alignment(db, amp_faa_paths, amp_matches):
     #create temp folder and delete at the end
     cwd = os.getcwd()
-    scripts_path = cwd + '/bin'
+    scripts_path = cwd #+ '/ampcombi'
     for path in amp_faa_paths:
         # align the query with the database
         temp = tempfile.mkdtemp()

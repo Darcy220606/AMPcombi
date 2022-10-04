@@ -1,0 +1,1 @@
+from ampcombi import main
