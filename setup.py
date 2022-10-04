@@ -1,7 +1,7 @@
 from distutils.core import setup
 
 setup(
-    name='Ampcombi_test',
+    name='AMPcombi',
     version='0.1.0',
     author='Anan Ibrahim and Louisa Perelo',
     author_email='ananhamido@hotmail.com and louisa.perelo@gmail.com',
