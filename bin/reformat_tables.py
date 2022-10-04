@@ -2,92 +2,35 @@
 
 # TITLE: Reformat the AMP output tables
 
-import os
 import pandas as pd
-import argparse
 from Bio import SeqIO
-
-# Define input arguments:
-parser = argparse.ArgumentParser()
-
-#TODO: add -h as argument and only print helpmessages if --help/-h is called
-#TODO: print a nice AMPcombi header
-parser.add_argument("--amp_results", dest="amp", nargs='?', help="enter the path to the folder that contains the different tool's output files in sub-folders named by sample name. \n If paths are to be inferred, sub-folders in this results-directory have to be organized like '/amp_results/toolsubdir/samplesubdir/tool.sample.filetype'",
-                    type=str, default="../amp_results/")
-parser.add_argument("--sample_list", dest="samples", nargs='?', help="enter a list of sample-names, e.g. ['sample_1', 'sample_2', 'sample_n']. \n If not given, the sample-names will be inferred from the folder structure",
-                    type=list, default=[])
-parser.add_argument("--path_list", dest="files", nargs='?', help="enter the list of paths to the files to be summarized as a list of lists, e.g. [['path/to/my/sample1.ampir.tsv', 'path/to/my/sample1.amplify.tsv'], ['path/to/my/sample2.ampir.tsv', 'path/to/my/sample2.amplify.tsv']]. \n If not given, the file-paths will be inferred from the folder structure",
-                    type=list, default=[])
-parser.add_argument("--outdir", dest="out", help="enter the name of the output directory",
-                    type=str, default="../amp_summary/")
-parser.add_argument("--cutoff", dest="p", help="enter the probability cutoff for AMPs",
-                    type=int, default=0.5)
-parser.add_argument("--faa_folder", dest="faa", help="enter the path to the folder containing the reference .faa files. Filenames have to contain the corresponding sample-name, i.e. sample_1.faa",
-                    type=str, default='../test_faa/')
-
-# print help message for user
-parser.print_help()
-
-# get command line arguments
-args = parser.parse_args()
-
-# assign input arguments to variables
-path = args.amp
-samplelist = args.samples
-filepaths = args.files
-outdir = args.out
-p = args.p
-faa_path = args.faa
-
-# additional variables
-# TODO: flexibilize this input (also see below): add this to input args, user can provide a dict of 'tool':'tool-fileending'
-tools = ['ampir', 'amplify', 'hmmer_hmmsearch', 'macrel', 'ensembleamppred'] # to include more tools, add names here
-fileending = ['ampir.tsv', 'amplify.tsv', 'macrel.tsv', 'hmmsearch.txt', 'ensembleamppred.txt'] # add endings of new tools, FLEXIBILIZE THIS
-
-# create output directory
-os.makedirs(outdir, exist_ok=True)
-
-# TODO: Check input: either --amp-results directory OR --path-list has to be given
-# TODO: check function should print INFO to screen
+from check_input import check_dfshape
 
 #########################################
-# GENERATE LIST OF AMP-FILE-LISTS
+# FUNCTION: KEEP ONLY LINES WITH KEYWORD
 #########################################
-# list has to be processed per sample (to create summary per sample)
-# list paths to target files per sample: list = [[pathlist_sample_1], ..., [pathlist_sample_n]]
-toollist = []
-pathlist = []
+def trim_text(filepath, key):
+    lines = []
+    # read file
+    with open(filepath, 'r') as fp:
+        # read an store all lines into list
+        lines = fp.readlines()
 
-if(samplelist==[]):
-    print('<--sample-list> was not given, sample names will be inferred from directory names')
-    for dirpath, subdirs, files in os.walk(path):
-        for dir in subdirs:
-            if (dir in tools):
-                toollist.append(dir)
-            else: 
-                samplelist.append(dir)
-    samplelist = list(set(samplelist))
-
-
-if(filepaths==[]):
-    print('<--path-list> was not given, paths to AMP-results-files will be inferred')
-    for sample in samplelist:
-        for dirpath, subdirs, files in os.walk(path):
-            for file in files:
-                if ((sample in dirpath)&((list(filter(file.endswith, fileending))!=[]))):
-                    pathlist.append(dirpath+'/'+file)
-        filepaths.append(pathlist)
-        #reset the pathlist for next sample
-        pathlist = []
+    # Write file
+    with open(filepath, 'w') as fp:
+        # iterate each line
+        for line in lines:
+            if key in line:
+                fp.write(line)
 
 #########################################
-# FUNCTIONS: READ TOOL OUTPUT TO DF
+# FUNCTIONS: READ TOOLS' OUTPUT TO DFs
 #########################################
 
 #########################################
     #  AMP_ampir
 #########################################
-def ampir(path): 
+def ampir(path, p): 
     # Dictionary to rename columns
     ampir_dict = {'seq_name':'contig_id', 'seq_aa':'seq_aa', 'prob_AMP':'prob_ampir'}
     # read file as df and rename columns
@@ -101,7 +44,7 @@ def ampir(path):
 #########################################
     #  AMP_amplify
 #########################################
-def amplify(path):
+def amplify(path, p):
     amplify_dict = {'Sequence_ID':'contig_id', 'Sequence':'seq_aa', 'Length':'length', 'Charge':'charge', 'Probability_score':'prob_amplify', 'AMPlify_log_scaled_score':'log_score', 'Prediction':'prediction'}
     amplify_df = pd.read_csv(path, sep='\t').rename(columns=amplify_dict).dropna()
     # apply probability cutoff
@@ -109,15 +52,39 @@ def amplify(path):
     return amplify_df[['contig_id', 'prob_amplify']]
 
 #########################################
+    #  AMP_ensembleamppred
+#########################################
+def amppred(path, p):
+    trim_text(path, 'Sequence')
+    amppred_dict = {4:'index', 14:'prob_amppred'} #{'level_0':1, 'level_1':2, 'level_2':'index', 'level_3':3, 'level_4':4, 'level_5':5, '############':6, 'Prediction':7, 'results':8, 'by':9, 'EnsembleAMPPred':10, '#############':'prob_amppred'}
+    amppred_df = pd.read_csv(path, sep=' ', header=None).rename(columns=amppred_dict)
+    amppred_df = amppred_df[(amppred_df['prob_amppred']>=p)]
+    return amppred_df[['index', 'prob_amppred']]
+
+#########################################
     #  AMP_macrel
 #########################################
-def macrel(path):
+def macrel(path, p):
     macrel_dict = {'Access':'contig_id', 'Sequence':'seq_aa', 'AMP_family':'amp_family', 'AMP_probability':'prob_macrel', 'Hemolytic':'hemolytic', 'Hemolytic_probability':'prob_hemo'}
     #set header to second row to skip first line starting with #
     macrel_df = pd.read_csv(path, sep='\t', header=[1]).rename(columns=macrel_dict)
     # apply probability cutoff
     macrel_df = macrel_df[(macrel_df['prob_macrel']>=p)]
     return macrel_df[['contig_id', 'prob_macrel']]
+
+#########################################
+    #  AMP_neubi
+#########################################
+def neubi(path, p):
+    neubi_seq = SeqIO.parse(open(path), 'fasta')
+    #initiate the dataframe containing contig ids, aa-sequences and probability in three columns
+    neubi_df = pd.DataFrame(columns=['contig_id', 'aa_sequence', 'prob_neubi'])
+    #append contig information to df (p is last value in header following '|' symbol)
+    for contig in neubi_seq:
+        contig_id, sequence, description = contig.id, str(contig.seq), float(contig.description.split("|",1)[1])
+        neubi_df = neubi_df.append({'contig_id':contig_id, 'aa_sequence':sequence, 'prob_neubi':description}, ignore_index=True)
+    neubi_df = neubi_df[(neubi_df['prob_neubi']>=p)]
+    return neubi_df[['contig_id', 'prob_neubi']]
 
 #########################################
     #  AMP_hmmsearch
@@ -137,21 +104,33 @@ def hmmsearch(path):
 # FUNCTION: READ DFs PER SAMPLE 
 #########################################
 # For one sample: parse filepaths and read files to dataframes, create list of dataframes
-# TODO: for more flexible input: toollist and fileendings could be given in a dict and then create the lists (for now hardcoded)
-def read_path(df_list, file_list):
+def read_path(df_list, file_list, p, dict, faa_path, samplename):
     for path in file_list:
-        if(path.endswith(fileending[0])):
+        if(path.endswith(dict['ampir'])):
             print('found ampir file')
-            df_list.append(ampir(path))
-        elif(path.endswith(fileending[1])):
+            df_list.append(ampir(path, p))
+        elif(path.endswith(dict['amplify'])):
             print('found amplify file')
-            df_list.append(amplify(path))
-        elif(path.endswith(fileending[2])):
+            df_list.append(amplify(path, p))
+        elif(path.endswith(dict['macrel'])):
             print('found macrel file')
-            df_list.append(macrel(path))
-        elif(path.endswith(fileending[3])):
+            df_list.append(macrel(path, p))
+        elif(path.endswith(dict['neubi'])):
+            print('found neubi file')
+            df_list.append(neubi(path, p))
+        elif(path.endswith(dict['hmmer_hmmsearch'])):
             print('found hmmersearch file')
             df_list.append(hmmsearch(path))
+        elif(path.endswith(dict['ensembleamppred'])):
+            print('found ensemblamppred file')
+            faa_filepath = faa_path+samplename+'.faa'
+            faa_df = faa2table(faa_filepath)
+            amppred_df = amppred(path, p)
+            if(check_dfshape(amppred_df, faa_df)):
+                # add contig_ids via index numbers, because ensembleamppred only gives numbered sequences without ids, in the order of sequences in faa
+                amppred_df = pd.merge(amppred_df, faa_df.reset_index(), on='index')
+                amppred_df.drop(['index', 'aa_sequence'], axis=1)
+                df_list.append(amppred_df)
         else:
             print(f'No AMP-output-files could be found with the given path ({path}). \n Please check your file paths and file endings or use the <--path-list> command')
             break
@@ -160,7 +139,7 @@ def read_path(df_list, file_list):
 # FUNCTION: MERGE DATAFRAMES
 #########################################
 # merge dataframes from list to summary output per sample
-def summary(df_list, samplename):
+def summary(df_list, samplename, faa_path, outdir):
     #initiate merge_df
     merge_df = pd.DataFrame(columns=['contig_id'])
     #merge all dfs in the df-list on contig_id
@@ -176,16 +155,16 @@ def summary(df_list, samplename):
     merge_df['p_sum']= merge_df.sum(axis=1)#.sort_values(ascending=False)
     merge_df = merge_df.sort_values('p_sum', ascending=False).drop('p_sum', axis=1).reset_index()
     # write summary to outdir
-    merge_df.to_csv(outdir+'/'+samplename+'_AMPsummary.csv', sep=',')
+    #merge_df.to_csv(outdir+'/'+samplename+'_AMPsummary.csv', sep=',')
     return merge_df
 
 #########################################
-# FUNCTION: ADD AA-SEQUENCE
+# FUNCTION: READ FAA TO TABLE
 #########################################
 # transform faa to dataframe with two columns
 def faa2table(faa_path):
     #read the amino-acid fasta with SeqIO
-    faa_seq = SeqIO.parse(open(faa), 'fasta')
+    faa_seq = SeqIO.parse(open(faa_path), 'fasta')
     #initiate the dataframe containing contig ids and aa-sequences in two columns
     fasta_df = pd.DataFrame(columns=['contig_id', 'aa_sequence'])
     #append contig information to df
@@ -193,17 +172,3 @@ def faa2table(faa_path):
         contig_id, sequence = contig.id, str(contig.seq)
         fasta_df = fasta_df.append({'contig_id':contig_id, 'aa_sequence':sequence}, ignore_index=True)
     return fasta_df
-
-#########################################
-# MAIN FUNCTION
-#########################################
-if __name__ == "__main__":
-    #print_header()
-    main_list = []
-    for i in range(0, len(samplelist)):
-        print(f'Processing AMP-files from sample: {samplelist[i]}')
-        read_path(main_list, filepaths[i])
-        summary(main_list, samplelist[i])
-        print(f'The summary file for {samplelist[i]} was saved to {outdir} \n')
-        # reset main_list for next sample summary
-        main_list=[]

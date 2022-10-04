@@ -1,4 +1,8 @@
 .DS_Store
 *checkpoint.ipynb
 .ipynb_checkpoints/
+.ipynb
 ampcombi_tests.ipynb
+*.pyc
+amp_summary/*
+amp_summary_anan/*
