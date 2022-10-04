@@ -4,7 +4,7 @@ setup(
     name='AMPcombi',
     version='0.1.0',
     author='Anan Ibrahim and Louisa Perelo',
-    author_email='ananhamido@hotmail.com and louisa.perelo@???',
+    author_email='ananhamido@hotmail.com and louisa.perelo@gmail.com',
     packages=['ampcombi', 'ampcombi.test'],
     scripts=['bin/main.py',
              'bin/amp_database.py',
