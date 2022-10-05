@@ -1,4 +1,4 @@
-# AMPombi
+# AMPcombi
 
 # ![Logo](docs/ampcombi_logo.png) 
 
