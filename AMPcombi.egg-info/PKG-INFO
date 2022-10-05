@@ -1,5 +1,30 @@
+Metadata-Version: 2.1
+Name: AMPcombi
+Version: 0.1.0
+Summary: A parsing tool for AMP tools.
+Home-page: http://pypi.python.org/pypi/AMPcombi/
+Author: Anan Ibrahim and Louisa Perelo
+Author-email: ananhamido@hotmail.com and louisa.perelo@gmail.com
+License: LICENSE.txt
+Keywords: Proteomics,Antimicrobial peptides,DiamondStandardization,Formatting,Functional annotation
+Classifier: Development Status :: 4 - Beta
+Classifier: Environment :: Console
+Classifier: License :: OSI Approved :: MIT License
+Classifier: Natural Language :: English
+Classifier: Operating System :: MacOS
+Classifier: Operating System :: POSIX
+Classifier: Operating System :: POSIX :: Linux
+Classifier: Programming Language :: Python :: 3
+Classifier: Programming Language :: Python :: 3.7
+Classifier: Programming Language :: Python :: 3.8
+Classifier: Programming Language :: Python :: 3.9
+Classifier: Intended Audience :: Science/Research
+Classifier: Intended Audience :: Healthcare Industry
+Classifier: Topic :: Scientific/Engineering :: Bio-InformaticsTopic :: Scientific/Engineering :: Information Analysis
+License-File: LICENSE.txt
+
 # Ampcombi
-# ![Logo](docs/ampcombi_logo.png) 
+![Logo](https://github.com/Darcy220606/Ampcombi/tree/amp_fasta/docs/outputname.png)
 
 This tool parses the results of amp prediction tools into a single table and aligns the hits against a reference database of antimicrobial peptides for functional classifications.
 

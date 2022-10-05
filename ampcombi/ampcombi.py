@@ -8,6 +8,7 @@ from reformat_tables import *
 from amp_fasta import *
 from check_input import *
 from amp_database import *
+from print_header import *
 
 # Define input arguments:
 parser = argparse.ArgumentParser(prog = 'ampcombi', formatter_class=argparse.RawDescriptionHelpFormatter,
@@ -78,6 +79,7 @@ warnings.simplefilter(action='ignore', category=FutureWarning)
 #########################################
 def main():
     # print_header()
+    print_header()
     # check input parameters
     check_input_complete(path, samplelist_in, filepaths_in, tools)
     # check input sample-list and create sample-list if input empty
