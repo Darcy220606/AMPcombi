@@ -12,14 +12,16 @@ For parsing: AMpcombi is developed to parse the output of these **amp prediction
 | AMPlify  | 1.0.3  | https://github.com/bcgsc/AMPlify |
 | Macrel  | 1.1.0  | https://github.com/BigDataBiology/macrel |
 | HMMsearch  | 3.3.2  | https://github.com/EddyRivasLab/hmmer |
-| EnsembleAMPpred  | ? | ? |
-| NeuBI  | ?  | https://github.com/nafizh/NeuBI |
+| EnsembleAMPpred  | - | https://pubmed.ncbi.nlm.nih.gov/33494403/ |
+| NeuBI  | -  | https://github.com/nafizh/NeuBI |
 
 For classification: AMPcombi is developed to offer functional annotation of the detcted AMPs by alignemnt to **AMP reference databases**, for e.g.,:
 
 | Tool | Version | Link |
 | ------------- | ------------- | ------------- |
 | DRAMP  | 3.0 | https://github.com/CPU-DRAMP/DRAMP-3.0 |
+
+Alignment to the reference database is done using [diamond blastp v.2.0.15](https://www.nature.com/articles/s41592-021-01101-x)
 
 ======================
 ## Installation
