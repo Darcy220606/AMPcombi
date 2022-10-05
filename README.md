@@ -1,4 +1,4 @@
-# AMPcombi
+# AMPcombi : Antimicorbial peptides parsing and functional classification tool
 
 # ![Logo](docs/ampcombi_logo.png) 
 
