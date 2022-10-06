@@ -1,0 +1,43 @@
+
+#$$$$$$\  $$\      $$\ $$$$$$$\                                     $$\       $$\|
+#$$  __$$\ $$$\    $$$ |$$  __$$\                                   $$ |      \__|
+#$ /  $$ |$$$$\  $$$$ |$$ |  $$ | $$$$$$$\  $$$$$$\  $$$$$$\$$$$\  $$$$$$$\  $$\ 
+#$$$$$$$$ |$$\$$\$$ $$ |$$$$$$$  |$$  _____|$$  __$$\ $$  _$$  _$$\ $$  __$$\ $$ |
+#$$  __$$ |$$ \$$$  $$ |$$  ____/ $$ /      $$ /  $$ |$$ / $$ / $$ |$$ |  $$ |$$ |
+#$$ |  $$ |$$ |\$  /$$ |$$ |      $$ |      $$ |  $$ |$$ | $$ | $$ |$$ |  $$ |$$ |
+#$$ |  $$ |$$ | \_/ $$ |$$ |      \$$$$$$$\ \$$$$$$  |$$ | $$ | $$ |$$$$$$$  |$$ |
+#\__|  \__|\__|     \__|\__|       \_______| \______/ \__| \__| \__|\_______/ \__|
+
+<--sample-list> was not given, sample names will be inferred from directory names
+<--path-list> was not given, paths to AMP-results-files will be inferred
+<--AMP_database> was not given, the current DRAMP general-AMP database will be downloaded and used
+
+ ########################################################## 
+Processing AMP-files from sample: sample_2
+found macrel file
+found neubi file
+found ensemblamppred file
+ERROR: different row number in tool output and faa file. Ensembleamppred output could not be included in the summary
+found ampir file
+found amplify file
+found hmmersearch file
+The fasta containing AMP sequences for sample_2 was saved to ./ampcombi_results//sample_2/ 
+
+The diamond alignment for sample_2 in process....
+The diamond alignment for sample_2 was saved to ./ampcombi_results//sample_2/.
+The summary file for sample_2 was saved to ./ampcombi_results//sample_2/.
+
+ ########################################################## 
+Processing AMP-files from sample: sample_1
+found macrel file
+found neubi file
+found ensemblamppred file
+ERROR: different row number in tool output and faa file. Ensembleamppred output could not be included in the summary
+found ampir file
+found amplify file
+found hmmersearch file
+The fasta containing AMP sequences for sample_1 was saved to ./ampcombi_results//sample_1/ 
+
+The diamond alignment for sample_1 in process....
+The diamond alignment for sample_1 was saved to ./ampcombi_results//sample_1/.
+The summary file for sample_1 was saved to ./ampcombi_results//sample_1/.

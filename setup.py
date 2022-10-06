@@ -20,6 +20,7 @@ setup(
     long_description=open('README.md').read(),
     keywords=["Proteomics", "Antimicrobial peptides", "Diamond"
               "Standardization", "Formatting","Functional annotation"],
+    install_requires=['pandas'],
     entry_points={  
         'console_scripts': [
             'ampcombi = ampcombi:main',

@@ -81,7 +81,7 @@ warnings.simplefilter(action='ignore', category=FutureWarning)
 #########################################
 # MAIN FUNCTION
 #########################################
-def main():
+def main_workflow():
     # print_header()
     print_header()
     # check input parameters
@@ -120,10 +120,13 @@ def main():
         complete_summary_df.to_csv(outdir +'/'+samplelist[i] +'/'+samplelist[i]+'_ampcombi.csv', sep=',')
         print(f'The summary file for {samplelist[i]} was saved to {outdir}/{samplelist[i]}/.')
         
-if __name__ == "__main__":
-    #main()
+def main():
     if args.log_file == True:
         with open(f'{outdir}/ampcombi.log', 'w') as f:
             with redirect_stdout(f):
-                main()
-    else: main()
+                main_workflow()
+    else: main_workflow()
+    
+
+if __name__ == "__main__":
+    main()

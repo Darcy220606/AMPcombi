@@ -5,6 +5,7 @@ AMPcombi.egg-info/PKG-INFO
 AMPcombi.egg-info/SOURCES.txt
 AMPcombi.egg-info/dependency_links.txt
 AMPcombi.egg-info/entry_points.txt
+AMPcombi.egg-info/requires.txt
 AMPcombi.egg-info/top_level.txt
 ampcombi/__init__.py
 ampcombi/amp_database.py
