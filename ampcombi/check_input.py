@@ -40,7 +40,7 @@ def check_dfshape(df1, df2):
         return True
 
 def check_ref_database(database, outdir):
-    if(database==[]):
+    if(database==None):
         print('<--AMP_database> was not given, the current DRAMP general-AMP database will be downloaded and used')
         database = os.path.join(outdir, r'amp_ref_database')
         os.makedirs(database, exist_ok=True)
