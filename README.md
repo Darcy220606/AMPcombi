@@ -27,7 +27,7 @@ Alignment to the reference database is done using [diamond blastp v.2.0.15](http
 ## Installation
 ======================
 
-To install AMPcombi: 
+To install AMPcombi:
 
 Add dependencies of the tool; python > 3.0, biopython, pandas and diamond.
 Installation can be done using:
@@ -47,33 +47,7 @@ conda env create -f ampcombi/environment.yml
 or
 ```
  conda install AMPcombi
-``` 
-
- and the latest release can be installed directly from pip, conda, docker, this repository, or from the galaxy toolshed:
-
-pip install hAMRonization
-PyPI version PyPI downloads
-
-Or
-
-conda create --name hamronization --channel conda-forge --channel bioconda --channel defaults hamronization
-version-on-conda conda-download last-update-on-conda
-
-Or to install using docker:
-
-docker pull finlaymaguire/hamronization:latest
-Or to install the latest development version:
-
-git clone https://github.com/pha4ge/hAMRonization
-pip install hAMRonization
-### For pip installation
-
-
-
-
-
-### Create conda environment
-
+```
 
 ======================
 ## Usage:
