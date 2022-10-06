@@ -1,10 +1,13 @@
-from distutils.core import setup
+from setuptools import setup
+
+with open('README.md') as fh:
+    long_description = fh.read()
 
 setup(
     name='AMPcombi',
     version='0.1.0',
-    author='Anan Ibrahim and Louisa Perelo',
-    author_email='ananhamido@hotmail.com and louisa.perelo@gmail.com',
+    author='Anan Ibrahim, Louisa Perelo',
+    author_email='ananhamido@hotmail.com, louperelo@gmail.com',
     packages=['ampcombi'],
     scripts=['ampcombi/ampcombi.py',
              'ampcombi/amp_database.py',
@@ -17,7 +20,8 @@ setup(
     url='http://pypi.python.org/pypi/AMPcombi/',
     license='LICENSE.txt',
     description='A parsing tool for AMP tools.',
-    long_description=open('README.md').read(),
+    long_description=long_description,
+    long_description_content_type='text/markdown',
     keywords=["Proteomics", "Antimicrobial peptides", "Diamond"
               "Standardization", "Formatting","Functional annotation"],
     install_requires=['pandas'],
@@ -40,7 +44,7 @@ setup(
         "Programming Language :: Python :: 3.9",
         "Intended Audience :: Science/Research",
         "Intended Audience :: Healthcare Industry",
-        "Topic :: Scientific/Engineering :: Bio-Informatics"
+        "Topic :: Scientific/Engineering :: Bio-Informatics",
         "Topic :: Scientific/Engineering :: Information Analysis"
         ],
 )

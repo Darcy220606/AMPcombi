@@ -1,4 +1,3 @@
-LICENSE.txt
 README.md
 setup.py
 AMPcombi.egg-info/PKG-INFO

@@ -1,2 +1,3 @@
 [console_scripts]
 ampcombi = ampcombi:main
+
