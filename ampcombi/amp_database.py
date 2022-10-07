@@ -46,13 +46,12 @@ def download_DRAMP(db):
 #########################################
 def create_diamond_ref_db(db):
     cwd = os.getcwd()
-    scripts_path = cwd + '/ampcombi'
     for file in os.listdir(db):
         if file.endswith('.fasta'):
             path = os.path.join(os.path.abspath(db) + '/' + file)
             os.chdir(db)
             #process = subprocess.Popen([f'{scripts_path}/diamond_makedb.sh', path])
-            subprocess.run(f'{scripts_path}/diamond_makedb.sh', text=True, input=path)
+            subprocess.run('diamond_makedb.sh', text=True, input=path)
             os.chdir(cwd)
             print
             return path
@@ -63,11 +62,10 @@ def create_diamond_ref_db(db):
 def diamond_alignment(db, amp_faa_paths, amp_matches):
     #create temp folder and delete at the end
     cwd = os.getcwd()
-    scripts_path = cwd + '/ampcombi'
     for path in amp_faa_paths:
         # align the query with the database
         temp = tempfile.mkdtemp()
-        subprocess.run(f'{scripts_path}/diamond_alignment.sh', text=True, input=f'{path}\n{temp}\n{db}')
+        subprocess.run('diamond_alignment.sh', text=True, input=f'{path}\n{temp}\n{db}')
         shutil.move(temp+'/diamond_matches.tsv', amp_matches)
         shutil.rmtree(temp)
         # mege the diamond_alignment with the ref_db table

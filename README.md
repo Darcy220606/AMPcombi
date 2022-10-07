@@ -57,12 +57,13 @@ There are two basic commands to run AMPcombi:
 
 1. Using `--amp_results`
 ```console
-ampcombi --amp_results path/to/my/result_folder/
+ampcombi --amp_results path/to/my/result_folder/ --faa_folder path/to/sample_faa_files/
 ```
 
-Here the head folder containing output files has to be given. AMPcombi finds and summarizes the output files from different tools, if the folder is structured  and named as: `/result_folder/toolsubdir/samplesubdir/sample.tool.filetype`.
+Here the head folder containing output files has to be given. AMPcombi finds and summarizes the output files from different tools, if the folder is structured  and named as: `/result_folder/toolsubdir/samplesubdir/sample.tool.filetype`. 
  - Note that the filetype ending might vary and can be specified with `--tooldict`, if it is different from the default.
 
+The path to the folder containing the respective protein fasta files has to be provided with `--faa_folder`. The files have to be named with `<samplename>.faa`.
 
 ```console
 amp_results/
@@ -86,16 +87,17 @@ amp_results/
 2. Using `--path_list` and `--sample_list`
 
 ```console
-ampcombi --path_list [[list of paths to sample_1-outputs][list of paths to sample_2-outputs]] --sample_list [sample_1, sample_2] 
+ampcombi --path_list [[list of paths to sample_1-outputs][list of paths to sample_2-outputs]] --sample_list [sample_1, sample_2] --faa_folder path/to/sample_faa_files/
 ```
 
-Here the paths to the output-files to be summarized can be given as a list for each sample. Together with this option a list of sample-names has to be supplied.
+Here the paths to the output-files to be summarized can be given as a list for each sample. Together with this option a list of sample-names has to be supplied. 
+The path to the folder containing the respective protein fasta files has to be provided with `--faa_folder`. The files have to be named with `<samplename>.faa`.
 
 
 ### Input options:
 | command | definition | default | example |
 | ------------- | ------------- | ------------- | ------------- |
-| --amp_results | path to the folder containing different tool's output files | ./test_files/ | ../amp_results |
+| --amp_results | path to the folder containing different tool's output files | ./test_files/ | ../amp_results/ |
 | --sample_list  | list of samples' names | [] | [sample_1, sample_2] |
 | --path_list  | list of paths to output files | [] | [[paths to sample_1 output], [paths to sample_2 outputs]] |
 | --outdir  | name of the output directory | ./ampcombi_results/ | ./ampcombi_results/ |
