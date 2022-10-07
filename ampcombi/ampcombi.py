@@ -24,11 +24,6 @@ parser = argparse.ArgumentParser(prog = 'ampcombi', formatter_class=argparse.Raw
                                 epilog='''Thank you for running AMP-combi!''',
                                 add_help=True)
 
-#TODO: Find out if parser and additional argument should be before or part of main()
-#TODO: Consider adding a parameters to keep the contigs with all non-amps and not to filter them out 
-# For stand a lone tool JFY suggests having a similar tool function as HAMRONIZATION, i.e. seperate the tools into different sub-modules
-# -- subtools =2: parse and summaruze (classify) for parsing --amppir --amplify --n
-
 parser.add_argument("--amp_results", dest="amp", nargs='?', help="Enter the path to the folder that contains the different tool's output files in sub-folders named by sample name. \n If paths are to be inferred, sub-folders in this results-directory have to be organized like '/amp_results/toolsubdir/samplesubdir/tool.sample.filetype' \n (default: %(default)s)",
                     type=str, default="./test_files/")
 parser.add_argument("--sample_list", dest="samples", nargs='?', help="Enter a list of sample-names, e.g. ['sample_1', 'sample_2', 'sample_n']. \n If not given, the sample-names will be inferred from the folder structure",
@@ -47,11 +42,6 @@ parser.add_argument("--amp_database", dest="ref_db", nargs='?', help="Enter the 
                     type=str, default=None)
 parser.add_argument("--log", dest="log_file", nargs='?', help="Silences the standardoutput and captures it in a log file)",
                     type=bool, default=False)
-
-#parser.add_argument('--help', default=argparse.SUPPRESS, nargs='?', help='Show this help message and exit.')
-
-# print help message for user
-#parser.print_help()
 
 # get command line arguments
 args = parser.parse_args()

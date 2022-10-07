@@ -4,7 +4,6 @@
 
 import pandas as pd
 from Bio import SeqIO
-from check_input import check_dfshape
 
 #########################################
 # FUNCTION: KEEP ONLY LINES WITH KEYWORD
@@ -22,6 +21,17 @@ def trim_text(filepath, key):
         for line in lines:
             if key in line:
                 fp.write(line)
+
+#########################################
+# FUNCTION: KEEP ONLY LINES WITH KEYWORD
+#########################################
+def check_dfshape(df1, df2):
+    if (df1.shape[0] != df2.shape[0]):
+        print(f'ERROR: different row number in tool output and faa file. Ensembleamppred output could not be included in the summary')
+        return False
+    else: 
+        return True
+
 
 #########################################
 # FUNCTIONS: READ TOOLS' OUTPUT TO DFs

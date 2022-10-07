@@ -4,9 +4,6 @@ import os
 import sys
 from amp_database import download_DRAMP
 
-# TODO: Check input: either --amp-results directory OR --path-list has to be given
-# TODO: check function should print INFO to screen
-
 def check_samplelist(samplelist, tools, path):
     if(samplelist==[]):
         print('<--sample-list> was not given, sample names will be inferred from directory names')
@@ -31,13 +28,6 @@ def check_pathlist(filepaths, samplelist, fileending, path):
         return filepaths
     else:
         return filepaths
-
-def check_dfshape(df1, df2):
-    if (df1.shape[0] != df2.shape[0]):
-        print(f'ERROR: different row number in tool output and faa file. Ensembleamppred output could not be included in the summary')
-        return False
-    else: 
-        return True
 
 def check_ref_database(database, outdir):
     if(database==None):
