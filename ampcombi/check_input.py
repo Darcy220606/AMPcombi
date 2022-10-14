@@ -29,10 +29,10 @@ def check_pathlist(filepaths, samplelist, fileending, path):
     else:
         return filepaths
 
-def check_ref_database(database, outdir):
+def check_ref_database(database):
     if(database==None):
         print('<--AMP_database> was not given, the current DRAMP general-AMP database will be downloaded and used')
-        database = os.path.join(outdir, r'amp_ref_database')
+        database = 'amp_ref_database'
         os.makedirs(database, exist_ok=True)
         db = database
         download_DRAMP(db)
