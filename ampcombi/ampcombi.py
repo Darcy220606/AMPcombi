@@ -83,6 +83,9 @@ def main_workflow():
     # check amp_ref_database filepaths and create a directory if input empty
     db = check_ref_database(database, outdir)
 
+    # initiate a final_summary dataframe to concatenate each new sample-summary
+    complete_summary_df = pd.DataFrame([])
+
     # generate summary for each sample
     amp_faa_paths = []
     create_diamond_ref_db(db)
@@ -106,10 +109,17 @@ def main_workflow():
         diamond_df = diamond_alignment(db, amp_faa_paths, amp_matches)
         print(f'The diamond alignment for {samplelist[i]} was saved to {outdir}/{samplelist[i]}/.')
         # Merge summary_df and diamond_df
-        complete_summary_df = pd.merge(summary_df, diamond_df, on = 'contig_id', how='left')
-        complete_summary_df.to_csv(outdir +'/'+samplelist[i] +'/'+samplelist[i]+'_ampcombi.csv', sep=',')
+        sample_summary_df = pd.merge(summary_df, diamond_df, on = 'contig_id', how='left')
+        # Insert column with sample name on position 0
+        sample_summary_df.insert(0, 'name', samplelist[i])
+        # Write sample summary into sample output folder
+        sample_summary_df.to_csv(outdir +'/'+samplelist[i] +'/'+samplelist[i]+'_ampcombi.csv', sep=',', index=False)
         print(f'The summary file for {samplelist[i]} was saved to {outdir}/{samplelist[i]}/.')
-        
+        # concatenate the sample summary to the complete summary and overwrite it
+        complete_summary_df = pd.concat([complete_summary_df, sample_summary_df])
+        complete_summary_df.to_csv('AMPcombi_summary.csv', sep=',', index=False)
+    print(f'\n FINISHED: The AMPcombi_summary.csv file was saved to your current working directory.')
+
 def main():
     if args.log_file == True:
         with open(f'{outdir}/ampcombi.log', 'w') as f:
