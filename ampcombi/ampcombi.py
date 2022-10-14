@@ -3,14 +3,15 @@
 import os
 import argparse
 import warnings
+from contextlib import redirect_stdout
+from version import __version__
+import json
 # import functions from sub-scripts to main:
 from reformat_tables import *
 from amp_fasta import *
 from check_input import *
 from amp_database import *
 from print_header import *
-from contextlib import redirect_stdout
-from version import __version__
 
 # Define input arguments:
 parser = argparse.ArgumentParser(prog = 'ampcombi', formatter_class=argparse.RawDescriptionHelpFormatter,
@@ -36,7 +37,7 @@ parser.add_argument("--cutoff", dest="p", help="Enter the probability cutoff for
 parser.add_argument("--faa_folder", dest="faa", help="Enter the path to the folder containing the reference .faa files. Filenames have to contain the corresponding sample-name, i.e. sample_1.faa \n (default: %(default)s)",
                     type=str, default='./test_faa/')
 parser.add_argument("--tooldict", dest="tools", help="Enter a dictionary of the AMP-tools used with their output file endings (as they appear in the directory tree), \n Tool-names have to be written as in default:\n default={'ampir':'ampir.tsv', 'amplify':'amplify.tsv', 'macrel':'macrel.tsv', 'hmmer_hmmsearch':'hmmsearch.txt', 'ensembleamppred':'ensembleamppred.txt'}",
-                    type=dict, default={'ampir':'ampir.tsv', 'amplify':'amplify.tsv', 'macrel':'macrel.tsv', 'neubi':'neubi.fasta', 'hmmer_hmmsearch':'hmmsearch.txt', 'ensembleamppred':'ensembleamppred.txt'})
+                    type=str, default='{"ampir":"ampir.tsv", "amplify":"amplify.tsv", "macrel":"macrel.tsv", "neubi":"neubi.fasta", "hmmer_hmmsearch":"hmmsearch.txt", "ensembleamppred":"ensembleamppred.txt"}')
 parser.add_argument("--amp_database", dest="ref_db", nargs='?', help="Enter the path to the folder containing the reference database files (.fa and .tsv); a fasta file and the corresponding table with functional and taxonomic classifications. \n (default: DRAMP database)",
                     type=str, default=None)
 parser.add_argument("--log", dest="log_file", nargs='?', help="Silences the standardoutput and captures it in a log file)",
@@ -52,7 +53,7 @@ samplelist_in = args.samples
 filepaths_in = args.files
 p = args.p
 faa_path = args.faa
-tooldict = args.tools
+tooldict = json.loads(args.tools)
 database = args.ref_db
 
 # additional variables
