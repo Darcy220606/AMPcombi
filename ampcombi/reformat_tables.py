@@ -164,8 +164,6 @@ def summary(df_list, samplename, faa_path):
     merge_df = merge_df.set_index('contig_id')
     merge_df['p_sum']= merge_df.sum(axis=1)#.sort_values(ascending=False)
     merge_df = merge_df.sort_values('p_sum', ascending=False).drop('p_sum', axis=1).reset_index()
-    # write summary to outdir
-    #merge_df.to_csv(outdir+'/'+samplename+'_AMPsummary.csv', sep=',')
     return merge_df
 
 #########################################
