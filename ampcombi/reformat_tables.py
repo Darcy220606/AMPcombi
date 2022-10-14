@@ -149,7 +149,7 @@ def read_path(df_list, file_list, p, dict, faa_path, samplename):
 # FUNCTION: MERGE DATAFRAMES
 #########################################
 # merge dataframes from list to summary output per sample
-def summary(df_list, samplename, faa_path, outdir):
+def summary(df_list, samplename, faa_path):
     #initiate merge_df
     merge_df = pd.DataFrame(columns=['contig_id'])
     #merge all dfs in the df-list on contig_id
