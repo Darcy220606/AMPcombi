@@ -1,22 +1,24 @@
-from setuptools import setup
-
+from setuptools import setup, find_packages
+   
 with open('README.md') as fh:
     long_description = fh.read()
 
 setup(
     name='AMPcombi',
-    version='0.1.3',
+    version='0.1.4',
     author='Anan Ibrahim, Louisa Perelo',
     author_email='ananhamido@hotmail.com, louperelo@gmail.com',
-    packages=['ampcombi'],
-    scripts=['ampcombi/ampcombi.py',
-             'ampcombi/amp_database.py',
-             'ampcombi/amp_fasta.py',
-             'ampcombi/check_input.py',
-             'ampcombi/diamond_alignment.sh',
-             'ampcombi/diamond_makedb.sh',
-             'ampcombi/reformat_tables.py',
-             'ampcombi/print_header.py'],
+    packages=find_packages(),    
+    scripts=['ampcombi/parse/parse.py',
+             'ampcombi/parse/amp_database.py',
+             'ampcombi/parse/amp_fasta.py',
+             'ampcombi/parse/check_input.py',
+             'ampcombi/parse/diamond_alignment.sh',
+             'ampcombi/parse/diamond_makedb.sh',
+             'ampcombi/parse/reformat_tables.py',
+             'ampcombi/parse/print_header.py',
+             'ampcombi/parse/version.py',
+             'ampcombi/summarize/summarize.py'],
     url='http://pypi.python.org/pypi/AMPcombi/',
     license='LICENSE.txt',
     description='A parsing tool for AMP tools.',
@@ -27,7 +29,7 @@ setup(
     install_requires=['pandas'],
     entry_points={  
         'console_scripts': [
-            'ampcombi = ampcombi:main',
+            'ampcombi-parse = parse:main', 'ampcombi-summarize = summarize:main'
         ],
     },
     classifiers=[

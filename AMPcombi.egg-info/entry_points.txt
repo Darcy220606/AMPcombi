@@ -1,0 +1,3 @@
+[console_scripts]
+ampcombi-parse = parse:main
+ampcombi-summarize = summarize:main
