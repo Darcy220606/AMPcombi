@@ -40,7 +40,9 @@ parser.add_argument("--tooldict", dest="tools", help="Enter a dictionary of the 
                     type=str, default='{"ampir":"ampir.tsv", "amplify":"amplify.tsv", "macrel":"macrel.tsv", "neubi":"neubi.fasta", "hmmer_hmmsearch":"hmmsearch.txt", "ensembleamppred":"ensembleamppred.txt"}')
 parser.add_argument("--amp_database", dest="ref_db", nargs='?', help="Enter the path to the folder containing the reference database files (.fa and .tsv); a fasta file and the corresponding table with functional and taxonomic classifications. \n (default: DRAMP database)",
                     type=str, default=None)
-parser.add_argument("--log", dest="log_file", nargs='?', help="Silences the standardoutput and captures it in a log file)",
+parser.add_argument("--complete_summary", dest="complete", nargs='?', help="Concatenates all sample summaries to one final summary",
+                    type=bool, default=False)
+parser.add_argument("--log", dest="log_file", nargs='?', help="Silences the standard output and captures it in a log file)",
                     type=bool, default=False)
 parser.add_argument('--version', action='version', version='%(prog)s {version}'.format(version=__version__))
 
@@ -55,6 +57,7 @@ p = args.p
 faa_path = args.faa
 tooldict = json.loads(args.tools)
 database = args.ref_db
+complete_summary = args.complete
 
 # additional variables
 # extract list of tools from input dictionary. If not given, default dict contains all possible tools
@@ -81,7 +84,8 @@ def main_workflow():
     db = check_ref_database(database)
 
     # initiate a final_summary dataframe to concatenate each new sample-summary
-    complete_summary_df = pd.DataFrame([])
+    if (complete_summary):
+        complete_summary_df = pd.DataFrame([])
 
     # generate summary for each sample
     amp_faa_paths = []
@@ -112,10 +116,16 @@ def main_workflow():
         # Write sample summary into sample output folder
         sample_summary_df.to_csv(samplelist[i] +'/'+samplelist[i]+'_ampcombi.csv', sep=',', index=False)
         print(f'The summary file for {samplelist[i]} was saved to {samplelist[i]}/.')
+        if (complete_summary):
         # concatenate the sample summary to the complete summary and overwrite it
-        complete_summary_df = pd.concat([complete_summary_df, sample_summary_df])
-        complete_summary_df.to_csv('AMPcombi_summary.csv', sep=',', index=False)
-    print(f'\n FINISHED: The AMPcombi_summary.csv file was saved to your current working directory.')
+            complete_summary_df = pd.concat([complete_summary_df, sample_summary_df])
+            complete_summary_df.to_csv('AMPcombi_summary.csv', sep=',', index=False)
+        else: 
+            continue
+    if (complete_summary):
+        print(f'\n FINISHED: The AMPcombi_summary.csv file was saved to your current working directory.')
+    else: 
+        print(f'\n FINISHED: AMPcombi created summaries for all input samples.')
 
 def main():
     if args.log_file == True:
