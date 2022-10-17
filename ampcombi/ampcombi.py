@@ -6,6 +6,7 @@ import warnings
 from contextlib import redirect_stdout
 from version import __version__
 import json
+import os.path
 # import functions from sub-scripts to main:
 from reformat_tables import *
 from amp_fasta import *
@@ -44,7 +45,7 @@ parser.add_argument("--complete_summary", dest="complete", nargs='?', help="Conc
                     type=bool, default=False)
 parser.add_argument("--log", dest="log_file", nargs='?', help="Silences the standard output and captures it in a log file)",
                     type=bool, default=False)
-parser.add_argument('--version', action='version', version='%(prog)s {version}'.format(version=__version__))
+parser.add_argument('--version', action='version', version='%(prog)s ' + __version__)
 
 # get command line arguments
 args = parser.parse_args()
@@ -128,9 +129,14 @@ def main_workflow():
         print(f'\n FINISHED: AMPcombi created summaries for all input samples.')
 
 def main():
-    if args.log_file == True:
+    if (args.log_file == True and not os.path.exists('ampcombi.log')):
         with open(f'ampcombi.log', 'w') as f:
-            print(f'AMPcombi version: {args.version}')
+            #print(f'AMPcombi version: {args.version}')
+            with redirect_stdout(f):
+                main_workflow()
+    elif(args.log_file == True and os.path.exists('ampcombi.log')):
+        with open(f'ampcombi.log', 'a') as f:
+            #print(f'AMPcombi version: {args.version}')
             with redirect_stdout(f):
                 main_workflow()
     else: main_workflow()
