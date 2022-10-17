@@ -108,8 +108,9 @@ The path to the folder containing the respective protein fasta files has to be p
 | --faa_folder  | path to the folder containing the samples` .faa files, Filenames have to contain the corresponding sample-name, i.e. sample_1.faa | ./test_faa/ | ./faa_files/|
 | --tooldict | dictionary of AMP-tools and their respective output file endings | '{"ampir":"ampir.tsv", "amplify":"amplify.tsv", "macrel":"macrel.tsv", "hmmer_hmmsearch":"hmmsearch.txt", "ensembleamppred":"ensembleamppred.txt"}' | - |
 | --amp_database | path to the folder containing the reference database files: (1) a fasta file with <.fasta> file extension and (2) the corresponding table with with functional and taxonomic classifications in <.tsv> file extension | [DRAMP 'general amps'](http://dramp.cpu-bioinfor.org/downloads/) database | ./amp_ref_database/ |
+| ----complete_summary | Merges the samples' summarized tables into one | False | True |
 | --log  | print messages into log file instead of stdout | False | True |
-| --version  | print the version number into stdout | - | 0.1.3 |
+| --version  | print the version number into stdout | - | 0.1.4 |
 
  - Note: The fasta file corresponding to the AMP database should not contain any characters other than ['A','C','D','E','F','G','H','I','K','L','M','N','P','Q','R','S','T','V','W',',Y']
   - Note: The reference database table should be tab delimited.
