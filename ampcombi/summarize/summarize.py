@@ -5,9 +5,10 @@ import argparse
 import warnings
 import pandas as pd
 from contextlib import redirect_stdout
+#from parse.version import __version__
 
 # Define input arguments:
-parser = argparse.ArgumentParser(prog = 'summarize', formatter_class=argparse.RawDescriptionHelpFormatter,
+parser = argparse.ArgumentParser(prog = 'ampcombi-summarize', formatter_class=argparse.RawDescriptionHelpFormatter,
                                  description=('''\
     .............................................................................
                                     *ampcombi-summarize*
@@ -20,6 +21,7 @@ parser = argparse.ArgumentParser(prog = 'summarize', formatter_class=argparse.Ra
 
 parser.add_argument("--summary_list", dest="summary", nargs='*', action='append', help="Enter a list that contains the path to the ampcombi summary files. \n  E.g. '/Sample_1/sample_1_ampcombi.csv' \n (default: %(default)s)",
                     default=[])
+#parser.add_argument('--version', action='version', version='%(prog)s {version}'.format(version=__version__))
 
 # get command line arguments
 args = parser.parse_args()
@@ -38,9 +40,8 @@ def summarize(summaries):
     # initiate a final_summary dataframe to concatenate each new sample-summary
     complete_summary_df = pd.DataFrame([])
     # concatenate the sample summary to the complete summary and overwrite it
-    for s in summaries:
+    for s in summaries[0]:
         complete_summary_df = pd.concat([complete_summary_df, pd.read_csv(s)])
-        #print(sum.shape)
     complete_summary_df.to_csv('AMPcombi_summary.csv', sep=',', index=False)
     print(f'\n FINISHED: The AMPcombi_summary.csv file was saved to your current working directory.')
     
