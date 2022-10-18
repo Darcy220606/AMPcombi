@@ -1,10 +1,10 @@
-# AMPcombi : Antimicrobial peptides parsing and functional classification tool
+# AMPcombi : AntiMicrobial Peptides parsing and functional classification tool
 
 # ![Logo](docs/amp-combi-logo.png)
 
-This tool parses the results of amp prediction tools into a single table and aligns the hits against a reference database of antimicrobial peptides for functional classifications.
+This tool parses the results of antimicrobial peptide (AMP) prediction tools into a single table and aligns the hits against a reference AMP database for functional classifications.
 
-For parsing: AMpcombi is developed to parse the output of these **amp prediction tools**:
+For parsing: AMPcombi is developed to parse the output of these **AMP prediction tools**:
  
 | Tool | Version | Link |
 | ------------- | ------------- | ------------- |
@@ -15,7 +15,7 @@ For parsing: AMpcombi is developed to parse the output of these **amp prediction
 | EnsembleAMPpred  | - | https://pubmed.ncbi.nlm.nih.gov/33494403/ |
 | NeuBI  | -  | https://github.com/nafizh/NeuBI |
 
-For classification: AMPcombi is developed to offer functional annotation of the detected AMPs by alignment to **AMP reference databases**, for e.g.,:
+For classification: AMPcombi is developed to offer functional annotation of the detected AMPs by alignment to an **AMP reference databases**, for e.g.,:
 
 | Tool | Version | Link |
 | ------------- | ------------- | ------------- |
@@ -29,7 +29,7 @@ Alignment to the reference database is done using [diamond blastp v.2.0.15](http
 
 To install AMPcombi:
 
-Add dependencies of the tool; python > 3.0, biopython, pandas and diamond.
+Add dependencies of the tool; `python` > 3.0, `biopython`, `pandas` and `diamond`.
 Installation can be done using:
 
  - pip installation
@@ -57,13 +57,17 @@ There are two basic commands to run AMPcombi:
 
 1. Using `--amp_results`
 ```console
-ampcombi --amp_results path/to/my/result_folder/ --faa_folder path/to/sample_faa_files/
+ampcombi \
+--amp_results path/to/my/result_folder/ \
+--faa_folder path/to/sample_faa_files/
 ```
 
 Here the head folder containing output files has to be given. AMPcombi finds and summarizes the output files from different tools, if the folder is structured  and named as: `/result_folder/toolsubdir/samplesubdir/sample.tool.filetype`. 
  - Note that the filetype ending might vary and can be specified with `--tooldict`, if it is different from the default. When passing a dictionary via command line, this has to be done as a string with single quotes `' '` and the dictionary keys and items with double quotes `" "`. i.e. `'{"key1":"item1", "key2":"item2"}'`
 
 The path to the folder containing the respective protein fasta files has to be provided with `--faa_folder`. The files have to be named with `<samplename>.faa`.
+
+Structure of the results folder:
 
 ```console
 amp_results/
@@ -108,11 +112,11 @@ The path to the folder containing the respective protein fasta files has to be p
 | --faa_folder  | path to the folder containing the samples` .faa files, Filenames have to contain the corresponding sample-name, i.e. sample_1.faa | ./test_faa/ | ./faa_files/|
 | --tooldict | dictionary of AMP-tools and their respective output file endings | '{"ampir":"ampir.tsv", "amplify":"amplify.tsv", "macrel":"macrel.tsv", "hmmer_hmmsearch":"hmmsearch.txt", "ensembleamppred":"ensembleamppred.txt"}' | - |
 | --amp_database | path to the folder containing the reference database files: (1) a fasta file with <.fasta> file extension and (2) the corresponding table with with functional and taxonomic classifications in <.tsv> file extension | [DRAMP 'general amps'](http://dramp.cpu-bioinfor.org/downloads/) database | ./amp_ref_database/ |
-| ----complete_summary | Merges the samples' summarized tables into one | False | True |
+| --complete_summary | Concatenates all samples' summarized tables into one | False | True |
 | --log  | print messages into log file instead of stdout | False | True |
 | --version  | print the version number into stdout | - | 0.1.4 |
 
- - Note: The fasta file corresponding to the AMP database should not contain any characters other than ['A','C','D','E','F','G','H','I','K','L','M','N','P','Q','R','S','T','V','W',',Y']
+ - Note: The fasta file corresponding to the AMP database should not contain any characters other than ['A','C','D','E','F','G','H','I','K','L','M','N','P','Q','R','S','T','V','W','Y']
   - Note: The reference database table should be tab delimited.
 
 ### Output:
@@ -143,12 +147,12 @@ AMPcombi is a tool developed for parsing results from published AMP prediction t
 
 ### Adding a new tool to AMPcombi
 In `ampcombi/reformat_tables.py`
-- add a new tool function to read the output to a pandas dataframe
+- add a new tool function to read the output to a pandas dataframe and return two columns named `contig_id` and `prob_<toolname>`
 - add the new function to the `read_path` function
 
 
 In `ampcombi/main.py`
-- add your default `tool:tool.fileending`to the default of `--tooldict`
+- add your default `tool:tool.fileending` to the default of `--tooldict`
 
 
 ======================
