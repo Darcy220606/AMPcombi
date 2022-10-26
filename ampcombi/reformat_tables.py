@@ -139,9 +139,11 @@ def hmmsearch(path):
 #########################################
 # For one sample: parse filepaths and read files to dataframes, create list of dataframes
 def read_path(df_list, file_list, p, dict, faa_path, samplename):
+    print(file_list)
     for path in file_list:
         if(path.endswith(dict['ampir'])):
             print('found ampir file')
+            print(path)
             df_list.append(ampir(path, p))
         elif(path.endswith(dict['amplify'])):
             print('found amplify file')
@@ -182,7 +184,7 @@ def summary(df_list, samplename, faa_path):
     #replace all NAs (where a tool did not identify the contig as AMP) with 0
     merge_df = merge_df.fillna(0)
     #add amino-acid sequences
-    faa_df = faa2table(faa_path+samplename+'.faa')
+    faa_df = faa2table(faa_path)
     merge_df = merge_df.merge(faa_df, how='inner', on='contig_id')
     # sort by sum of p-values over rows
     merge_df = merge_df.set_index('contig_id')
