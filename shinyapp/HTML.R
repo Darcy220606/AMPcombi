@@ -24,20 +24,21 @@ library("dplyr")
 library("DT")
 library("optparse")
 library(htmlwidgets)
-# option_list = list(
-#   make_option(c("-f", "--file"), type="character", default=NULL, 
-#               help="AMpcombi complete summary table", metavar="character"),
-#   make_option(c("-o", "--out"), type="character", default="AMPcombi_summary.html", 
-#               help="Provide the name of the output file [default= %default]", metavar="character")
-# ); 
-# 
-# opt_parser = OptionParser(option_list=option_list);
-# opt = parse_args(opt_parser);
+
+option_list = list(
+  make_option(c("-f", "--file"), type="character", default="AMPcombi_summary.csv",
+              help="AMpcombi complete summary table [default= %default]", metavar="character"),
+  make_option(c("-o", "--out"), type="character", default="AMPcombi_summary.html",
+              help="Provide the name of the output file [default= %default]", metavar="character")
+);
+
+opt_parser = OptionParser(option_list=option_list);
+opt = parse_args(opt_parser);
 
 ##############################
 #Generate HTML interactive files ####
 table <-
-  readr::read_csv("ECO004-CDC007.csv") %>%
+  readr::read_csv(opt$file) %>%
   unique()
 
 result<-datatable(table,
@@ -46,19 +47,23 @@ result<-datatable(table,
                           pageLength = 100, ## number of rows to output for each page
                           scrollX = TRUE,   ## enable scrolling on X axis
                           scrollY = TRUE,   ## enable scrolling on Y axis
-                          #autoWidth = TRUE, ## use smart column width handling
-                          #width = 20,
+                          autoWidth = TRUE, ## use smart column width handling
+                          #width = 100,
+                          #height=100,
                           server = TRUE,   ## use client-side processing only load the 100 on display
                           dom = 'Bfrtip',
                           #bordered = TRUE,
                           buttons = c('csv', 'excel'), ## the user can just download what on display because server=TRUE
-                          columnDefs = list(list(targets = '_all', className = 'dt-center',width = '20px')
-                          )),
+                          columnDefs = list(list(targets = '_all', className = 'dt-center'),
+                                            list(targets = c(0, 8, 9), visible = TRUE))),
           extensions = 'Buttons',
           selection = 'multiple',         ## enable selection of a single row
           filter = 'top',                 ## include column filters at the bottom
           rownames = FALSE                ## don't show row numbers/names
           )
 
-htmlwidgets::saveWidget(result, "result.html")
+# Change the HTML size to fill the browser 
+result$sizingPolicy$browser$fill<-TRUE
+# SAves the html file 
+htmlwidgets::saveWidget(result, opt$out, selfcontained = FALSE)
 ##############################
