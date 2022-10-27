@@ -46,14 +46,14 @@ result<-datatable(table,
                           pageLength = 100, ## number of rows to output for each page
                           scrollX = TRUE,   ## enable scrolling on X axis
                           scrollY = TRUE,   ## enable scrolling on Y axis
-                          autoWidth = TRUE, ## use smart column width handling
+                          #autoWidth = TRUE, ## use smart column width handling
                           #width = 20,
                           server = TRUE,   ## use client-side processing only load the 100 on display
                           dom = 'Bfrtip',
                           #bordered = TRUE,
                           buttons = c('csv', 'excel'), ## the user can just download what on display because server=TRUE
-                          columnDefs = list(list(targets = '_all', className = 'dt-center',width = '20px'),
-                                            list(targets = c(0, 8, 9), visible = TRUE))),
+                          columnDefs = list(list(targets = '_all', className = 'dt-center',width = '20px')
+                          )),
           extensions = 'Buttons',
           selection = 'multiple',         ## enable selection of a single row
           filter = 'top',                 ## include column filters at the bottom
