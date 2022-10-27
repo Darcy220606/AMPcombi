@@ -10,3 +10,5 @@ v<0.1.5>, <27.10.2022> -- Initial release.
     -- adapt reading of hmmer_hmmsearch output to deal with varying header lines
     -- fix syntax in "if" statements in "check_input.py"
     -- include "check_faa_path" function, to find .faa files also in subdirectories
+v<0.1.4>, <XX.XX.2022>
+    -- Included the HTML output for the complete summary

@@ -13,6 +13,7 @@ from amp_fasta import *
 from check_input import *
 from amp_database import *
 from print_header import *
+from visualise_complete_summary import *
 
 # Define input arguments:
 parser = argparse.ArgumentParser(prog = 'ampcombi', formatter_class=argparse.RawDescriptionHelpFormatter,
@@ -41,7 +42,7 @@ parser.add_argument("--tooldict", dest="tools", help="Enter a dictionary of the 
                     type=str, default='{"ampir":"ampir.tsv", "amplify":"amplify.tsv", "macrel":"macrel.tsv", "neubi":"neubi.fasta", "hmmer_hmmsearch":"hmmsearch.txt", "ensembleamppred":"ensembleamppred.txt"}')
 parser.add_argument("--amp_database", dest="ref_db", nargs='?', help="Enter the path to the folder containing the reference database files (.fa and .tsv); a fasta file and the corresponding table with functional and taxonomic classifications. \n (default: DRAMP database)",
                     type=str, default=None)
-parser.add_argument("--complete_summary", dest="complete", nargs='?', help="Concatenates all sample summaries to one final summary",
+parser.add_argument("--complete_summary", dest="complete", nargs='?', help="Concatenates all sample summaries to one final summary and outputs both csv and interactive html files",
                     type=bool, default=False)
 parser.add_argument("--log", dest="log_file", nargs='?', help="Silences the standard output and captures it in a log file)",
                     type=bool, default=False)
@@ -121,10 +122,11 @@ def main_workflow():
         # concatenate the sample summary to the complete summary and overwrite it
             complete_summary_df = pd.concat([complete_summary_df, sample_summary_df])
             complete_summary_df.to_csv('AMPcombi_summary.csv', sep=',', index=False)
+            html_generator() 
         else: 
             continue
     if (complete_summary):
-        print(f'\n FINISHED: The AMPcombi_summary.csv file was saved to your current working directory.')
+        print(f'\n FINISHED: The AMPcombi_summary.csv and AMPcombi_summary.html file was saved to your current working directory.')
     else: 
         print(f'\n FINISHED: AMPcombi created summaries for all input samples.')
 

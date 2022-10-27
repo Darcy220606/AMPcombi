@@ -5,7 +5,7 @@ with open('README.md') as fh:
 
 setup(
     name='AMPcombi',
-    version='0.1.5',
+    version='0.1.6',
     author='Anan Ibrahim, Louisa Perelo',
     author_email='ananhamido@hotmail.com, louperelo@gmail.com',
     packages=['ampcombi'],
@@ -17,7 +17,9 @@ setup(
              'ampcombi/diamond_makedb.sh',
              'ampcombi/reformat_tables.py',
              'ampcombi/print_header.py',
-             'ampcombi/version.py'],
+             'ampcombi/version.py',
+             'ampcombi/visualise_complete_summary.py',
+             'ampcombi/HTML.R'],
     url='http://pypi.python.org/pypi/AMPcombi/',
     license='LICENSE.txt',
     description='A parsing tool for AMP tools.',

@@ -8,16 +8,17 @@
 ##############################
 # Authors ####
 # Anan Ibrahim - ananhamido@hotmail.com - @darcy220606
-# Louisa Perelo -louperelo@gmail.com - @louperelo
+# Louisa Perelo - louperelo@gmail.com - @louperelo
 ##############################
 # Working_directory ####
-##############################
-setwd("/home/aibrahim/github/testing_ampcombi_on_deepevo")
+# setwd("/home/aibrahim/github/testing_ampcombi_on_deepevo")
+setwd(getwd())
 ##############################
 # Libraries used + arguments ####
 if (!require("dplyr")) install.packages('dplyr')
 if (!require("DT")) install.packages('DT')
 if (!require("optparse")) install.packages('optparse')
+if (!require("htmlwidgets")) install.packages('htmlwidgets')
 
 library("dplyr")
 library("DT")
@@ -28,16 +29,16 @@ option_list = list(
   make_option(c("-f", "--file"), type="character", default="AMPcombi_summary.csv",
               help="AMpcombi complete summary table [default= %default]", metavar="character"),
   make_option(c("-o", "--out"), type="character", default="AMPcombi_summary.html",
-              help="Provide the name of the output file [default= %default]", metavar="character")
-);
-
+              help="Provide the name of the output file [default= %default]", metavar="character"));
+# Turns warnings off
+#options(warn=-1)
 opt_parser = OptionParser(option_list=option_list);
 opt = parse_args(opt_parser);
 
 ##############################
 #Generate HTML interactive files ####
 table <-
-  readr::read_csv(opt$file) %>%
+  readr::read_csv(opt$file,show_col_types = FALSE) %>%
   unique()
 
 result<-datatable(table,
@@ -51,10 +52,11 @@ result<-datatable(table,
                           #height=100,
                           server = FALSE,   ## use client-side processing only load the 100 on display
                           dom = 'Bfrtip',
+                          language = list(sSearch = "Keyword look-up:"),
                           #bordered = TRUE,
                           buttons = c('csv', 'excel'), ## the user can just download what on display because server=TRUE
                           columnDefs = list(list(targets = '_all', className = 'dt-center'),
-                                            list(targets = c(0, 8, 9), visible = TRUE))),
+                                            list(targets='aa_sequence', visible=TRUE, width='20'))),
           extensions = 'Buttons',
           selection = 'multiple',         ## enable selection of a single row
           filter = 'top',                 ## include column filters at the bottom
@@ -65,4 +67,7 @@ result<-datatable(table,
 result$sizingPolicy$defaultWidth<-"100%"
 
 htmlwidgets::saveWidget(result, opt$out, selfcontained = FALSE)
+
+# CLean up the library folder created
+unlink("AMPcombi_summary_files", recursive = TRUE)
 ##############################
