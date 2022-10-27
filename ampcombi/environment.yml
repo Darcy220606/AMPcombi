@@ -17,6 +17,7 @@ dependencies:
   - et_xmlfile=1.0.1
   - icu=70.1
   - idna=3.4
+  - jsonschema=4.16.0
   - libblas=3.9.0
   - libcblas=3.9.0
   - libcxx=14.0.6
