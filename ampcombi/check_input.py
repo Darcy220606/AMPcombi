@@ -16,11 +16,6 @@ def check_samplelist(samplelist, tools, path):
     else:
         return samplelist
 
-def check_list_depth(list_of_lists):
-    if not isinstance(list_of_lists, list):
-        return 0
-    return max(map(check_list_depth, list_of_lists), default=0) + 1
-
 def check_pathlist(filepaths, samplelist, fileending, path):
     if(filepaths==[]):
         print('<--path-list> was not given, paths to AMP-results-files will be inferred')
@@ -32,9 +27,6 @@ def check_pathlist(filepaths, samplelist, fileending, path):
                         pathlist.append(dirpath+'/'+file)
             filepaths.append(pathlist)
         return filepaths
-    # in case of nf-core modules, input channel files are passed as a list and end up as [[[path_1,..., path_n]]]
-    elif (check_list_depth(filepaths)>1):
-        return filepaths[0]
     else:
         return filepaths
 

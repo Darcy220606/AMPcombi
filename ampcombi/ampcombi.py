@@ -73,8 +73,7 @@ warnings.simplefilter(action='ignore', category=FutureWarning)
 # MAIN FUNCTION
 #########################################
 def main_workflow():
-    print(filepaths_in)
-    # print_header()
+    # print AMPcombi header
     print_header()
     # check input parameters
     check_input_complete(path, samplelist_in, filepaths_in, tools)
@@ -84,7 +83,6 @@ def main_workflow():
     filepaths = check_pathlist(filepaths_in, samplelist, fileending, path)
     # check amp_ref_database filepaths and create a directory if input empty
     db = check_ref_database(database)
-
     # initiate a final_summary dataframe to concatenate each new sample-summary
     if (complete_summary):
         complete_summary_df = pd.DataFrame([])
@@ -98,10 +96,9 @@ def main_workflow():
         print(f'Processing AMP-files from sample: {samplelist[i]}')
         os.makedirs(samplelist[i], exist_ok=True)
         # fill main_list with tool-output filepaths for sample i
-        read_path(main_list, filepaths, p, tooldict, faa_path, samplelist[i])
+        read_path(main_list, filepaths[i], p, tooldict, faa_path, samplelist[i])
         # get the path to the samples' corresponding faa file
         faa_name = check_faa_path(faa_path, samplelist[i])
-            #faa_name = faa_path+samplelist[i]+'.faa'
         # use main_list to create the summary file for sample i
         summary_df = summary(main_list, samplelist[i], faa_name)
         # Generate the AMP-faa.fasta for sample i
@@ -134,12 +131,10 @@ def main_workflow():
 def main():
     if (args.log_file == True and not os.path.exists('ampcombi.log')):
         with open(f'ampcombi.log', 'w') as f:
-            #print(f'AMPcombi version: {args.version}')
             with redirect_stdout(f):
                 main_workflow()
     elif(args.log_file == True and os.path.exists('ampcombi.log')):
         with open(f'ampcombi.log', 'a') as f:
-            #print(f'AMPcombi version: {args.version}')
             with redirect_stdout(f):
                 main_workflow()
     else: main_workflow()
