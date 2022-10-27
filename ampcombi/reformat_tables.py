@@ -139,11 +139,9 @@ def hmmsearch(path):
 #########################################
 # For one sample: parse filepaths and read files to dataframes, create list of dataframes
 def read_path(df_list, file_list, p, dict, faa_path, samplename):
-    print(file_list)
     for path in file_list:
         if(path.endswith(dict['ampir'])):
             print('found ampir file')
-            print(path)
             df_list.append(ampir(path, p))
         elif(path.endswith(dict['amplify'])):
             print('found amplify file')
