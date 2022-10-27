@@ -1,6 +1,6 @@
 # AMPcombi : AntiMicrobial Peptides parsing and functional classification tool
 
-# ![Logo](docs/amp-combi-logo.png)
+<img src="https://raw.githubusercontent.com/Darcy220606/AMPcombi/main/docs/amp-combi-logo.png" width="620" height="200" />
 
 This tool parses the results of antimicrobial peptide (AMP) prediction tools into a single table and aligns the hits against a reference AMP database for functional classifications.
 

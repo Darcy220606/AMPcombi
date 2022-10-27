@@ -4,6 +4,7 @@
 
 import pandas as pd
 from Bio import SeqIO
+import os
 
 #########################################
 # FUNCTION: KEEP ONLY LINES WITH KEYWORD
@@ -100,14 +101,37 @@ def neubi(path, p):
     #  AMP_hmmsearch
 #########################################
 def hmmsearch(path):
-    hmmer_dict = {'level_0':'evalue_hmmer', 'level_1':'score_hmmer', 'level_2':'bias', 'level_3':'eval_domain', 'level_4':'score_domain', 'level_5':'bias_domain', 'level_6':'exp_dom', '-------':'N_dom', '------':'contig_id'}
-    hmmer_df = pd.read_table(path, delim_whitespace=True, header=[15]).reset_index().rename(columns=hmmer_dict)
-    hmmer_df = hmmer_df.drop(hmmer_df.iloc[:,9:17], axis=1) #drop unnecessary columns
-    for index, row in hmmer_df.iterrows():
-        if (row.str.contains('Domain').any()):              #identify index of first row with 'Domain'
-            i = index
-            break
-    hmmer_df = hmmer_df[hmmer_df.index<i]                   #only keep rows previous to index i
+    # list of words in header rows to be removed
+    key_words = ["# hmmsearch ::", "# HMMER ", "# Copyright (C) ", "# Freely distributed", 
+               "# - - - ", "# query HMM file:", "# target sequence database:", 
+               "# output directed to file:", "Query:", "Accession:", 
+               "Description:", "Scores for complete sequences",  "--- full sequence",
+               "# number of worker threads:", "inclusion threshold", "E-value", "-------"]
+    no_hits = "[No hits detected that satisfy reporting thresholds]"
+    hmmer_dict = {0:'evalue_hmmer', 1:'score_hmmer', 2:'bias', 3:'eval_domain', 4:'score_domain', 5:'bias_domain', 6:'exp_dom', 7:'N_dom', 8:'contig_id'}
+    # open the file and read line by line
+    with open(path, "r") as fp:
+        lines = fp.readlines()
+    # Open hmmer_tmp.txt file and only write lines not containing any of key_words
+    with open("hmmer_tmp.txt", "w") as fp:
+        for line in lines:
+            if not any(phrase in line for phrase in key_words):
+                fp.write(line)
+    with open('hmmer_tmp.txt') as tmp:
+        if no_hits in tmp.read():
+            print('The hmmersearch-file did not contain any hits')
+            hmmer_df = pd.DataFrame(columns=[val for val in hmmer_dict.values()])
+        else:
+            hmmer_df = pd.read_table("hmmer_tmp.txt", delim_whitespace=True, header=None).reset_index().rename(columns=hmmer_dict).drop(columns = [9,10,11,12,13,14,15,16]).dropna()
+            for index, row in hmmer_df.iterrows():
+                #identify the footer part of the file: index of first row with '#'
+                if (row.str.contains('#').any()):
+                    i = index
+                    break
+            # eliminate all rows with footer information
+            hmmer_df = hmmer_df[hmmer_df.index<i] 
+        #remove the temporary file
+    os.remove('hmmer_tmp.txt')  
     return hmmer_df[['contig_id', 'evalue_hmmer']]
 
 #########################################
@@ -158,7 +182,7 @@ def summary(df_list, samplename, faa_path):
     #replace all NAs (where a tool did not identify the contig as AMP) with 0
     merge_df = merge_df.fillna(0)
     #add amino-acid sequences
-    faa_df = faa2table(faa_path+samplename+'.faa')
+    faa_df = faa2table(faa_path)
     merge_df = merge_df.merge(faa_df, how='inner', on='contig_id')
     # sort by sum of p-values over rows
     merge_df = merge_df.set_index('contig_id')

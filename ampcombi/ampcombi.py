@@ -28,7 +28,7 @@ parser = argparse.ArgumentParser(prog = 'ampcombi', formatter_class=argparse.Raw
                                 add_help=True)
 
 parser.add_argument("--amp_results", dest="amp", nargs='?', help="Enter the path to the folder that contains the different tool's output files in sub-folders named by sample name. \n If paths are to be inferred, sub-folders in this results-directory have to be organized like '/amp_results/toolsubdir/samplesubdir/tool.sample.filetype' \n (default: %(default)s)",
-                    type=str, default="./test_files/")
+                    type=str, default='./test_files/')
 parser.add_argument("--sample_list", dest="samples", nargs='*', help="Enter a list of sample-names, e.g. sample_1 sample_2 sample_n. \n If not given, the sample-names will be inferred from the folder structure",
                     default=[])
 parser.add_argument("--path_list", dest="files", nargs='*', action='append', help="Enter the list of paths to the files to be summarized as a list of lists, e.g. --path_list path/to/my/sample1.ampir.tsv path/to/my/sample1.amplify.tsv --path_list path/to/my/sample2.ampir.ts path/to/my/sample2.amplify.tsv. \n If not given, the file-paths will be inferred from the folder structure",
@@ -73,7 +73,7 @@ warnings.simplefilter(action='ignore', category=FutureWarning)
 # MAIN FUNCTION
 #########################################
 def main_workflow():
-    # print_header()
+    # print AMPcombi header
     print_header()
     # check input parameters
     check_input_complete(path, samplelist_in, filepaths_in, tools)
@@ -83,7 +83,6 @@ def main_workflow():
     filepaths = check_pathlist(filepaths_in, samplelist, fileending, path)
     # check amp_ref_database filepaths and create a directory if input empty
     db = check_ref_database(database)
-
     # initiate a final_summary dataframe to concatenate each new sample-summary
     if (complete_summary):
         complete_summary_df = pd.DataFrame([])
@@ -98,11 +97,12 @@ def main_workflow():
         os.makedirs(samplelist[i], exist_ok=True)
         # fill main_list with tool-output filepaths for sample i
         read_path(main_list, filepaths[i], p, tooldict, faa_path, samplelist[i])
+        # get the path to the samples' corresponding faa file
+        faa_name = check_faa_path(faa_path, samplelist[i])
         # use main_list to create the summary file for sample i
-        summary_df = summary(main_list, samplelist[i], faa_path)
+        summary_df = summary(main_list, samplelist[i], faa_name)
         # Generate the AMP-faa.fasta for sample i
         out_path = samplelist[i] +'/'+samplelist[i]+'_amp.faa'
-        faa_name = faa_path+samplelist[i]+'.faa'
         amp_fasta(summary_df, faa_name, out_path)
         amp_faa_paths.append(out_path)
         print(f'The fasta containing AMP sequences for {samplelist[i]} was saved to {samplelist[i]}/ \n')
@@ -131,12 +131,10 @@ def main_workflow():
 def main():
     if (args.log_file == True and not os.path.exists('ampcombi.log')):
         with open(f'ampcombi.log', 'w') as f:
-            #print(f'AMPcombi version: {args.version}')
             with redirect_stdout(f):
                 main_workflow()
     elif(args.log_file == True and os.path.exists('ampcombi.log')):
         with open(f'ampcombi.log', 'a') as f:
-            #print(f'AMPcombi version: {args.version}')
             with redirect_stdout(f):
                 main_workflow()
     else: main_workflow()
