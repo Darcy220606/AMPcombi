@@ -7,9 +7,8 @@
 # October, 19 2022
 ##############################
 # Authors ####
-# Anan Ibrahim
-# ananhamido@hotmail.com 
-# @darcy220606
+# Anan Ibrahim - ananhamido@hotmail.com - @darcy220606
+# Louisa Perelo -louperelo@gmail.com - @louperelo
 ##############################
 # Working_directory ####
 ##############################
@@ -23,7 +22,7 @@ if (!require("optparse")) install.packages('optparse')
 library("dplyr")
 library("DT")
 library("optparse")
-library(htmlwidgets)
+library("htmlwidgets")
 
 option_list = list(
   make_option(c("-f", "--file"), type="character", default="AMPcombi_summary.csv",
@@ -50,7 +49,7 @@ result<-datatable(table,
                           autoWidth = TRUE, ## use smart column width handling
                           #width = 100,
                           #height=100,
-                          server = TRUE,   ## use client-side processing only load the 100 on display
+                          server = FALSE,   ## use client-side processing only load the 100 on display
                           dom = 'Bfrtip',
                           #bordered = TRUE,
                           buttons = c('csv', 'excel'), ## the user can just download what on display because server=TRUE
@@ -63,7 +62,7 @@ result<-datatable(table,
           )
 
 # Change the HTML size to fill the browser 
-result$sizingPolicy$browser$fill<-TRUE
-# SAves the html file 
+result$sizingPolicy$defaultWidth<-"100%"
+
 htmlwidgets::saveWidget(result, opt$out, selfcontained = FALSE)
 ##############################
