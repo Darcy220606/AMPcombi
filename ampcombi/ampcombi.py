@@ -126,7 +126,7 @@ def main_workflow():
         else: 
             continue
     if (complete_summary):
-        print(f'\n FINISHED: The AMPcombi_summary.csv and AMPcombi_summary.html file was saved to your current working directory.')
+        print(f'\n FINISHED: The AMPcombi_summary.csv and AMPcombi_summary.html files were saved to your current working directory.')
     else: 
         print(f'\n FINISHED: AMPcombi created summaries for all input samples.')
 
