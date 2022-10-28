@@ -11,7 +11,6 @@
 # Louisa Perelo - louperelo@gmail.com - @louperelo
 ##############################
 # Working_directory ####
-# setwd("/home/aibrahim/github/testing_ampcombi_on_deepevo")
 setwd(getwd())
 ##############################
 # Libraries used + arguments ####
