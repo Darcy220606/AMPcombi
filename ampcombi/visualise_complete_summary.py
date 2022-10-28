@@ -5,7 +5,7 @@
 import subprocess
 
 ########################################
-#  FUNCTION: DOWNLOAD DRAMP DATABASE AND CLEAN IT
+#  FUNCTION: GENERATE AN INTERACTIVE HTML SUMMARY 
 #########################################
 def html_generator():
     subprocess.run('HTML.R', text=True)
