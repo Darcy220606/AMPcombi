@@ -79,10 +79,10 @@ warnings.simplefilter(action='ignore', category=FutureWarning)
 def main_workflow():
     # print AMPcombi header
     print_header()
-    # check input parameters
-    check_input_complete(path, samplelist_in, filepaths_in, tools)
     # check input sample-list and create sample-list if input empty
     samplelist = check_samplelist(samplelist_in, tools, path)
+    # check input parameters
+    check_input_complete(path, samplelist, filepaths_in, tools)
     # check input filepaths and create list of list of filepaths per sample if input empty
     filepaths = check_pathlist(filepaths_in, samplelist, fileending, path)
     # check amp_ref_database filepaths and create a directory if input empty
