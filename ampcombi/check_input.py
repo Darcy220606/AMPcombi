@@ -39,20 +39,25 @@ def check_faa_path(faa_path, samplename):
     return path_list[0]
 
 def check_ref_database(database):
-    if(database==None):
+    if((database==None) and (not os.path.exists('amp_ref_database'))):
         print('<--AMP_database> was not given, the current DRAMP general-AMP database will be downloaded and used')
         database = 'amp_ref_database'
         os.makedirs(database, exist_ok=True)
         db = database
         download_DRAMP(db)
-        return db
-    else:
-        if os.path.exists(database):
+        return db    
+    elif ((not database==None)):
+        if (os.path.exists(database)):
             db = database
+            print(f'<--AMP_database> = ${db} is found and will be used')
             return db
-        else:
-            if not os.path.exists(database):
-                sys.exit(f'Reference amp database path {database} does not exist, please check the path.')
+        if (not os.path.exists(database)):
+            sys.exit(f'Reference amp database path {database} does not exist, please check the path.')
+    elif((database==None) and (os.path.exists('amp_ref_database'))):
+        print('<--AMP_database> = DRAMP is already downloaded and will be reused')
+        database = 'amp_ref_database'
+        db = database
+        return db
 
 def check_path(path):
     return os.path.exists(path) #returns True or False

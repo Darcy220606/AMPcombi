@@ -46,6 +46,8 @@ parser.add_argument("--complete_summary", dest="complete", nargs='?', help="Conc
                     type=bool, default=False)
 parser.add_argument("--log", dest="log_file", nargs='?', help="Silences the standard output and captures it in a log file)",
                     type=bool, default=False)
+parser.add_argument("--threads", dest="cores", nargs='?', help="Changes the threads used for DIAMOND alignment (default: %(default)s)",
+                    type=bool, default='4')
 parser.add_argument('--version', action='version', version='%(prog)s ' + __version__)
 
 # get command line arguments
@@ -60,6 +62,7 @@ faa_path = args.faa
 tooldict = json.loads(args.tools)
 database = args.ref_db
 complete_summary = args.complete
+threads = args.cores
 
 # additional variables
 # extract list of tools from input dictionary. If not given, default dict contains all possible tools
@@ -90,7 +93,7 @@ def main_workflow():
 
     # generate summary for each sample
     amp_faa_paths = []
-    create_diamond_ref_db(db)
+    create_diamond_ref_db(db,threads)
     for i in range(0, len(samplelist)):
         main_list = []
         print('\n ########################################################## ')
@@ -108,8 +111,8 @@ def main_workflow():
         amp_faa_paths.append(out_path)
         print(f'The fasta containing AMP sequences for {samplelist[i]} was saved to {samplelist[i]}/ \n')
         amp_matches = samplelist[i] +'/'+samplelist[i]+'_diamond_matches.txt'
-        print(f'The diamond alignment for {samplelist[i]} in process....')
-        diamond_df = diamond_alignment(db, amp_faa_paths, amp_matches)
+        print(f'The diamond alignment for {samplelist[i]} in progress ....')
+        diamond_df = diamond_alignment(db, amp_faa_paths, amp_matches, threads)
         print(f'The diamond alignment for {samplelist[i]} was saved to {samplelist[i]}/.')
         # Merge summary_df and diamond_df
         sample_summary_df = pd.merge(summary_df, diamond_df, on = 'contig_id', how='left')

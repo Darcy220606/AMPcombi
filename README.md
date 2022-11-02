@@ -64,6 +64,7 @@ ampcombi \
 
 Here the head folder containing output files has to be given. AMPcombi finds and summarizes the output files from different tools, if the folder is structured  and named as: `/result_folder/toolsubdir/samplesubdir/sample.tool.filetype`. 
  - Note that the filetype ending might vary and can be specified with `--tooldict`, if it is different from the default. When passing a dictionary via command line, this has to be done as a string with single quotes `' '` and the dictionary keys and items with double quotes `" "`. i.e. `'{"key1":"item1", "key2":"item2"}'`
+- Note that `--sample_list` can also be given if only specfic samples are needed from the driectory.
 
 The path to the folder containing the respective protein fasta files has to be provided with `--faa_folder`. The files have to be named with `<samplename>.faa`.
 
@@ -112,8 +113,9 @@ The path to the folder containing the respective protein fasta files has to be p
 | --faa_folder  | path to the folder containing the samples` .faa files, Filenames have to contain the corresponding sample-name, i.e. sample_1.faa | ./test_faa/ | ./faa_files/|
 | --tooldict | dictionary of AMP-tools and their respective output file endings | '{"ampir":"ampir.tsv", "amplify":"amplify.tsv", "macrel":"macrel.tsv", "hmmer_hmmsearch":"hmmsearch.txt", "ensembleamppred":"ensembleamppred.txt"}' | - |
 | --amp_database | path to the folder containing the reference database files: (1) a fasta file with <.fasta> file extension and (2) the corresponding table with with functional and taxonomic classifications in <.tsv> file extension | [DRAMP 'general amps'](http://dramp.cpu-bioinfor.org/downloads/) database | ./amp_ref_database/ |
-| --complete_summary | Concatenates all samples' summarized tables into one and generates both 'csv' and interactive 'html' files | False | True |
+| --complete_summary | concatenates all samples' summarized tables into one and generates both 'csv' and interactive 'html' files | False | True |
 | --log  | print messages into log file instead of stdout | False | True |
+| --threads  | adjust the number of threads required for DIAMOND alignemnt depending on the computing resources available  | 4 | 32 |
 | --version  | print the version number into stdout | - | 0.1.4 |
 
  - Note: The fasta file corresponding to the AMP database should not contain any characters other than ['A','C','D','E','F','G','H','I','K','L','M','N','P','Q','R','S','T','V','W','Y']
