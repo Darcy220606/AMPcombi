@@ -13,6 +13,7 @@ from amp_fasta import *
 from check_input import *
 from amp_database import *
 from print_header import *
+from visualise_complete_summary import *
 
 # Define input arguments:
 parser = argparse.ArgumentParser(prog = 'ampcombi', formatter_class=argparse.RawDescriptionHelpFormatter,
@@ -41,10 +42,12 @@ parser.add_argument("--tooldict", dest="tools", help="Enter a dictionary of the 
                     type=str, default='{"ampir":"ampir.tsv", "amplify":"amplify.tsv", "macrel":"macrel.tsv", "neubi":"neubi.fasta", "hmmer_hmmsearch":"hmmsearch.txt", "ensembleamppred":"ensembleamppred.txt"}')
 parser.add_argument("--amp_database", dest="ref_db", nargs='?', help="Enter the path to the folder containing the reference database files (.fa and .tsv); a fasta file and the corresponding table with functional and taxonomic classifications. \n (default: DRAMP database)",
                     type=str, default=None)
-parser.add_argument("--complete_summary", dest="complete", nargs='?', help="Concatenates all sample summaries to one final summary",
+parser.add_argument("--complete_summary", dest="complete", nargs='?', help="Concatenates all sample summaries to one final summary and outputs both csv and interactive html files",
                     type=bool, default=False)
 parser.add_argument("--log", dest="log_file", nargs='?', help="Silences the standard output and captures it in a log file)",
                     type=bool, default=False)
+parser.add_argument("--threads", dest="cores", nargs='?', help="Changes the threads used for DIAMOND alignment (default: %(default)s)",
+                    type=bool, default='4')
 parser.add_argument('--version', action='version', version='%(prog)s ' + __version__)
 
 # get command line arguments
@@ -59,6 +62,7 @@ faa_path = args.faa
 tooldict = json.loads(args.tools)
 database = args.ref_db
 complete_summary = args.complete
+threads = args.cores
 
 # additional variables
 # extract list of tools from input dictionary. If not given, default dict contains all possible tools
@@ -75,10 +79,10 @@ warnings.simplefilter(action='ignore', category=FutureWarning)
 def main_workflow():
     # print AMPcombi header
     print_header()
-    # check input parameters
-    check_input_complete(path, samplelist_in, filepaths_in, tools)
     # check input sample-list and create sample-list if input empty
     samplelist = check_samplelist(samplelist_in, tools, path)
+    # check input parameters
+    check_input_complete(path, samplelist, filepaths_in, tools)
     # check input filepaths and create list of list of filepaths per sample if input empty
     filepaths = check_pathlist(filepaths_in, samplelist, fileending, path)
     # check amp_ref_database filepaths and create a directory if input empty
@@ -89,7 +93,7 @@ def main_workflow():
 
     # generate summary for each sample
     amp_faa_paths = []
-    create_diamond_ref_db(db)
+    create_diamond_ref_db(db,threads)
     for i in range(0, len(samplelist)):
         main_list = []
         print('\n ########################################################## ')
@@ -107,8 +111,8 @@ def main_workflow():
         amp_faa_paths.append(out_path)
         print(f'The fasta containing AMP sequences for {samplelist[i]} was saved to {samplelist[i]}/ \n')
         amp_matches = samplelist[i] +'/'+samplelist[i]+'_diamond_matches.txt'
-        print(f'The diamond alignment for {samplelist[i]} in process....')
-        diamond_df = diamond_alignment(db, amp_faa_paths, amp_matches)
+        print(f'The diamond alignment for {samplelist[i]} in progress ....')
+        diamond_df = diamond_alignment(db, amp_faa_paths, amp_matches, threads)
         print(f'The diamond alignment for {samplelist[i]} was saved to {samplelist[i]}/.')
         # Merge summary_df and diamond_df
         sample_summary_df = pd.merge(summary_df, diamond_df, on = 'contig_id', how='left')
@@ -121,10 +125,11 @@ def main_workflow():
         # concatenate the sample summary to the complete summary and overwrite it
             complete_summary_df = pd.concat([complete_summary_df, sample_summary_df])
             complete_summary_df.to_csv('AMPcombi_summary.csv', sep=',', index=False)
+            html_generator() 
         else: 
             continue
     if (complete_summary):
-        print(f'\n FINISHED: The AMPcombi_summary.csv file was saved to your current working directory.')
+        print(f'\n FINISHED: The AMPcombi_summary.csv and AMPcombi_summary.html files were saved to your current working directory.')
     else: 
         print(f'\n FINISHED: AMPcombi created summaries for all input samples.')
 

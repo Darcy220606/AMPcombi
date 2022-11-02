@@ -44,14 +44,14 @@ def download_DRAMP(db):
 ########################################
 #  FUNCTION: CREATE DIAMOND COMPATIBLE DATBASE FORMATS
 #########################################
-def create_diamond_ref_db(db):
+def create_diamond_ref_db(db,threads):
     cwd = os.getcwd()
     for file in os.listdir(db):
         if file.endswith('.fasta'):
             path = os.path.join(os.path.abspath(db) + '/' + file)
             os.chdir(db)
             #process = subprocess.Popen([f'{scripts_path}/diamond_makedb.sh', path])
-            subprocess.run('diamond_makedb.sh', text=True, input=path)
+            subprocess.run('diamond_makedb.sh', text=True, input=f'{path}\n{threads}')
             os.chdir(cwd)
             print
             return path
@@ -59,13 +59,13 @@ def create_diamond_ref_db(db):
 ########################################
 #  FUNCTION: DIAMOND ALIGNMENT
 #########################################
-def diamond_alignment(db, amp_faa_paths, amp_matches):
+def diamond_alignment(db, amp_faa_paths, amp_matches,threads):
     #create temp folder and delete at the end
     cwd = os.getcwd()
     for path in amp_faa_paths:
         # align the query with the database
         temp = tempfile.mkdtemp()
-        subprocess.run('diamond_alignment.sh', text=True, input=f'{path}\n{temp}\n{db}')
+        subprocess.run('diamond_alignment.sh', text=True, input=f'{path}\n{temp}\n{db}\n{threads}')
         shutil.move(temp+'/diamond_matches.tsv', amp_matches)
         shutil.rmtree(temp)
         # mege the diamond_alignment with the ref_db table
