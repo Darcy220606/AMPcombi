@@ -59,14 +59,14 @@ There are two basic commands to run AMPcombi:
 ```console
 ampcombi \
 --amp_results path/to/my/result_folder/ \
---faa_folder path/to/sample_faa_files/
+--faa path/to/sample_faa_files/
 ```
 
 Here the head folder containing output files has to be given. AMPcombi finds and summarizes the output files from different tools, if the folder is structured  and named as: `/result_folder/toolsubdir/samplesubdir/sample.tool.filetype`. 
  - Note that the filetype ending might vary and can be specified with `--tooldict`, if it is different from the default. When passing a dictionary via command line, this has to be done as a string with single quotes `' '` and the dictionary keys and items with double quotes `" "`. i.e. `'{"key1":"item1", "key2":"item2"}'`
 - Note that `--sample_list` can also be given if only specfic samples are needed from the driectory.
 
-The path to the folder containing the respective protein fasta files has to be provided with `--faa_folder`. The files have to be named with `<samplename>.faa`.
+The path to the folder containing the respective protein fasta files has to be provided with `--faa`. The files have to be named with `<samplename>.faa`.
 
 Structure of the results folder:
 
@@ -96,11 +96,11 @@ ampcombi \
 --path_list path_to_sample_1_tool_1.csv path_to_sample_1_tool_1.csv \
 --path_list path_to_sample_2_tool_1.csv path_to_sample_2_tool_1.csv \
 --sample_list sample_1 sample_2 \
---faa_folder path/to/sample_faa_files/
+--faa path/to/sample_faa_files/
 ```
 
 Here the paths to the output-files to be summarized can be given by `--path_list` for each sample. Together with this option a list of sample-names has to be supplied.
-The path to the folder containing the respective protein fasta files has to be provided with `--faa_folder`. The files have to be named with `<samplename>.faa`.
+Either the path to the folder containing the respective protein fasta files has to be provided with `--faa` or, in case of only one sample, the path to the corresponding `.faa` file. The files have to be named with `<samplename>.faa`.
 
 
 ### Input options:
@@ -110,7 +110,7 @@ The path to the folder containing the respective protein fasta files has to be p
 | --sample_list  | list of samples' names | - | sample_1 sample_2 |
 | --path_list  | list of paths to output files | - | path_to_sample_1_tool_1.csv path_to_sample_1_tool_1.csv |
 | --cutoff  | probability cutoff to filter AMPs | 0 | 0.5 |
-| --faa_folder  | path to the folder containing the samples` .faa files, Filenames have to contain the corresponding sample-name, i.e. sample_1.faa | ./test_faa/ | ./faa_files/|
+| --faa  | path to the folder containing the samples`.faa` files or, in case of only one sample, the path to the corresponding `.faa` file. Filenames have to contain the corresponding sample-name, i.e. sample_1.faa | ./test_faa/ | ./faa_files/|
 | --tooldict | dictionary of AMP-tools and their respective output file endings | '{"ampir":"ampir.tsv", "amplify":"amplify.tsv", "macrel":"macrel.tsv", "hmmer_hmmsearch":"hmmsearch.txt", "ensembleamppred":"ensembleamppred.txt"}' | - |
 | --amp_database | path to the folder containing the reference database files: (1) a fasta file with <.fasta> file extension and (2) the corresponding table with with functional and taxonomic classifications in <.tsv> file extension | [DRAMP 'general amps'](http://dramp.cpu-bioinfor.org/downloads/) database | ./amp_ref_database/ |
 | --complete_summary | concatenates all samples' summarized tables into one and generates both 'csv' and interactive 'html' files | False | True |
