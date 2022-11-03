@@ -14,3 +14,5 @@ v<0.1.6>, <02.11.2022>
     -- Included the HTML output for the complete summary
     -- add option --threads for diamond (make database and alignment)
     -- included check if database was downloaded once to not download again
+v<0.1.7>, <03.11.2022>
+    -- Included the possibility of only submitting one .faa file instead of the faa-folder path (in case of summarizing only one single sample)
