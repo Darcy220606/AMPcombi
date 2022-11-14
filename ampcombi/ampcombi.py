@@ -35,7 +35,7 @@ parser.add_argument("--sample_list", dest="samples", nargs='*', help="Enter a li
 parser.add_argument("--path_list", dest="files", nargs='*', action='append', help="Enter the list of paths to the files to be summarized as a list of lists, e.g. --path_list path/to/my/sample1.ampir.tsv path/to/my/sample1.amplify.tsv --path_list path/to/my/sample2.ampir.ts path/to/my/sample2.amplify.tsv. \n If not given, the file-paths will be inferred from the folder structure",
                     default=[])
 parser.add_argument("--cutoff", dest="p", help="Enter the probability cutoff for AMPs \n (default: %(default)s)",
-                    type=int, default=0)
+                    type=float, default=0)
 parser.add_argument("--faa", dest="faa", help="Enter the path to the folder containing the reference .faa files or to one .faa file (running only one sample). Filenames have to contain the corresponding sample-name, i.e. sample_1.faa \n (default: %(default)s)",
                     type=str, default='./test_faa/')
 parser.add_argument("--tooldict", dest="tools", help="Enter a dictionary of the AMP-tools used with their output file endings (as they appear in the directory tree), \n Tool-names have to be written as in default:\n default={'ampir':'ampir.tsv', 'amplify':'amplify.tsv', 'macrel':'macrel.tsv', 'hmmer_hmmsearch':'hmmsearch.txt', 'ensembleamppred':'ensembleamppred.txt'}",
@@ -129,7 +129,7 @@ def main_workflow():
         else: 
             continue
     if (complete_summary):
-        print(f'\n FINISHED: The AMPcombi_summary.csv and AMPcombi_summary.html files were saved to your current working directory.')
+        print(f'\n FINISHED: File AMPcombi_summary.csv and folder AMPcombi_interactive_summary/ were saved to your current working directory.')
     else: 
         print(f'\n FINISHED: AMPcombi created summaries for all input samples.')
 

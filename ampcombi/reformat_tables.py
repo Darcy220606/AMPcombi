@@ -157,7 +157,7 @@ def read_path(df_list, file_list, p, dict, faa_path, samplename):
             df_list.append(hmmsearch(path))
         elif(path.endswith(dict['ensembleamppred'])):
             print('found ensemblamppred file')
-            faa_filepath = faa_path+samplename+'.faa'
+            faa_filepath = faa_path+'/'+samplename+'.faa'
             faa_df = faa2table(faa_filepath)
             amppred_df = amppred(path, p)
             if(check_dfshape(amppred_df, faa_df)):

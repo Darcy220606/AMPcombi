@@ -65,8 +65,10 @@ result<-datatable(table,
 # Change the HTML size to fill the browser 
 result$sizingPolicy$defaultWidth<-"100%"
 
+# create output directory and set as working directory to save output
+dir.create(file.path('AMPcombi_interactive_summary'), showWarnings = FALSE)
+setwd(file.path(getwd(), 'AMPcombi_interactive_summary'))
+
 htmlwidgets::saveWidget(result, opt$out, selfcontained = FALSE)
 
-# CLean up the library folder created
-unlink("AMPcombi_summary_files", recursive = TRUE)
 ##############################
