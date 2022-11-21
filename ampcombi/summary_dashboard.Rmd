@@ -1,14 +1,23 @@
 ---
-title: "AMP summary dashboard"
+title: "AMPsummary"
+authors: "Anan Ibrahim and Louisa Perelo"
 output: 
   flexdashboard::flex_dashboard:
-    orientation: columns
-    #vertical_layout: fill
-    runtime: shiny
+    theme:
+      bg: "#101010"
+      fg: "#FDF7F7" 
+      primary: "#4CB963"
+      base_font:
+        google: Prompt
+      code_font:
+        google: JetBrains Mono
+    orientation: rows
+    vertical_layout: fill
+runtime: shiny
 ---
 
 ```{r global, include=FALSE}
-library(flexdashboard)
+library("flexdashboard")
 library("dplyr")
 library("DT")
 library("optparse")
@@ -17,15 +26,15 @@ library("VennDiagram")
 library("eulerr")
 library("shiny")
 library("knitr")
+library("grid")
+library("gridExtra")
 
+# load data in 'global' chunk so it can be shared by all users of the dashboard
 #load summary.csv globally
-#TODO: give the right path to the AMPcombi_summary file!
-amp_summary <-
-  readr::read_csv("AMPcombi_summary.csv",show_col_types = FALSE) 
+amp_summary <- data.frame(readr::read_csv("AMPcombi_summary.csv",show_col_types = FALSE)) 
 #get the names of the tools' probability columns
 toMatch <- c('prob_', 'evalue_hmmer')
-tool_cols <- grep(paste(toMatch,collapse="|"), colnames(amp_summary)) #list of matching col-indices
-
+tool_cols <- grep(paste(toMatch,collapse="|"), colnames(amp_summary)) #list of matching col-indices 
 ```
 
 Summary Table
@@ -54,221 +63,220 @@ DT::datatable(amp_summary, class = 'cell-border stripe',     ## add column borde
           filter = 'top',                 ## include column filters at the bottom
           rownames = FALSE                ## don't show row numbers/names)
 )
-#renderTable({
-#  head(amp_summary, n = input$rows)
-#})
+
 ```
 
-Test for reactive code
+
+VennDiagram
 =======================================================================
 
 Column {.sidebar}
 -----------------------------------------------------------------------
-select some column and rows (by sample)
-```{r echo=FALSE, message=FALSE}
+
+Select samples and tools to be displayed
+
+```{r}
+
 samples = c(unique(amp_summary[["name"]]))
-selectInput(inputId='sample', label='Sample', choices=samples,  multiple=TRUE, selected=samples[1])
+selectInput(inputId='sample', label='Sample', choices=c(samples),  multiple=TRUE, selected=samples)
+
 tools = colnames(amp_summary[tool_cols])
-checkboxGroupInput(inputId='tool',label='Tools', choices=tools)
-
-#alternative input format
-#selectInput(inputId='tool',label='Tools', choices=tools, multiple=TRUE, selected=tools[1])
-
+checkboxGroupInput(inputId='tool',label='Tools: \n select 2-5 tools from the list', choices=c(tools), selected = tools[1:2])
 ```
 
 Column
 -----------------------------------------------------------------------
-make some graph of it
-```{r echo=FALSE, message=FALSE, results='hide'}
 
-# new df containing data for VennDiagram (sample, contig_id, toMatch columns)
-amp_summary_in <- amp_summary[,c(1,2,tool_cols)]
-# replace values with 1 == AMP identified by tool on contig
-amp_summary_in[,tool_cols] <- replace(amp_summary_in[,tool_cols], amp_summary_in[,tool_cols]>0, 1)
-
-#get selected columns + name + contig_id
-venn_df <- reactive({
-  amp_summary_in[amp_summary_in$name %in% input$sample, c('name','contig_id', input$tool)]
-  })
-
-renderTable({venn_df()})
-
-```
-
-
-
-VennDiagrams
-=======================================================================
-
-Column {.sidebar}
------------------------------------------------------------------------
-Select the tools and samples to visualize
-
-
-```{r echo=FALSE, message=FALSE}
-samples = c(unique(amp_summary[["name"]]))
-selectInput(inputId='sample', label='Sample', choices=samples,  multiple=TRUE, selected=samples[1])
-tools = colnames(amp_summary[tool_cols])
-checkboxGroupInput(inputId='tool',label='Tools', choices=tools)
-
-#alternative input format
-#selectInput(inputId='tool',label='Tools', choices=tools, multiple=TRUE, selected=tools[1])
-
-```
-Column
------------------------------------------------------------------------
 ### VennDiagram
-```{r echo=FALSE, message=FALSE, results='hide'}
-# new df containing data for VennDiagram (sample, contig_id, toMatch columns)
-amp_summary_in <- amp_summary[,c(1,2,tool_cols)]
-# replace values with 1 == AMP identified by tool on contig
-amp_summary_in[,tool_cols] <- replace(amp_summary_in[,tool_cols], amp_summary_in[,tool_cols]>0, 1)
+```{r echo=FALSE, message=FALSE, results='show'}
 
-#get selected columns + name + contig_id
-venn_df <- reactive({
-  amp_summary_in[amp_summary_in$name %in% input$sample, c('name','contig_id', input$tool)]
-  })
-
-# TEST data
-testtools = c("prob_ampir", "prob_amplify", "prob_neubi")
-testsample = c("sample_1")
-venn_data <- amp_summary_in[amp_summary_in$name %in% testsample, c('name','contig_id', testtools)]
-
-#Determine how many variables will enter the VennDiagram (max 5!)
-venn_num <- reactive(length(venn_df()))
-#venn_num <- 3
-
-drawVenn = function(venn_df, venn_num, tools){
-  tool_cols <- grep(paste(tools,collapse="|"), colnames(venn_df))
-  # create VENN diagram
-  if (venn_num <=0){
-    print("Please select tool outputs to be visualized")
+  # get only relevant columns from input csv
+  df <- amp_summary[,c(1,2,tool_cols)]
+  # transform probabilites of AMPs to presence (1) and absence (0)
+  df[,tool_cols] <- replace(df[,tool_cols], df[,tool_cols]>0, 1)
+  # filter df according to selected columns
+  venn_df <- reactive({df[df$name %in% input$sample, c('name','contig_id', input$tool)]})
+  # get number of selected tools
+  venn_num <- reactive({length(input$tool)})
+  # get the selected tool column names
+  tcols <- reactive({input$tool})
+  
+  venn1 = reactive({venn_num()>=1})
+  venn2 = reactive({venn_num()>=2})
+  venn3 = reactive({venn_num()>=3})
+  venn4 = reactive({venn_num()>=4})
+  venn5 = reactive({venn_num()==5})
+  
+renderPlot({
+  # create VENN diagram inputs, depending on number of tool outputs chosen
+  if (venn1()==TRUE){
+    A = reactive({venn_df()[,tcols()][1]})
   }
-  if (venn_num >=1){
-    A = venn_df[,tool_cols][1]
+  if (venn2()==TRUE){
+    B = reactive({venn_df()[,tcols()][2]})
   }
-  if (venn_num >=2){
-    B = venn_df[,tool_cols][2]
+  if (venn3()==TRUE){
+    C = reactive({venn_df()[,tcols()][3]})
   }
-  if (venn_num >=3){
-    C = venn_df[,tool_cols][3]
+  if (venn4()==TRUE){
+    D = reactive({venn_df()[,tcols()][4]})
   }
-  if (venn_num >=4){
-    D = venn_df[,tool_cols][4]
-  }
-  if (venn_num ==5){
-    E = venn_df[,tool_cols][5]
+  if (venn5()==TRUE){
+    E = reactive({venn_df()[,tcols()][5]})
   }
   
   # single Venn
-  if (venn_num ==1){
-    return(draw.single.venn(sum(A), 
-                     colnames(venn_df[0,tool_cols[1:venn_num]]),
-                     fill = c("orange")))
+  if (venn_num() ==1){
+    grid.newpage()
+    venn.plot <- draw.single.venn(sum(A()), 
+                    colnames(venn_df()[0,tcols()[1:venn_num()]]),
+                    fill = c("orange"),
+                    filename = NULL)
+    grid.draw(venn.plot)
   }
   # pairwise Venn
-  if (venn_num ==2){
-    return (draw.pairwise.venn(area1 = sum(A),
-                       area2 = sum(B),
-                       cross.area = sum(A == 1 & B == 1),
-                       category = c(colnames(venn_df[0, tool_cols[1:venn_num]])),
-                       fill = c("orange", "red"),
-                       cat.col = c("orange", "red")
-                      ))
+  if (venn_num() ==2){
+    grid.newpage()
+    venn.plot <- draw.pairwise.venn(area1 = sum(A()),
+                    area2 = sum(B()),
+                    cross.area = sum(A() == 1 & B() == 1),
+                    category = c(colnames(venn_df()[0, tcols()[1:venn_num()]])),
+                    fill = c("orange", "red"),filename = NULL,
+                    cat.col = c("orange", "red")
+                    )
+    grid.draw(venn.plot)
   }
   # triple Venn
-  if (venn_num ==3){
-    return (draw.triple.venn(area1 = sum(A),
-                        area2 = sum(B),
-                        area3 = sum(C),
-                        n12 = sum(A == 1 & B == 1),
-                        n13 = sum(A == 1 & C == 1),
-                        n23 = sum(B == 1 & C == 1),
-                        n123 = sum(A == 1 & B == 1 & C == 1),
-                        category = c(colnames(venn_df[0, tool_cols[1:venn_num]])),
-                        fill = c("orange", "red", "green"),
-                        cat.col = c("orange", "red", "green")
-    ))
+  if (venn_num() ==3){
+    grid.newpage()
+    venn.plot <- draw.triple.venn(area1 = sum(A()),
+                    area2 = sum(B()),
+                    area3 = sum(C()),
+                    n12 = sum(A() == 1 & B() == 1),
+                    n13 = sum(A() == 1 & C() == 1),
+                    n23 = sum(B() == 1 & C() == 1),
+                    n123 = sum(A() == 1 & B() == 1 & C() == 1),
+                    category = c(colnames(venn_df()[0, tcols()[1:venn_num()]])),
+                    fill = c("orange", "red", "green"),filename = NULL,
+                    cat.col = c("orange", "red", "green")
+                    )
+    grid.draw(venn.plot)
   }
   # quadruple Venn
-  if (venn_num ==4){
-    return (draw.quad.venn(area1 = sum(A),
-                        area2 = sum(B),
-                        area3 = sum(C),
-                        area4 = sum(D),
-                        n12 = sum(A == 1 & B == 1),
-                        n13 = sum(A == 1 & C == 1),
-                        n14 = sum(A == 1 & D == 1),
-                        n23 = sum(B == 1 & C == 1),
-                        n24 = sum(B == 1 & D == 1),
-                        n34 = sum(C == 1 & D == 1),
-                        n123 = sum(A == 1 & B == 1 & C == 1),
-                        n124 = sum(A == 1 & B == 1 & D == 1),
-                        n134 = sum(A == 1 & C == 1 & D == 1),
-                        n234 = sum(B == 1 & C == 1 & D == 1),
-                        n1234 = sum(A == 1 & B == 1 & C == 1 & D == 1),
-                        category = c(colnames(venn_df[0, tool_cols[1:venn_num]])),
-                        fill = c("orange", "red", "green", "blue"),
-                        cat.col = c("orange", "red", "green", "blue")
-    ))
+  if (venn_num() ==4){
+    grid.newpage()
+    venn.plot <- draw.quad.venn(area1 = sum(A()),
+                    area2 = sum(B()),
+                    area3 = sum(C()),
+                    area4 = sum(D()),
+                    n12 = sum(A() == 1 & B() == 1),
+                    n13 = sum(A() == 1 & C() == 1),
+                    n14 = sum(A() == 1 & D() == 1),
+                    n23 = sum(B() == 1 & C() == 1),
+                    n24 = sum(B() == 1 & D() == 1),
+                    n34 = sum(C() == 1 & D() == 1),
+                    n123 = sum(A() == 1 & B() == 1 & C() == 1),
+                    n124 = sum(A() == 1 & B() == 1 & D() == 1),
+                    n134 = sum(A() == 1 & C() == 1 & D() == 1),
+                    n234 = sum(B() == 1 & C() == 1 & D() == 1),
+                    n1234 = sum(A() == 1 & B() == 1 & C() == 1 & D() == 1),
+                    category = c(colnames(venn_df()[0, tcols()[1:venn_num()]])),
+                    fill = c("orange", "red", "green", "blue"),filename = NULL,
+                    cat.col = c("orange", "red", "green", "blue")
+                    )
+    grid.draw(venn.plot)
   }
   # quintuple Venn
-  if (venn_num ==5){
-    return(draw.quintuple.venn(area1 = sum(A),
-                        area2 = sum(B),
-                        area3 = sum(C),
-                        area4 = sum(D),
-                        area5 = sum(E),
-                        n12 = sum(A == 1 & B == 1),
-                        n13 = sum(A == 1 & C == 1),
-                        n14 = sum(A == 1 & D == 1),
-                        n15 = sum(A == 1 & E == 1),
-                        n23 = sum(B == 1 & C == 1),
-                        n24 = sum(B == 1 & D == 1),
-                        n25 = sum(B == 1 & E == 1),
-                        n34 = sum(C == 1 & D == 1),
-                        n35 = sum(C == 1 & E == 1),
-                        n45 = sum(D == 1 & E == 1),
-                        n123 = sum(A == 1 & B == 1 & C == 1),
-                        n124 = sum(A == 1 & B == 1 & D == 1),
-                        n125 = sum(A == 1 & B == 1 & E == 1),
-                        n134 = sum(A == 1 & C == 1 & D == 1),
-                        n135 = sum(A == 1 & C == 1 & E == 1),
-                        n145 = sum(A == 1 & D == 1 & E == 1),
-                        n234 = sum(B == 1 & C == 1 & D == 1),
-                        n235 = sum(B == 1 & C == 1 & E == 1),
-                        n245 = sum(B == 1 & D == 1 & E == 1),
-                        n345 = sum(C == 1 & D == 1 & E == 1),
-                        n1234 = sum(A == 1 & B == 1 & C == 1 & D == 1),
-                        n1235 = sum(A == 1 & B == 1 & C == 1 & E == 1),
-                        n1245 = sum(A == 1 & B == 1 & D == 1 & E == 1),
-                        n1345 = sum(A == 1 & C == 1 & D == 1 & E == 1),
-                        n2345 = sum(B == 1 & C == 1 & D == 1 & E == 1),
-                        n12345 = sum(A == 1 & B == 1 & C == 1 & D == 1 & E == 1),
-                        category = c(colnames(venn_df[0, tool_cols[1:venn_num]])),
-                        fill = c("orange", "red", "green", "blue", "grey"),
-                        cat.col = c("orange", "red", "green", "blue", "grey")
-    ))
+  if (venn_num() ==5){
+    grid.newpage()
+    venn.plot <- draw.quintuple.venn(area1 = sum(A()),
+                    area2 = sum(B()),
+                    area3 = sum(C()),
+                    area4 = sum(D()),
+                    area5 = sum(E()),
+                    n12 = sum(A() == 1 & B() == 1),
+                    n13 = sum(A() == 1 & C() == 1),
+                    n14 = sum(A() == 1 & D() == 1),
+                    n15 = sum(A() == 1 & E() == 1),
+                    n23 = sum(B() == 1 & C() == 1),
+                    n24 = sum(B() == 1 & D() == 1),
+                    n25 = sum(B() == 1 & E() == 1),
+                    n34 = sum(C() == 1 & D() == 1),
+                    n35 = sum(C() == 1 & E() == 1),
+                    n45 = sum(D() == 1 & E() == 1),
+                    n123 = sum(A() == 1 & B() == 1 & C() == 1),
+                    n124 = sum(A() == 1 & B() == 1 & D() == 1),
+                    n125 = sum(A() == 1 & B() == 1 & E() == 1),
+                    n134 = sum(A() == 1 & C() == 1 & D() == 1),
+                    n135 = sum(A() == 1 & C() == 1 & E() == 1),
+                    n145 = sum(A() == 1 & D() == 1 & E() == 1),
+                    n234 = sum(B() == 1 & C() == 1 & D() == 1),
+                    n235 = sum(B() == 1 & C() == 1 & E() == 1),
+                    n245 = sum(B() == 1 & D() == 1 & E() == 1),
+                    n345 = sum(C() == 1 & D() == 1 & E() == 1),
+                    n1234 = sum(A() == 1 & B() == 1 & C() == 1 & D() == 1),
+                    n1235 = sum(A() == 1 & B() == 1 & C() == 1 & E() == 1),
+                    n1245 = sum(A() == 1 & B() == 1 & D() == 1 & E() == 1),
+                    n1345 = sum(A() == 1 & C() == 1 & D() == 1 & E() == 1),
+                    n2345 = sum(B() == 1 & C() == 1 & D() == 1 & E() == 1),
+                    n12345 = sum(A() == 1 & B() == 1 & C() == 1 & D() == 1 & E() == 1),
+                    category = c(colnames(venn_df()[0, tcols()[1:venn_num()]])),
+                    fill = c("orange", "red", "green", "blue", "grey"),filename = NULL,
+                    cat.col = c("orange", "red", "green", "blue", "grey")
+                    )
+    grid.draw(venn.plot)
   }
   # if more than 5 tools are to be compared, try to draw an EULER diagram
   # the euler diagram may not be able to show all overlaps: " if the euler model can not describe all intersections the count will not be ploted."
   # https://stackoverflow.com/questions/46629193/create-5-way-venn-diagram-from-csv-file-in-r
-  if (venn_num >5){
+  if (venn_num() >5){
+    grid.newpage()
     set.seed(10) #this seed changes the orientation of the sets         
-    return (plot(euler(venn_df[,tool_cols]), counts = T, fontface = 1, quantities = TRUE))
-  }
-
-}
-
-renderPlot({
-  drawVenn(venn_df(), venn_num(), input$tool)
-  #print(venn)
+    venn.plot <- plot(euler(venn_df()[,tcols()]), counts = T, fontface = 1, quantities = TRUE)
+    venn.plot
+    }
 })
 
-#test to show that the function drawVenn works
-#drawVenn(venn_data, 3, testtools)
 ```
 
 
+Test histogram
+=======================================================================
+Column {.sidebar}
+-----------------------------------------------------------------------
 
+Waiting time between eruptions and the duration of the eruption for the
+Old Faithful geyser in Yellowstone National Park, Wyoming, USA.
 
+```{r}
+selectInput("n_breaks2", label = "number of breaks",
+            choices = c(10, 20, 30, 50, 100), selected = 20)
+
+sliderInput("bw_adjust2", label = "Bandwidth adjustment:",
+            min = 0.2, max = 2, value = 1, step = 0.2)
+
+samples = c(unique(amp_summary[["name"]]))
+selectInput(inputId='sample2', label='Sample', choices=samples,  multiple=TRUE, selected=samples[1])
+
+tools = colnames(amp_summary[tool_cols])
+checkboxGroupInput(inputId='tool2',label='Tools', choices=tools, selected = tools[1])
+```
+
+Column
+-----------------------------------------------------------------------
+
+### Test histogram
+
+```{r}
+renderPlot({
+  df <- amp_summary[,c(1,2,tool_cols)]
+  df[,tool_cols] <- replace(df[,tool_cols], df[,tool_cols]>0, 1)
+  df <- df[df$name %in% input$sample2, c('name','contig_id', input$tool2)]
+  
+  hist(df[,input$tool2], probability = TRUE, breaks = as.numeric(input$n_breaks2),
+      xlab = input$tool2, main = "Geyser Eruption Duration")
+  
+  #dens <- density(faithful$eruptions, adjust = input$bw_adjust)
+  #lines(dens, col = "blue")
+})
+```
