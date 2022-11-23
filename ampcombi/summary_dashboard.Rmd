@@ -238,6 +238,111 @@ renderPlot({
 })
 
 ```
+Dotplot
+=======================================================================
+
+Column {.sidebar}
+-----------------------------------------------------------------------
+AMP hits detected in more than two tools.
+
+```{r}
+samples = c(unique(amp_summary[["name"]]))
+selectInput(inputId='sample_selected', label='Sample', choices=c(samples),  multiple=TRUE, selected=samples[1:2])
+
+selectInput('xcol', 'X-axis', choices = colnames(amp_summary), selected=colnames(amp_summary['name']))
+selectInput('ycol', 'Y-axis', choices = colnames(amp_summary), selected=colnames(amp_summary['Activity']))
+selectInput('zcol', 'Hovering text', colnames(amp_summary), selected=colnames(amp_summary['contig_id']))
+
+tools = colnames(amp_summary[tool_cols])
+checkboxGroupInput(inputId='amp_tool',label='AMP Tools', choices=c(tools), selected = tools[1:2])
+```
+
+Column
+-----------------------------------------------------------------------
+
+### Interactive
+
+```{r echo=FALSE, message=FALSE, results='show'}
+# replace 0 by 1s
+amp_summary[,tool_cols] <- replace(amp_summary[,tool_cols], amp_summary[,tool_cols]>0, 1)
+# replace NAs with 'not' in refernce databse
+amp_summary[is.na(amp_summary)] <- "Not found in reference database"
+# make a copy of the tools
+tool_df <- as.data.frame(amp_summary[,c(tools)])
+# remove the amp tools from the df
+amp_summary_new <- amp_summary[ , -which(names(amp_summary) %in% c(tools))]
+# grab the amp tools column numbers according to tools selected 
+matching <- reactive({input$amp_tool})
+# filter the table according to the tools selected and sum the rows
+subset <- reactive({data.frame(sums = rowSums(tool_df[c(matching())]))})
+# add the sums to the table
+new_df <- reactive({cbind(amp_summary_new, subset())})
+# filter by selected samples
+new_samples = reactive({input$sample_selected})
+filtered_df <- reactive ({
+  new_df()[new_df()['name'] == new_samples(), ]
+})
+# create reactive x-, y- and z- axis 
+xaxis <- reactive({as.character(input$xcol)})
+yaxis <- reactive({as.character(input$ycol)})
+zaxis <- reactive({as.character(input$zcol)})
+
+# Filter by the number of tools selected
+# one tool
+df1= reactive({
+  if (length(matching()) == 1){
+    data.frame(filtered_df() %>% filter(sums == 1))
+  }
+  })
+# two tools
+df2= reactive({
+  if (length(matching()) == 2){
+    data.frame(filtered_df() %>% filter(sums == 2))
+  }
+  })
+# three tools
+df3= reactive({
+  if (length(matching()) == 3){
+    data.frame(filtered_df() %>% filter(sums == 3))
+  }
+  })
+# two tools
+df4= reactive({
+  if (length(matching()) == 4){
+    data.frame(filtered_df() %>% filter(sums == 4))
+  }
+  })
+# two tools
+df5= reactive({
+  if (length(matching()) == 5){
+    data.frame(filtered_df() %>% filter(sums == 5))
+  }
+  })
+# # TODO : I think here We will need the for loop you created yesterday to join them in a new dataframe with nodes listed in a cell,because currently the plot picks only one contig_id per sample to display its activity (Ithink :))
+# x <- reactive({df2()[, c(xaxis())]})
+# y <- reactive({df2()[, c(yaxis())]})
+# z <- reactive({df2()[, c(zaxis())]})
+
+# TODO : Render the plotly image: STILL NOT rendering 
+renderPlot({
+library(plotly)
+p <- ggplot(df2(), aes(x=xaxis(), y=yaxis(), text = paste("contig_id:", zaxis()))) +
+  geom_point() +
+  theme(axis.text.x = element_text(face="plain", color="black",
+                                   size=8, angle=60, vjust = .5, hjust = .5),
+        axis.text.y = element_text(face="plain", color="black",
+                                   size=8, angle=0)) +
+  theme(panel.border=element_rect(colour="black",fill=NA,size=1.2),
+        strip.background=element_rect(colour="black",size=1.2),
+        panel.grid.major.x=element_line(size=0.5,colour="grey88"),
+        panel.grid.minor.x=element_blank(),
+        panel.grid.major.y=element_line(size=0.5,colour="grey88"),
+        panel.background=element_rect(fill="white"))
+
+gplotly(p)
+})
+
+```
 
 
 Test histogram
