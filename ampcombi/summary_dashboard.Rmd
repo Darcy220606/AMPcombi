@@ -28,6 +28,9 @@ library("shiny")
 library("knitr")
 library("grid")
 library("gridExtra")
+library("plotly")
+library("ggplot2")
+library("heatmaply")
 
 # load data in 'global' chunk so it can be shared by all users of the dashboard
 #load summary.csv globally
@@ -421,28 +424,28 @@ return(node_mat)
 })
 #node_data
 
-# # Heatmap
-# renderPlotly({
-#   heatmaply(count_mat(),
-#                dendrogram = "column",
-#                #xlab = "Sample name", ylab = "Activity",
-#                #main = "",
-#                #scale = "column",
-#                #margins = c(60,100,40,20),
-#                grid_color = "white",
-#                grid_width = 0.00001,
-#                titleX = FALSE,
-#                colors = hcl.colors(500, palette='viridis', alpha=NULL,rev=TRUE),
-#                #hide_colorbar = TRUE,
-#                #branches_lwd = 0.1,
-#                #label_names = c("Country", "Feature:", "Value"),
-#                fontsize_row = 5, fontsize_col = 5,
-#                #labCol = colnames(count_mat),
-#                #labRow = rownames(count_mat),
-#                custom_hovertext = node_mat(),
-#                heatmap_layers = theme(axis.line=element_blank())
-# )
-# })
+# Heatmap
+renderPlotly({
+  heatmaply(count_data(),
+               dendrogram = "column",
+               #xlab = "Sample name", ylab = "Activity",
+               #main = "",
+               #scale = "column",
+               #margins = c(60,100,40,20),
+               grid_color = "white",
+               grid_width = 0.00001,
+               titleX = FALSE,
+               colors = hcl.colors(500, palette='viridis', alpha=NULL,rev=TRUE),
+               #hide_colorbar = TRUE,
+               #branches_lwd = 0.1,
+               #label_names = c("Country", "Feature:", "Value"),
+               fontsize_row = 5, fontsize_col = 5,
+               #labCol = colnames(count_mat),
+               #labRow = rownames(count_mat),
+               custom_hovertext = node_data(),
+               heatmap_layers = theme(axis.line=element_blank())
+)
+})
 
 ```
 
