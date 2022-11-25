@@ -11,7 +11,7 @@ output:
         google: Prompt
       code_font:
         google: JetBrains Mono
-    orientation: rows
+    orientation: columns
     vertical_layout: fill
 runtime: shiny
 ---
@@ -358,22 +358,24 @@ Heatmap
 Column {.sidebar}
 -----------------------------------------------------------------------
 
-Select samples, tools and activities to be displayed
 
 ```{r}
-
-samples = c(unique(amp_summary[["name"]]))
-selectInput(inputId='sample_hm', label='Sample', choices=c(samples),  multiple=TRUE, selected=samples)
-
-tools = colnames(amp_summary[tool_cols])
-checkboxGroupInput(inputId='tool_hm',label='Tools', choices=c(tools), selected = tools[1:2])
-
-
 activities = unique(amp_summary[["Activity"]])
-selectInput(inputId='activity_hm',label='AMP biological activity', choices=c(activities), multiple=TRUE, selected = activities)
+samples = c(unique(amp_summary[["name"]]))
+
+selectInput(inputId='nodes_act',label='Choose one activity and sample to display contig names', choices=c(activities), selected = activities[1])
+selectInput(inputId='nodes_sample', label='', choices=c(samples), selected=samples[1])
+
+selectInput(inputId='sample_hm', label='Select samples and activities to be displayed in Heatmap: Samples', choices=c(samples),  multiple=TRUE, selected=samples)
+
+#tools = colnames(amp_summary[tool_cols])
+#checkboxGroupInput(inputId='tool_hm',label='Tools', choices=c(tools), selected = tools[1:2])
+
+selectInput(inputId='activity_hm',label='Biological activities', choices=c(activities), multiple=TRUE, selected = activities)
+
 ```
 
-Column
+Column{data-width=700}
 -----------------------------------------------------------------------
 
 ### AMP Activity Heatmap
@@ -384,9 +386,6 @@ s = reactive(input$sample_hm)
 a = reactive(input$activity_hm)
 t = reactive(input$tool_hm)
 heatmap_df <- reactive({df[df$name %in% s() & df$Activity %in% a(), ]})
-# Create empty matrix with sample_names and activities containing list of corresponding contigs
-#count_mat <- reactive({matrix(nrow=length(a()),ncol=length(s()), dimnames=list(a(), s()))})
-#node_mat <- reactive({matrix(nrow=length(a()),ncol=length(s()), dimnames=list(a(), s()))})
 
 # prepare data for heatmap
 ################################
@@ -416,7 +415,7 @@ node_data <- reactive({
     for(j in 1:noRows){
       df_sub2 <- reactive(df_sub()[df_sub()$Activity == a()[j],])
       contig_names <- reactive(df_sub2()$contig_id)
-      nodes <- reactive(paste(contig_names(), collapse=","))
+      nodes <- reactive(paste(contig_names(), collapse=", "))
       node_mat[j,i] <- nodes()
       }
     }
@@ -430,25 +429,31 @@ renderPlotly({
                dendrogram = "column",
                #xlab = "Sample name", ylab = "Activity",
                #main = "",
-               #scale = "column",
-               #margins = c(60,100,40,20),
                grid_color = "white",
                grid_width = 0.00001,
                titleX = FALSE,
                colors = hcl.colors(500, palette='viridis', alpha=NULL,rev=TRUE),
-               #hide_colorbar = TRUE,
-               #branches_lwd = 0.1,
-               #label_names = c("Country", "Feature:", "Value"),
                fontsize_row = 5, fontsize_col = 5,
-               #labCol = colnames(count_mat),
-               #labRow = rownames(count_mat),
-               custom_hovertext = node_data(),
+               #custom_hovertext = node_data(),
                heatmap_layers = theme(axis.line=element_blank())
 )
 })
 
 ```
+Column{data-width=300}
+-----------------------------------------------------------------------
 
+### List of contigs
+```{r}
+nodelist <- reactive({
+  sample <- input$nodes_sample
+  activity <- input$nodes_act
+  df_sub3 = reactive({heatmap_df()[heatmap_df()$Activity == activity & heatmap_df()$name == sample,]})
+  return(df_sub3()$contig_id)
+})
+nodelist
+
+```
 
 
 Test histogram
