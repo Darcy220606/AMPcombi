@@ -32,6 +32,11 @@ library("gridExtra")
 # load data in 'global' chunk so it can be shared by all users of the dashboard
 #load summary.csv globally
 amp_summary <- data.frame(readr::read_csv("AMPcombi_summary.csv",show_col_types = FALSE)) 
+#rename activities
+amp_summary$Activity[amp_summary$Activity == "Not found"] <- 'Activity unknown'
+amp_summary$Activity[amp_summary$Activity =="Unknown"] <- 'Activity unknown'
+amp_summary$Activity[is.na(amp_summary$Activity)] <- 'Not found in reference db'
+
 #get the names of the tools' probability columns
 toMatch <- c('prob_', 'evalue_hmmer')
 tool_cols <- grep(paste(toMatch,collapse="|"), colnames(amp_summary)) #list of matching col-indices 
@@ -78,10 +83,10 @@ Select samples and tools to be displayed
 ```{r}
 
 samples = c(unique(amp_summary[["name"]]))
-selectInput(inputId='sample', label='Sample', choices=c(samples),  multiple=TRUE, selected=samples)
+selectInput(inputId='sample_venn', label='Sample', choices=c(samples),  multiple=TRUE, selected=samples)
 
 tools = colnames(amp_summary[tool_cols])
-checkboxGroupInput(inputId='tool',label='Tools: \n select 2-5 tools from the list', choices=c(tools), selected = tools[1:2])
+checkboxGroupInput(inputId='tool_venn',label='Tools: \n select 2-5 tools from the list', choices=c(tools), selected = tools[1:2])
 ```
 
 Column
@@ -95,11 +100,11 @@ Column
   # transform probabilites of AMPs to presence (1) and absence (0)
   df[,tool_cols] <- replace(df[,tool_cols], df[,tool_cols]>0, 1)
   # filter df according to selected columns
-  venn_df <- reactive({df[df$name %in% input$sample, c('name','contig_id', input$tool)]})
+  venn_df <- reactive({df[df$name %in% input$sample_venn, c('name','contig_id', input$tool_venn)]})
   # get number of selected tools
-  venn_num <- reactive({length(input$tool)})
+  venn_num <- reactive({length(input$tool_venn)})
   # get the selected tool column names
-  tcols <- reactive({input$tool})
+  tcols <- reactive({input$tool_venn})
   
   venn1 = reactive({venn_num()>=1})
   venn2 = reactive({venn_num()>=2})
@@ -343,6 +348,104 @@ gplotly(p)
 })
 
 ```
+
+Heatmap
+=======================================================================
+
+Column {.sidebar}
+-----------------------------------------------------------------------
+
+Select samples, tools and activities to be displayed
+
+```{r}
+
+samples = c(unique(amp_summary[["name"]]))
+selectInput(inputId='sample_hm', label='Sample', choices=c(samples),  multiple=TRUE, selected=samples)
+
+tools = colnames(amp_summary[tool_cols])
+checkboxGroupInput(inputId='tool_hm',label='Tools', choices=c(tools), selected = tools[1:2])
+
+
+activities = unique(amp_summary[["Activity"]])
+selectInput(inputId='activity_hm',label='AMP biological activity', choices=c(activities), multiple=TRUE, selected = activities)
+```
+
+Column
+-----------------------------------------------------------------------
+
+### AMP Activity Heatmap
+```{r echo=FALSE, message=FALSE, results='show'}
+
+df <- amp_summary[,c("name","contig_id","Activity")]
+s = reactive(input$sample_hm)
+a = reactive(input$activity_hm)
+t = reactive(input$tool_hm)
+heatmap_df <- reactive({df[df$name %in% s() & df$Activity %in% a(), ]})
+# Create empty matrix with sample_names and activities containing list of corresponding contigs
+#count_mat <- reactive({matrix(nrow=length(a()),ncol=length(s()), dimnames=list(a(), s()))})
+#node_mat <- reactive({matrix(nrow=length(a()),ncol=length(s()), dimnames=list(a(), s()))})
+
+# prepare data for heatmap
+################################
+
+count_data <- reactive({
+  noRows <- length(a())
+  noCols <- length(s())
+ count_mat <- data.frame(matrix(ncol = noCols, nrow = noRows, dimnames=list(a(), s())))
+ for(i in 1:noCols){
+    df_sub = reactive({heatmap_df()[heatmap_df()$name == s()[i],]})
+    for(j in 1:noRows){
+      df_sub2 <- reactive(df_sub()[df_sub()$Activity == a()[j],])
+      count <- reactive(nrow(df_sub2()))
+      count_mat[j,i] <- count()
+      }
+    }
+return(count_mat)
+})
+#count_data
+
+node_data <- reactive({
+  noRows <- length(a())
+  noCols <- length(s())
+ node_mat <- data.frame(matrix(ncol = noCols, nrow = noRows, dimnames=list(a(), s())))
+ for(i in 1:noCols){
+    df_sub = reactive({heatmap_df()[heatmap_df()$name == s()[i],]})
+    for(j in 1:noRows){
+      df_sub2 <- reactive(df_sub()[df_sub()$Activity == a()[j],])
+      contig_names <- reactive(df_sub2()$contig_id)
+      nodes <- reactive(paste(contig_names(), collapse=","))
+      node_mat[j,i] <- nodes()
+      }
+    }
+return(node_mat)
+})
+#node_data
+
+# # Heatmap
+# renderPlotly({
+#   heatmaply(count_mat(),
+#                dendrogram = "column",
+#                #xlab = "Sample name", ylab = "Activity",
+#                #main = "",
+#                #scale = "column",
+#                #margins = c(60,100,40,20),
+#                grid_color = "white",
+#                grid_width = 0.00001,
+#                titleX = FALSE,
+#                colors = hcl.colors(500, palette='viridis', alpha=NULL,rev=TRUE),
+#                #hide_colorbar = TRUE,
+#                #branches_lwd = 0.1,
+#                #label_names = c("Country", "Feature:", "Value"),
+#                fontsize_row = 5, fontsize_col = 5,
+#                #labCol = colnames(count_mat),
+#                #labRow = rownames(count_mat),
+#                custom_hovertext = node_mat(),
+#                heatmap_layers = theme(axis.line=element_blank())
+# )
+# })
+
+```
+
 
 
 Test histogram
