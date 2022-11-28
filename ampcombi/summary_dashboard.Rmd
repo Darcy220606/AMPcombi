@@ -31,6 +31,7 @@ library("gridExtra")
 library("plotly")
 library("ggplot2")
 library("heatmaply")
+library("data.table")
 
 # load data in 'global' chunk so it can be shared by all users of the dashboard
 #load summary.csv globally
@@ -99,11 +100,11 @@ Column
 ```{r echo=FALSE, message=FALSE, results='show'}
 
   # get only relevant columns from input csv
-  df <- amp_summary[,c(1,2,tool_cols)]
+  df_venn <- amp_summary[,c(1,2,tool_cols)]
   # transform probabilites of AMPs to presence (1) and absence (0)
-  df[,tool_cols] <- replace(df[,tool_cols], df[,tool_cols]>0, 1)
+  df_venn[,tool_cols] <- replace(df_venn[,tool_cols], df_venn[,tool_cols]>0, 1)
   # filter df according to selected columns
-  venn_df <- reactive({df[df$name %in% input$sample_venn, c('name','contig_id', input$tool_venn)]})
+  venn_df <- reactive({df_venn[df_venn$name %in% input$sample_venn, c('name','contig_id', input$tool_venn)]})
   # get number of selected tools
   venn_num <- reactive({length(input$tool_venn)})
   # get the selected tool column names
@@ -246,110 +247,134 @@ renderPlot({
 })
 
 ```
+
 Dotplot
 =======================================================================
 
 Column {.sidebar}
 -----------------------------------------------------------------------
-AMP hits detected in more than two tools.
+AMP hits detected in one or more than two tool.
 
 ```{r}
 samples = c(unique(amp_summary[["name"]]))
-selectInput(inputId='sample_selected', label='Sample', choices=c(samples),  multiple=TRUE, selected=samples[1:2])
+selectInput(inputId='sample_dotplot', label='Sample_dotplot', choices=c(samples),  multiple=TRUE, selected=samples)
 
 selectInput('xcol', 'X-axis', choices = colnames(amp_summary), selected=colnames(amp_summary['name']))
 selectInput('ycol', 'Y-axis', choices = colnames(amp_summary), selected=colnames(amp_summary['Activity']))
 selectInput('zcol', 'Hovering text', colnames(amp_summary), selected=colnames(amp_summary['contig_id']))
 
 tools = colnames(amp_summary[tool_cols])
-checkboxGroupInput(inputId='amp_tool',label='AMP Tools', choices=c(tools), selected = tools[1:2])
+checkboxGroupInput(inputId='tool_dotplot',label='AMP Tools', choices=c(tools), selected = tools[1:2])
 ```
 
-Column
+Column{data-width=700}
 -----------------------------------------------------------------------
 
-### Interactive
+### Test dotplot
 
 ```{r echo=FALSE, message=FALSE, results='show'}
 # replace 0 by 1s
 amp_summary[,tool_cols] <- replace(amp_summary[,tool_cols], amp_summary[,tool_cols]>0, 1)
-# replace NAs with 'not' in refernce databse
-amp_summary[is.na(amp_summary)] <- "Not found in reference database"
 # make a copy of the tools
 tool_df <- as.data.frame(amp_summary[,c(tools)])
 # remove the amp tools from the df
 amp_summary_new <- amp_summary[ , -which(names(amp_summary) %in% c(tools))]
 # grab the amp tools column numbers according to tools selected 
-matching <- reactive({input$amp_tool})
+matching <- reactive({input$tool_dotplot})
 # filter the table according to the tools selected and sum the rows
-subset <- reactive({data.frame(sums = rowSums(tool_df[c(matching())]))})
+subset <- reactive({data.frame(tool_df[c(matching())])})
 # add the sums to the table
-new_df <- reactive({cbind(amp_summary_new, subset())})
+new_df <- reactive({data.frame(cbind(amp_summary_new, sums = rowSums(subset())))})
+# grab the samples column numbers according to samples selected 
+new_samples <- reactive({input$sample_dotplot})
 # filter by selected samples
-new_samples = reactive({input$sample_selected})
-filtered_df <- reactive ({
-  new_df()[new_df()['name'] == new_samples(), ]
-})
-# create reactive x-, y- and z- axis 
-xaxis <- reactive({as.character(input$xcol)})
-yaxis <- reactive({as.character(input$ycol)})
-zaxis <- reactive({as.character(input$zcol)})
+filtered_df <- reactive({
+  new_df()[new_df()$name %in% new_samples(), ]
+  })
 
+# Interactive ggplot
+renderPlotly({
 # Filter by the number of tools selected
-# one tool
-df1= reactive({
   if (length(matching()) == 1){
-    data.frame(filtered_df() %>% filter(sums == 1))
+   df2 <- filtered_df()[filtered_df()$sums ==  1,]
   }
-  })
-# two tools
-df2= reactive({
   if (length(matching()) == 2){
-    data.frame(filtered_df() %>% filter(sums == 2))
+   df2 <- filtered_df()[filtered_df()$sums ==  2,]
   }
-  })
-# three tools
-df3= reactive({
   if (length(matching()) == 3){
-    data.frame(filtered_df() %>% filter(sums == 3))
+   df2 <- filtered_df()[filtered_df()$sums ==  3,]
   }
-  })
-# two tools
-df4= reactive({
   if (length(matching()) == 4){
-    data.frame(filtered_df() %>% filter(sums == 4))
+   df2 <- filtered_df()[filtered_df()$sums ==  4,]
   }
-  })
-# two tools
-df5= reactive({
   if (length(matching()) == 5){
-    data.frame(filtered_df() %>% filter(sums == 5))
+   df2 <- filtered_df()[filtered_df()$sums ==  5,]
   }
+
+# Filter by the number of tools selected and the x/y/z/ axes selected
+  xaxis = reactive(input$xcol) # name
+  yaxis = reactive(input$ycol) # activity
+  zaxis = reactive(input$zcol) # contig_id
+
+  df_df = reactive ({
+    filtered_df() %>%
+      filter(sums == 2) %>%
+      select(c(xaxis(), yaxis(), zaxis()))
+    })
+
+# prepare the df for concatenation of contig_id
+  df_x <- reactive({unlist(unname(c(unique(df_df()[c(xaxis())]))))
+    })
+  df_y <- reactive({unlist(unname(c(unique(df_df()[c(yaxis())]))))
+    })
+  df_z <- reactive({unlist(unname(c(df_df()[c(zaxis())])))
+    })
+
+# Concatenate contig_id
+  node_data <- reactive({
+    noRows <- length(df_y())
+    noCols <- length(df_x())
+  node_mat <- data.frame(matrix(ncol = noCols, nrow = noRows, dimnames=list(df_y(), df_x())))
+  for(i in 1:noCols){
+      df_sub = reactive({df_df()[df_df()[c(xaxis())] == df_x()[i],]})
+      for(j in 1:noRows){
+        df_sub2 <- reactive(df_sub()[df_sub()[c(yaxis())] == df_y()[j],])
+        contig_names <- reactive(unlist(c(df_sub2()[c(zaxis())])))
+        nodes <- reactive(paste(contig_names(), collapse=", "))
+        node_mat[j,i] <- nodes()
+        }
+   }
+  return(node_mat)
   })
-# # TODO : I think here We will need the for loop you created yesterday to join them in a new dataframe with nodes listed in a cell,because currently the plot picks only one contig_id per sample to display its activity (Ithink :))
-# x <- reactive({df2()[, c(xaxis())]})
-# y <- reactive({df2()[, c(yaxis())]})
-# z <- reactive({df2()[, c(zaxis())]})
 
-# TODO : Render the plotly image: STILL NOT rendering 
-renderPlot({
-library(plotly)
-p <- ggplot(df2(), aes(x=xaxis(), y=yaxis(), text = paste("contig_id:", zaxis()))) +
-  geom_point() +
-  theme(axis.text.x = element_text(face="plain", color="black",
-                                   size=8, angle=60, vjust = .5, hjust = .5),
-        axis.text.y = element_text(face="plain", color="black",
-                                   size=8, angle=0)) +
-  theme(panel.border=element_rect(colour="black",fill=NA,size=1.2),
-        strip.background=element_rect(colour="black",size=1.2),
-        panel.grid.major.x=element_line(size=0.5,colour="grey88"),
-        panel.grid.minor.x=element_blank(),
-        panel.grid.major.y=element_line(size=0.5,colour="grey88"),
-        panel.background=element_rect(fill="white"))
+# format from wide to long format
+  node_long_1 <- reactive(data.frame(cbind(yy=rownames(node_data()), node_data())))
+  node_long_2 <- reactive({data.frame(melt(node_long_1(),id.vars="yy", variable.name="xx", value.name="zz",na.rm=T))})
+# remove rows that have no yy
+  df_final <- reactive(node_long_2()[!node_long_2()["zz"]=="",])
 
-gplotly(p)
-})
-
+  p <- ggplot(df_final(), aes(x=xx, y=yy, color = xx, text = stringr::str_wrap(
+                  string = zz,
+                  width = 40,
+                  indent = 1, # add extra space from the margins
+                  exdent = 1  # add extra space from the margins
+                ))) +
+    geom_point() +
+    theme(axis.text.x = element_text(face="plain", color="black",
+                                     size=8, angle=60, vjust = .5, hjust = .5),
+          axis.text.y = element_text(face="plain", color="black",
+                                     size=8, angle=0)) +
+    theme(panel.border=element_rect(colour="black",fill=NA,size=1.2),
+          strip.background=element_rect(colour="black",size=1.2),
+          panel.grid.major.x=element_line(size=0.5,colour="grey88"),
+          panel.grid.minor.x=element_blank(),
+          panel.grid.major.y=element_line(size=0.5,colour="grey88"),
+          panel.background=element_rect(fill="white"),
+          legend.position = "none")
+  ggplotly(p, tooltip = "text")
+  #text = gsub('(.{1,100})(\\s|$)', '\\1\n', zz)))
+  })
+renderPrint(as.character(event_data("plotly_hover")))
 ```
 
 Heatmap
