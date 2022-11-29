@@ -292,35 +292,37 @@ filtered_df <- reactive({
   new_df()[new_df()$name %in% new_samples(), ]
   })
 
-# Interactive ggplot
+# SetUp interactive ggplot = dotplot
 renderPlotly({
-# Filter by the number of tools selected
-  if (length(matching()) == 1){
-   df2 <- filtered_df()[filtered_df()$sums ==  1,]
-  }
-  if (length(matching()) == 2){
-   df2 <- filtered_df()[filtered_df()$sums ==  2,]
-  }
-  if (length(matching()) == 3){
-   df2 <- filtered_df()[filtered_df()$sums ==  3,]
-  }
-  if (length(matching()) == 4){
-   df2 <- filtered_df()[filtered_df()$sums ==  4,]
-  }
-  if (length(matching()) == 5){
-   df2 <- filtered_df()[filtered_df()$sums ==  5,]
-  }
-
 # Filter by the number of tools selected and the x/y/z/ axes selected
   xaxis = reactive(input$xcol) # name
   yaxis = reactive(input$ycol) # activity
   zaxis = reactive(input$zcol) # contig_id
 
   df_df = reactive ({
-    filtered_df() %>%
+    if (length(matching()) == 1){
+      filtered_df() %>%
+      filter(sums == 1) %>%
+      select(c(xaxis(), yaxis(), zaxis()))
+      } else if (length(matching()) == 2){
+      filtered_df() %>%
       filter(sums == 2) %>%
       select(c(xaxis(), yaxis(), zaxis()))
-    })
+      } else if (length(matching()) == 3){
+      filtered_df() %>%
+      filter(sums == 3) %>%
+      select(c(xaxis(), yaxis(), zaxis()))
+      } else if (length(matching()) == 4){
+      filtered_df() %>%
+      filter(sums == 4) %>%
+      select(c(xaxis(), yaxis(), zaxis()))
+      } else if (length(matching()) == 5){
+      filtered_df() %>%
+      filter(sums == 5) %>%
+      select(c(xaxis(), yaxis(), zaxis()))
+      } else {print("Please only choose 1,2,3,4 or 5 tools")
+    }
+  })
 
 # prepare the df for concatenation of contig_id
   df_x <- reactive({unlist(unname(c(unique(df_df()[c(xaxis())]))))
@@ -353,6 +355,7 @@ renderPlotly({
 # remove rows that have no yy
   df_final <- reactive(node_long_2()[!node_long_2()["zz"]=="",])
 
+  # plot the DotPlot
   p <- ggplot(df_final(), aes(x=xx, y=yy, color = xx, text = stringr::str_wrap(
                   string = zz,
                   width = 40,
@@ -374,7 +377,7 @@ renderPlotly({
   ggplotly(p, tooltip = "text")
   #text = gsub('(.{1,100})(\\s|$)', '\\1\n', zz)))
   })
-renderPrint(as.character(event_data("plotly_hover")))
+#renderPrint(as.character(event_data("plotly_hover")))
 ```
 
 Heatmap
