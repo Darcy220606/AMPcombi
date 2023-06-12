@@ -16,5 +16,3 @@ v<0.1.6>, <02.11.2022>
     -- included check if database was downloaded once to not download again
 v<0.1.7>, <03.11.2022>
     -- Included the possibility of only submitting one .faa file instead of the faa-folder path (in case of summarizing only one single sample)
-v<0.1.8>, <12.06.2023>
-    -- change summary output format to .tsv (sample summaries and complete summary)
