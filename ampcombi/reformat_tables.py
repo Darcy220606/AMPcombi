@@ -140,22 +140,22 @@ def hmmsearch(path):
 # For one sample: parse filepaths and read files to dataframes, create list of dataframes
 def read_path(df_list, file_list, p, dict, faa_path, samplename):
     for path in file_list:
-        if(path.endswith(dict['ampir'])):
+        if('ampir' in dict and path.endswith(dict['ampir'])):
             print('found ampir file')
             df_list.append(ampir(path, p))
-        elif(path.endswith(dict['amplify'])):
+        elif('amplify' in dict and path.endswith(dict['amplify'])):
             print('found amplify file')
             df_list.append(amplify(path, p))
-        elif(path.endswith(dict['macrel'])):
+        elif('macrel' in dict and path.endswith(dict['macrel'])):
             print('found macrel file')
             df_list.append(macrel(path, p))
-        elif(path.endswith(dict['neubi'])):
+        elif('neubi' in dict and path.endswith(dict['neubi'])):
             print('found neubi file')
             df_list.append(neubi(path, p))
-        elif(path.endswith(dict['hmmer_hmmsearch'])):
+        elif('hmmer_hmmsearch' in dict and path.endswith(dict['hmmer_hmmsearch'])):
             print('found hmmersearch file')
             df_list.append(hmmsearch(path))
-        elif(path.endswith(dict['ensembleamppred'])):
+        elif('ampir' in dict and path.endswith(dict['ensembleamppred'])):
             print('found ensemblamppred file')
             faa_filepath = faa_path+samplename+'.faa'
             faa_df = faa2table(faa_filepath)
