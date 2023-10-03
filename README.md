@@ -133,13 +133,15 @@ The output will be written into your working directory, containing the following
 |   ├── sample_1_amp.faa
 |   ├── sample_1_ampcombi.csv
 |   └── sample_1_diamond_matches.txt
+|   └── sample_1_ampcombi.log
 ├── sample_2/
 |   ├── sample_2_amp.faa
 |   ├── sample_2_ampcombi.csv
 |   └── sample_2_diamond_matches.txt
+|   └── sample_2_ampcombi.log
 ├── AMPcombi_summary.csv
 ├── AMPcombi_summary.html
-└── ampcombi.log
+└── Ampcombi.log
 ```
 
 ======================
