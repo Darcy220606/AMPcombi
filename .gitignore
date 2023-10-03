@@ -1,0 +1,8 @@
+build/
+AMPcombi.egg-info/
+
+amp_ref_database/
+sample_1/
+sample_2/
+AMPcombi_summary.csv
+Ampcombi.log
