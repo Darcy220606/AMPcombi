@@ -42,7 +42,7 @@ parser.add_argument("--cutoff", dest="p", help="Enter the probability cutoff for
 parser.add_argument("--faa", dest="faa", help="Enter the path to the folder containing the reference .faa files or to one .faa file (running only one sample). Filenames have to contain the corresponding sample-name, i.e. sample_1.faa \n (default: %(default)s)",
                     type=str, default='./test_faa/')
 parser.add_argument("--tooldict", dest="tools", help="Enter a dictionary of the AMP-tools used with their output file endings (as they appear in the directory tree), \n Tool-names have to be written as in default:\n default={'ampir':'ampir.tsv', 'amplify':'amplify.tsv', 'macrel':'macrel.tsv', 'hmmer_hmmsearch':'hmmsearch.txt', 'ensembleamppred':'ensembleamppred.txt'}",
-                    type=str, default='{"ampir":"ampir.tsv", "amplify":"amplify.tsv", "macrel":"macrel.tsv", "neubi":"neubi.fasta", "hmmer_hmmsearch":"hmmsearch.txt", "ensembleamppred":"ensembleamppred.txt"}')
+                    type=str, default='{"ampir":"ampir.tsv", "amplify":"amplify.tsv", "macrel":"macrel.tsv", "neubi":"neubi.fasta", "ampgram":"ampgram.tsv", "hmmer_hmmsearch":"hmmsearch.txt", "ensembleamppred":"ensembleamppred.txt"}')
 parser.add_argument("--amp_database", dest="ref_db", nargs='?', help="Enter the path to the folder containing the reference database files (.fa and .tsv); a fasta file and the corresponding table with functional and taxonomic classifications. \n (default: DRAMP database)",
                     type=str, default=None)
 parser.add_argument("--complete_summary", dest="complete", nargs='?', help="Concatenates all sample summaries to one final summary and outputs both csv and interactive html files",

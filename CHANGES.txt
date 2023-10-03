@@ -19,4 +19,4 @@ v<0.1.7>, <03.11.2022>
 v<0.1.8>, <XX.10.2023>
     -- Fix the dependencies in the environment.yml file
     -- Added a log file for each sample. Beneficial when used in pipelines like nfcore/funcscan
-    
+    -- Add AMPgram summary table

@@ -98,6 +98,18 @@ def neubi(path, p):
     return neubi_df[['contig_id', 'prob_neubi']]
 
 #########################################
+    #  AMP_ampgram
+#########################################
+def ampgram(path, p): 
+    # Dictionary to rename columns
+    ampgram_dict = {'single_prot_pred':'prob_ampgram'}
+    # read file as df and rename columns
+    ampgram_df = pd.read_csv(path, sep='\t').rename(columns=ampgram_dict) 
+    # apply probability cutoff
+    ampgram_df = ampgram_df[(ampgram_df['prob_ampgram']>=p)]
+    return ampgram_df[['contig_id', 'prob_ampgram']]
+
+#########################################
     #  AMP_hmmsearch
 #########################################
 def hmmsearch(path):
@@ -149,6 +161,9 @@ def read_path(df_list, file_list, p, dict, faa_path, samplename):
         elif(path.endswith(dict['macrel'])):
             print('found macrel file')
             df_list.append(macrel(path, p))
+        elif(path.endswith(dict['ampgram'])):
+            print('found ampgram file')
+            df_list.append(ampgram(path, p))
         elif(path.endswith(dict['neubi'])):
             print('found neubi file')
             df_list.append(neubi(path, p))
