@@ -6,6 +6,10 @@ import pandas as pd
 from Bio import SeqIO
 import os
 
+import tempfile
+import shutil
+import subprocess
+
 #########################################
 # FUNCTION: KEEP ONLY LINES WITH KEYWORD
 #########################################
@@ -97,42 +101,22 @@ def neubi(path, p):
     neubi_df = neubi_df[(neubi_df['prob_neubi']>=p)]
     return neubi_df[['contig_id', 'prob_neubi']]
 
-#########################################
-    #  AMP_hmmsearch
-#########################################
+##########################################
+    #  AMP_hmmsearch (single and multi HMM models)
+##########################################
 def hmmsearch(path):
-    # list of words in header rows to be removed
-    key_words = ["# hmmsearch ::", "# HMMER ", "# Copyright (C) ", "# Freely distributed", 
-               "# - - - ", "# query HMM file:", "# target sequence database:", 
-               "# output directed to file:", "Query:", "Accession:", 
-               "Description:", "Scores for complete sequences",  "--- full sequence",
-               "# number of worker threads:", "inclusion threshold", "E-value", "-------"]
-    no_hits = "[No hits detected that satisfy reporting thresholds]"
-    hmmer_dict = {0:'evalue_hmmer', 1:'score_hmmer', 2:'bias', 3:'eval_domain', 4:'score_domain', 5:'bias_domain', 6:'exp_dom', 7:'N_dom', 8:'contig_id'}
-    # open the file and read line by line
-    with open(path, "r") as fp:
-        lines = fp.readlines()
-    # Open hmmer_tmp.txt file and only write lines not containing any of key_words
-    with open("hmmer_tmp.txt", "w") as fp:
-        for line in lines:
-            if not any(phrase in line for phrase in key_words):
-                fp.write(line)
-    with open('hmmer_tmp.txt') as tmp:
-        if no_hits in tmp.read():
-            print('The hmmersearch-file did not contain any hits')
-            hmmer_df = pd.DataFrame(columns=[val for val in hmmer_dict.values()])
-        else:
-            hmmer_df = pd.read_table("hmmer_tmp.txt", delim_whitespace=True, header=None).reset_index().rename(columns=hmmer_dict).drop(columns = [9,10,11,12,13,14,15,16]).dropna()
-            for index, row in hmmer_df.iterrows():
-                #identify the footer part of the file: index of first row with '#'
-                if (row.str.contains('#').any()):
-                    i = index
-                    break
-            # eliminate all rows with footer information
-            hmmer_df = hmmer_df[hmmer_df.index<i] 
-        #remove the temporary file
-    os.remove('hmmer_tmp.txt')  
-    return hmmer_df[['contig_id', 'evalue_hmmer']]
+    # create temp folder to convert hmm to csv
+    temp = tempfile.mkdtemp()
+    # define the command to execute
+    command = f'hmm_to_csv_input_file.py -i {path} -o ./temp/hmm_stats.csv'
+    subprocess.run(command, text=True, shell=True)
+    # open the csv file and extract what you need from there
+    hmm_dict = {'Query':'HMM_model', 'E-value':'evalue_hmmer', 'Sequence':'contig_id'}
+    # set header to second row to skip first line starting with #
+    hmm_df = pd.read_csv('./temp/hmm_stats.csv', sep=',').rename(columns=hmm_dict)
+    # remove temp dir
+    shutil.rmtree('./temp')
+    return hmm_df[['contig_id','evalue_hmmer', 'HMM_model']] 
 
 #########################################
 # FUNCTION: READ DFs PER SAMPLE 
