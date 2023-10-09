@@ -36,6 +36,8 @@ parser.add_argument("--path_list", dest="files", nargs='*', action='append', hel
                     default=[])
 parser.add_argument("--cutoff", dest="p", help="Enter the probability cutoff for AMPs \n (default: %(default)s)",
                     type=float, default=0)
+parser.add_argument("--aminoacid_length", dest="length", help="Enter the length of the aa sequences required. Any hits below that cutoff will be removed \n (default: %(default)s)",
+                    type=int, default=100)
 parser.add_argument("--faa", dest="faa", help="Enter the path to the folder containing the reference .faa files or to one .faa file (running only one sample). Filenames have to contain the corresponding sample-name, i.e. sample_1.faa \n (default: %(default)s)",
                     type=str, default='./test_faa/')
 parser.add_argument("--tooldict", dest="tools", help="Enter a dictionary of the AMP-tools used with their output file endings (as they appear in the directory tree), \n Tool-names have to be written as in default:\n default={'ampir':'ampir.tsv', 'amplify':'amplify.tsv', 'macrel':'macrel.tsv', 'hmmer_hmmsearch':'hmmsearch.txt', 'ensembleamppred':'ensembleamppred.txt'}",
@@ -63,6 +65,7 @@ tooldict = json.loads(args.tools)
 database = args.ref_db
 complete_summary = args.complete
 threads = args.cores
+aa_len = args.length
 
 # additional variables
 # extract list of tools from input dictionary. If not given, default dict contains all possible tools
@@ -104,7 +107,7 @@ def main_workflow():
         # get the path to the samples' corresponding faa file
         faa_name = check_faa_path(faa_path, samplelist[i])
         # use main_list to create the summary file for sample i
-        summary_df = summary(main_list, samplelist[i], faa_name)
+        summary_df = summary(main_list, samplelist[i], faa_name, aa_len)
         # Generate the AMP-faa.fasta for sample i
         out_path = samplelist[i] +'/'+samplelist[i]+'_amp.faa'
         amp_fasta(summary_df, faa_name, out_path)

@@ -173,7 +173,7 @@ def read_path(df_list, file_list, p, dict, faa_path, samplename):
 # FUNCTION: MERGE DATAFRAMES
 #########################################
 # merge dataframes from list to summary output per sample
-def summary(df_list, samplename, faa_path):
+def summary(df_list, samplename, faa_path, aa_len):
     #initiate merge_df
     merge_df = pd.DataFrame(columns=['contig_id'])
     #merge all dfs in the df-list on contig_id
@@ -184,10 +184,15 @@ def summary(df_list, samplename, faa_path):
     #add amino-acid sequences
     faa_df = faa2table(faa_path)
     merge_df = merge_df.merge(faa_df, how='inner', on='contig_id')
+    # remove hits that have a hit lengths <100aa: TODO!!!
+    # count the number of letters across the aa_sequence
+    merge_df['aa_lengths'] =  merge_df['aa_sequence'].apply(lambda x: len(x))
+    # retain hits below the aa lengths
+    merge_df = merge_df[merge_df['aa_lengths'] <= aa_len]
     # sort by sum of p-values over rows
     merge_df = merge_df.set_index('contig_id')
     merge_df['p_sum']= merge_df.sum(axis=1)#.sort_values(ascending=False)
-    merge_df = merge_df.sort_values('p_sum', ascending=False).drop('p_sum', axis=1).reset_index()
+    merge_df = merge_df.sort_values('p_sum', ascending=False).drop(['p_sum', 'aa_lengths'], axis=1).reset_index()
     return merge_df
 
 #########################################
