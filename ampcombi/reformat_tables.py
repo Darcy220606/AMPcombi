@@ -104,7 +104,7 @@ def neubi(path, p):
 ##########################################
     #  AMP_hmmsearch (single and multi HMM models)
 ##########################################
-def hmmsearch(path):
+def hmmsearch(path, hmmevalue):
     # create temp folder to convert hmm to csv
     temp = tempfile.mkdtemp()
     # define the command to execute
@@ -116,13 +116,18 @@ def hmmsearch(path):
     hmm_df = pd.read_csv('./temp/hmm_stats.csv', sep=',').rename(columns=hmm_dict)
     # remove temp dir
     shutil.rmtree('./temp')
+    # remove any below evalue specified
+#   hmm_df = hmm_df[(hmm_df['evalue_hmmer']<=hmmevalue)]
+    if hmmevalue is not None:
+        hmm_df['evalue_hmmer'] = hmm_df['evalue_hmmer'].astype(float)
+        hmm_df = hmm_df[hmm_df['evalue_hmmer'] <= float(hmmevalue)]
     return hmm_df[['contig_id','evalue_hmmer', 'HMM_model']] 
 
 #########################################
 # FUNCTION: READ DFs PER SAMPLE 
 #########################################
 # For one sample: parse filepaths and read files to dataframes, create list of dataframes
-def read_path(df_list, file_list, p, dict, faa_path, samplename):
+def read_path(df_list, file_list, p, hmmevalue, dict, faa_path, samplename):
     for path in file_list:
         if(path.endswith(dict['ampir'])):
             print('found ampir file')
@@ -138,7 +143,7 @@ def read_path(df_list, file_list, p, dict, faa_path, samplename):
             df_list.append(neubi(path, p))
         elif(path.endswith(dict['hmmer_hmmsearch'])):
             print('found hmmersearch file')
-            df_list.append(hmmsearch(path))
+            df_list.append(hmmsearch(path, hmmevalue))
         elif(path.endswith(dict['ensembleamppred'])):
             print('found ensemblamppred file')
             faa_filepath = faa_path+'/'+samplename+'.faa'
