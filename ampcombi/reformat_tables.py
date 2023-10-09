@@ -116,10 +116,11 @@ def hmmsearch(path, hmmevalue):
     hmm_df = pd.read_csv('./temp/hmm_stats.csv', sep=',').rename(columns=hmm_dict)
     # remove temp dir
     shutil.rmtree('./temp')
-    # remove any below evalue specified
-#   hmm_df = hmm_df[(hmm_df['evalue_hmmer']<=hmmevalue)]
+    # remove any hits below evalue specified
     if hmmevalue is not None:
+        # make sure the evalues are float type 
         hmm_df['evalue_hmmer'] = hmm_df['evalue_hmmer'].astype(float)
+        # remove any hits below evalue
         hmm_df = hmm_df[hmm_df['evalue_hmmer'] <= float(hmmevalue)]
     return hmm_df[['contig_id','evalue_hmmer', 'HMM_model']] 
 
