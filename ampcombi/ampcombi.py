@@ -36,6 +36,8 @@ parser.add_argument("--path_list", dest="files", nargs='*', action='append', hel
                     default=[])
 parser.add_argument("--cutoff", dest="p", help="Enter the probability cutoff for AMPs \n (default: %(default)s)",
                     type=float, default=0)
+parser.add_argument("--db_evalue", dest="dbevalue", help="Enter the evalue cutoff for AMPs for the database diamond alignment. Any evalue below this value will only remove the DRAMP classification and not the entire hit \n (default: %(default)s)",
+                    type=float, default=0.05)                    
 parser.add_argument("--faa", dest="faa", help="Enter the path to the folder containing the reference .faa files or to one .faa file (running only one sample). Filenames have to contain the corresponding sample-name, i.e. sample_1.faa \n (default: %(default)s)",
                     type=str, default='./test_faa/')
 parser.add_argument("--tooldict", dest="tools", help="Enter a dictionary of the AMP-tools used with their output file endings (as they appear in the directory tree), \n Tool-names have to be written as in default:\n default={'ampir':'ampir.tsv', 'amplify':'amplify.tsv', 'macrel':'macrel.tsv', 'hmmer_hmmsearch':'hmmsearch.txt', 'ensembleamppred':'ensembleamppred.txt'}",
@@ -58,6 +60,7 @@ path = args.amp
 samplelist_in = args.samples
 filepaths_in = args.files
 p = args.p
+dbevalue = args.dbevalue
 faa_path = args.faa
 tooldict = json.loads(args.tools)
 database = args.ref_db
@@ -112,7 +115,7 @@ def main_workflow():
         print(f'The fasta containing AMP sequences for {samplelist[i]} was saved to {samplelist[i]}/ \n')
         amp_matches = samplelist[i] +'/'+samplelist[i]+'_diamond_matches.txt'
         print(f'The diamond alignment for {samplelist[i]} in progress ....')
-        diamond_df = diamond_alignment(db, amp_faa_paths, amp_matches, threads)
+        diamond_df = diamond_alignment(db, amp_faa_paths, amp_matches, threads, dbevalue)
         print(f'The diamond alignment for {samplelist[i]} was saved to {samplelist[i]}/.')
         # Merge summary_df and diamond_df
         sample_summary_df = pd.merge(summary_df, diamond_df, on = 'contig_id', how='left')

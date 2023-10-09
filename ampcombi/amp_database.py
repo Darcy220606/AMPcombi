@@ -59,7 +59,7 @@ def create_diamond_ref_db(db,threads):
 ########################################
 #  FUNCTION: DIAMOND ALIGNMENT
 #########################################
-def diamond_alignment(db, amp_faa_paths, amp_matches,threads):
+def diamond_alignment(db, amp_faa_paths, amp_matches,threads, dbevalue):
     #create temp folder and delete at the end
     cwd = os.getcwd()
     for path in amp_faa_paths:
@@ -68,9 +68,13 @@ def diamond_alignment(db, amp_faa_paths, amp_matches,threads):
         subprocess.run('diamond_alignment.sh', text=True, input=f'{path}\n{temp}\n{db}\n{threads}')
         shutil.move(temp+'/diamond_matches.tsv', amp_matches)
         shutil.rmtree(temp)
-        # mege the diamond_alignment with the ref_db table
+        # merge the diamond_alignment with the ref_db table
         dd_align = pd.read_csv(amp_matches, delimiter='\t')
         dd_align = dd_align[['target_id','contig_id','pident','evalue']]
+        # make sure the evalues are float type 
+        dd_align['evalue'] = dd_align['evalue'].astype(float)
+        # removes only the classification below evalue
+        dd_align = dd_align[dd_align['evalue'] <= float(dbevalue)]
         for file in os.listdir(db):
             if file.endswith('.tsv'):
                 path_2 = os.path.join(os.path.abspath(db) + '/' + file)
