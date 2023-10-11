@@ -119,17 +119,17 @@ def main_workflow():
         # Insert column with sample name on position 0
         sample_summary_df.insert(0, 'name', samplelist[i])
         # Write sample summary into sample output folder
-        sample_summary_df.to_csv(samplelist[i] +'/'+samplelist[i]+'_ampcombi.csv', sep=',', index=False)
+        sample_summary_df.to_csv(samplelist[i] +'/'+samplelist[i]+'_ampcombi.tsv', sep='\t', index=False)
         print(f'The summary file for {samplelist[i]} was saved to {samplelist[i]}/.')
         if (complete_summary):
         # concatenate the sample summary to the complete summary and overwrite it
             complete_summary_df = pd.concat([complete_summary_df, sample_summary_df])
-            complete_summary_df.to_csv('AMPcombi_summary.csv', sep=',', index=False)
+            complete_summary_df.to_csv('AMPcombi_summary.tsv', sep='\t', index=False)
             html_generator() 
         else: 
             continue
     if (complete_summary):
-        print(f'\n FINISHED: File AMPcombi_summary.csv and folder AMPcombi_interactive_summary/ were saved to your current working directory.')
+        print(f'\n FINISHED: File AMPcombi_summary.tsv and folder AMPcombi_interactive_summary/ were saved to your current working directory.')
     else: 
         print(f'\n FINISHED: AMPcombi created summaries for all input samples.')
 
