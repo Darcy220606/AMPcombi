@@ -14,6 +14,8 @@ For parsing: AMPcombi is developed to parse the output of these **AMP prediction
 | HMMsearch  | 3.3.2  | https://github.com/EddyRivasLab/hmmer |
 | EnsembleAMPpred  | - | https://pubmed.ncbi.nlm.nih.gov/33494403/ |
 | NeuBI  | -  | https://github.com/nafizh/NeuBI |
+| AMPgram  | -  | https://github.com/michbur/AmpGram |
+| AMPtransformer  | -  | https://github.com/Brendan-P-Moore/AMPTransformer |
 
 For classification: AMPcombi is developed to offer functional annotation of the detected AMPs by alignment to an **AMP reference databases**, for e.g.,:
 
