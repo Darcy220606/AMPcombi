@@ -17,6 +17,9 @@ v<0.1.6>, <02.11.2022>
 v<0.1.7>, <03.11.2022>
     -- Included the possibility of only submitting one .faa file instead of the faa-folder path (in case of summarizing only one single sample)
 v<0.1.9>, <XX.10.2023>
-    -- Added the parameter `--aminoacid_length` to retain hits with a specific length
     -- Change the output extension from .csv to .tsv
-    -- Add AMPtransformer to summary table
+    -- Added `--hmm_evalue` parameter to filter the hmm results in table based on evalue
+    -- Renamed parameter `--cutoff` to `--amp_cutoff`
+    -- Added the parameter `--aminoacid_length` to retain hits with a specific length
+    -- Add AMPtransformer to sssssssssssssssssssssssssssummary table
+    -- Fixed hmmsearch to now parse both single and multi models

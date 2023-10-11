@@ -34,8 +34,10 @@ parser.add_argument("--sample_list", dest="samples", nargs='*', help="Enter a li
                     default=[])
 parser.add_argument("--path_list", dest="files", nargs='*', action='append', help="Enter the list of paths to the files to be summarized as a list of lists, e.g. --path_list path/to/my/sample1.ampir.tsv path/to/my/sample1.amplify.tsv --path_list path/to/my/sample2.ampir.ts path/to/my/sample2.amplify.tsv. \n If not given, the file-paths will be inferred from the folder structure",
                     default=[])
-parser.add_argument("--cutoff", dest="p", help="Enter the probability cutoff for AMPs \n (default: %(default)s)",
+parser.add_argument("--amp_cutoff", dest="p", help="Enter the probability cutoff for AMPs for all tools except for HMMsearch \n (default: %(default)s)",
                     type=float, default=0)
+parser.add_argument("--hmm_evalue", dest="hmmevalue", help="Enter the evalue cutoff for AMPs for HMMsearch)  \n (default: %(default)s)",
+                    type=float, default=None)
 parser.add_argument("--aminoacid_length", dest="length", help="Enter the length of the aa sequences required. Any hits below that cutoff will be removed \n (default: %(default)s)",
                     type=int, default=100)
 parser.add_argument("--faa", dest="faa", help="Enter the path to the folder containing the reference .faa files or to one .faa file (running only one sample). Filenames have to contain the corresponding sample-name, i.e. sample_1.faa \n (default: %(default)s)",
@@ -60,6 +62,7 @@ path = args.amp
 samplelist_in = args.samples
 filepaths_in = args.files
 p = args.p
+hmmevalue = args.hmmevalue
 faa_path = args.faa
 tooldict = json.loads(args.tools)
 database = args.ref_db
@@ -103,7 +106,7 @@ def main_workflow():
         print(f'Processing AMP-files from sample: {samplelist[i]}')
         os.makedirs(samplelist[i], exist_ok=True)
         # fill main_list with tool-output filepaths for sample i
-        read_path(main_list, filepaths[i], p, tooldict, faa_path, samplelist[i])
+        read_path(main_list, filepaths[i], p, hmmevalue, tooldict, faa_path, samplelist[i])
         # get the path to the samples' corresponding faa file
         faa_name = check_faa_path(faa_path, samplelist[i])
         # use main_list to create the summary file for sample i
