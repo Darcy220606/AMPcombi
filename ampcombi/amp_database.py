@@ -68,7 +68,7 @@ def diamond_alignment(db, amp_faa_paths, amp_matches,threads):
         subprocess.run('diamond_alignment.sh', text=True, input=f'{path}\n{temp}\n{db}\n{threads}')
         shutil.move(temp+'/diamond_matches.tsv', amp_matches)
         shutil.rmtree(temp)
-        # mege the diamond_alignment with the ref_db table
+        # merge the diamond_alignment with the ref_db table
         dd_align = pd.read_csv(amp_matches, delimiter='\t')
         dd_align = dd_align[['target_id','contig_id','pident','evalue']]
         for file in os.listdir(db):
