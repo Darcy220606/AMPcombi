@@ -16,3 +16,6 @@ v<0.1.6>, <02.11.2022>
     -- included check if database was downloaded once to not download again
 v<0.1.7>, <03.11.2022>
     -- Included the possibility of only submitting one .faa file instead of the faa-folder path (in case of summarizing only one single sample)
+v<0.1.9>, <XX.10.2023>
+    -- Added a new feature, that estimates the isoelectric point, mwt, structure fraction and hydrophobicity
+    -- The DRAMP db .tsv was filtered to retain only necessary columns

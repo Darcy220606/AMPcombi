@@ -23,7 +23,9 @@ def download_DRAMP(db):
     ##Convert excel to tab sep file and write it to a file in the DRAMP_db directly with the date its downloaded
     date = datetime.now().strftime("%Y_%m_%d")
     ref_amps=pd.read_excel (db +'/'+ r'general_amps.xlsx')
-    ref_amps.to_csv (db +'/' + f'general_amps_{date}.tsv', index = None, header=True,sep='\t')
+    # Add the column names you want to keep
+    columns_to_keep = ['DRAMP_ID','Sequence', 'Family', 'Source', 'PDB_ID','Linear/Cyclic/Branched','Other_Modifications','Pubmed_ID','Reference']
+    ref_amps[columns_to_keep].to_csv (db +'/' + f'general_amps_{date}.tsv', index = None, header=True,sep='\t')
     ##Download the (fasta) file and store it in a results directory 
     urlfasta = 'http://dramp.cpu-bioinfor.org/downloads/download.php?filename=download_data/DRAMP3.0_new/general_amps.fasta'
     z = requests.get(urlfasta)

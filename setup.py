@@ -16,6 +16,7 @@ setup(
              'ampcombi/diamond_alignment.sh',
              'ampcombi/diamond_makedb.sh',
              'ampcombi/reformat_tables.py',
+             'ampcombi/functionality.py',
              'ampcombi/print_header.py',
              'ampcombi/version.py',
              'ampcombi/visualise_complete_summary.py',
