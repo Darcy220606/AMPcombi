@@ -14,6 +14,7 @@ from check_input import *
 from amp_database import *
 from print_header import *
 from visualise_complete_summary import *
+from functionality import *
 
 # Define input arguments:
 parser = argparse.ArgumentParser(prog = 'ampcombi', formatter_class=argparse.RawDescriptionHelpFormatter,
@@ -127,6 +128,10 @@ def main_workflow():
         sample_summary_df = pd.merge(summary_df, diamond_df, on = 'contig_id', how='left')
         # Insert column with sample name on position 0
         sample_summary_df.insert(0, 'name', samplelist[i])
+        # Estimate the aa functions: chemical and physical
+        sample_summary_df_functions = functionality(sample_summary_df)
+        print(f'The estimation of functional and structural properties for {samplelist[i]} in progress ....')
+        sample_summary_df = sample_summary_df_functions
         # Write sample summary into sample output folder
         sample_summary_df.to_csv(samplelist[i] +'/'+samplelist[i]+'_ampcombi.tsv', sep='\t', index=False)
         print(f'The summary file for {samplelist[i]} was saved to {samplelist[i]}/.')
