@@ -121,7 +121,7 @@ Either the path to the folder containing the respective protein fasta files has 
 | --db_evalue  | probability cutoff to filter database classifications by evalue -any hit with value below this will have it's database classification removed-| None | 0.05 |
 | --aminoacid_length  | probability cutoff to filter AMP hits by the length of the amino acid sequence| 100 | 60 |
 | --faa  | path to the folder containing the samples`.faa` files or, in case of only one sample, the path to the corresponding `.faa` file. Filenames have to contain the corresponding sample-name, i.e. sample_1.faa | ./test_faa/ | ./faa_files/|
-| --tooldict | dictionary of AMP-tools and their respective output file endings | '{"ampir":"ampir.tsv", "amplify":"amplify.tsv", "macrel":"macrel.tsv", "hmmer_hmmsearch":"hmmsearch.txt", "ensembleamppred":"ensembleamppred.txt", "ampgram":"ampgram.tsv", "amptransformer":"amptransformer.tsv"}' | - |
+| --tooldict | dictionary of AMP-tools and their respective output file endings | '{"ampir":"ampir.tsv", "amplify":"amplify.tsv", "macrel":"macrel.tsv", "hmmer_hmmsearch":"hmmsearch.txt", "ensembleamppred":"ensembleamppred.txt", "ampgram":"ampgram.tsv", "amptransformer":"amptransformer.txt"}' | - |
 | --amp_database | path to the folder containing the reference database files: (1) a fasta file with <.fasta> file extension and (2) the corresponding table with functional and taxonomic classifications in <.tsv> file extension | [DRAMP 'general amps'](http://dramp.cpu-bioinfor.org/downloads/) database | ./amp_ref_database/ |
 | --complete_summary | concatenates all samples' summarized tables into one and generates both 'csv' and interactive 'html' files | False | True |
 | --log  | print messages into log file instead of stdout | False | True |
