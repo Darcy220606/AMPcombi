@@ -18,8 +18,9 @@ v<0.1.7>, <03.11.2022>
     -- Included the possibility of only submitting one .faa file instead of the faa-folder path (in case of summarizing only one single sample)
 v<0.1.9>, <XX.10.2023>
     -- Change the output extension from .csv to .tsv
-    -- Added `--hmm_evalue` parameter to filter the hmm results in table based on evalue
-    -- Renamed parameter `--cutoff` to `--amp_cutoff`
+    -- Added parameter `--hmm_evalue` to filter the hmm results in table based on evalue
     -- Added the parameter `--aminoacid_length` to retain hits with a specific length
-    -- Add AMPtransformer to sssssssssssssssssssssssssssummary table
+    -- Added the paarmeter `db_evalue` to filter out classification hits below specific diamond evalues
+    -- Renamed the parameter `--cutoff` to `--amp_cutoff`
+    -- Added the tool AMPtransformer
     -- Fixed hmmsearch to now parse both single and multi models
