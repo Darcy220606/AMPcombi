@@ -19,3 +19,4 @@ v<0.1.7>, <03.11.2022>
 v<0.1.9>, <XX.10.2023>
     -- Added the parameter `--aminoacid_length` to retain hits with a specific length
     -- Change the output extension from .csv to .tsv
+    -- Add AMPtransformer to summary table

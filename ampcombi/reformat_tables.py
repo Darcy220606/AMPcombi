@@ -98,6 +98,18 @@ def neubi(path, p):
     return neubi_df[['contig_id', 'prob_neubi']]
 
 #########################################
+    #  AMP_transformer
+#########################################
+def amptransformer(path, p): 
+    # Dictionary to rename columns
+    amptransformer_dict = {'peptides':'contig_id','sequence':'seq_aa','Antimicrobial_Peptide_Prediction':'prob_amptransformer'}
+    # read file as df and rename columns
+    amptransformer_df = pd.read_csv(path, sep='\t').rename(columns=amptransformer_dict) 
+    # apply probability cutoff
+    amptransformer_df = amptransformer_df[(amptransformer_df['prob_amptransformer']>=p)]
+    return amptransformer_df[['contig_id', 'prob_amptransformer']]
+
+#########################################
     #  AMP_hmmsearch
 #########################################
 def hmmsearch(path):
@@ -152,6 +164,9 @@ def read_path(df_list, file_list, p, dict, faa_path, samplename):
         elif(path.endswith(dict['neubi'])):
             print('found neubi file')
             df_list.append(neubi(path, p))
+        elif(path.endswith(dict['amptransformer'])):
+            print('found amptransformer file')
+            df_list.append(amptransformer(path, p))
         elif(path.endswith(dict['hmmer_hmmsearch'])):
             print('found hmmersearch file')
             df_list.append(hmmsearch(path))

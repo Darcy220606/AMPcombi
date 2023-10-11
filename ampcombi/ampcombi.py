@@ -41,7 +41,7 @@ parser.add_argument("--aminoacid_length", dest="length", help="Enter the length 
 parser.add_argument("--faa", dest="faa", help="Enter the path to the folder containing the reference .faa files or to one .faa file (running only one sample). Filenames have to contain the corresponding sample-name, i.e. sample_1.faa \n (default: %(default)s)",
                     type=str, default='./test_faa/')
 parser.add_argument("--tooldict", dest="tools", help="Enter a dictionary of the AMP-tools used with their output file endings (as they appear in the directory tree), \n Tool-names have to be written as in default:\n default={'ampir':'ampir.tsv', 'amplify':'amplify.tsv', 'macrel':'macrel.tsv', 'hmmer_hmmsearch':'hmmsearch.txt', 'ensembleamppred':'ensembleamppred.txt'}",
-                    type=str, default='{"ampir":"ampir.tsv", "amplify":"amplify.tsv", "macrel":"macrel.tsv", "neubi":"neubi.fasta", "hmmer_hmmsearch":"hmmsearch.txt", "ensembleamppred":"ensembleamppred.txt"}')
+                    type=str, default='{"ampir":"ampir.tsv", "amplify":"amplify.tsv", "macrel":"macrel.tsv", "neubi":"neubi.fasta", "amptransformer":"amptransformer.txt", "hmmer_hmmsearch":"hmmsearch.txt", "ensembleamppred":"ensembleamppred.txt"}')
 parser.add_argument("--amp_database", dest="ref_db", nargs='?', help="Enter the path to the folder containing the reference database files (.fa and .tsv); a fasta file and the corresponding table with functional and taxonomic classifications. \n (default: DRAMP database)",
                     type=str, default=None)
 parser.add_argument("--complete_summary", dest="complete", nargs='?', help="Concatenates all sample summaries to one final summary and outputs both csv and interactive html files",
@@ -122,17 +122,17 @@ def main_workflow():
         # Insert column with sample name on position 0
         sample_summary_df.insert(0, 'name', samplelist[i])
         # Write sample summary into sample output folder
-        sample_summary_df.to_csv(samplelist[i] +'/'+samplelist[i]+'_ampcombi.csv', sep=',', index=False)
+        sample_summary_df.to_csv(samplelist[i] +'/'+samplelist[i]+'_ampcombi.tsv', sep='\t', index=False)
         print(f'The summary file for {samplelist[i]} was saved to {samplelist[i]}/.')
         if (complete_summary):
         # concatenate the sample summary to the complete summary and overwrite it
             complete_summary_df = pd.concat([complete_summary_df, sample_summary_df])
-            complete_summary_df.to_csv('AMPcombi_summary.csv', sep=',', index=False)
+            complete_summary_df.to_csv('AMPcombi_summary.tsv', sep='\t', index=False)
             html_generator() 
         else: 
             continue
     if (complete_summary):
-        print(f'\n FINISHED: File AMPcombi_summary.csv and folder AMPcombi_interactive_summary/ were saved to your current working directory.')
+        print(f'\n FINISHED: File AMPcombi_summary.tsv and folder AMPcombi_interactive_summary/ were saved to your current working directory.')
     else: 
         print(f'\n FINISHED: AMPcombi created summaries for all input samples.')
 
