@@ -101,6 +101,30 @@ def neubi(path, p):
     neubi_df = neubi_df[(neubi_df['prob_neubi']>=p)]
     return neubi_df[['contig_id', 'prob_neubi']]
 
+#########################################
+    #  AMP_ampgram
+#########################################
+def ampgram(path, p): 
+    # Dictionary to rename columns
+    ampgram_dict = {'single_prot_pred':'prob_ampgram'}
+    # read file as df and rename columns
+    ampgram_df = pd.read_csv(path, sep='\t').rename(columns=ampgram_dict) 
+    # apply probability cutoff
+    ampgram_df = ampgram_df[(ampgram_df['prob_ampgram']>=p)]
+    return ampgram_df[['contig_id', 'prob_ampgram']]
+
+#########################################
+    #  AMP_transformer
+#########################################
+def amptransformer(path, p): 
+    # Dictionary to rename columns
+    amptransformer_dict = {'peptides':'contig_id','sequence':'seq_aa','Antimicrobial_Peptide_Prediction':'prob_amptransformer'}
+    # read file as df and rename columns
+    amptransformer_df = pd.read_csv(path, sep='\t').rename(columns=amptransformer_dict) 
+    # apply probability cutoff
+    amptransformer_df = amptransformer_df[(amptransformer_df['prob_amptransformer']>=p)]
+    return amptransformer_df[['contig_id', 'prob_amptransformer']]
+  
 ##########################################
     #  AMP_hmmsearch (single and multi HMM models)
 ##########################################
@@ -123,18 +147,6 @@ def hmmsearch(path, hmmevalue):
         # remove any hits below evalue
         hmm_df = hmm_df[hmm_df['evalue_hmmer'] <= float(hmmevalue)]
     return hmm_df[['contig_id','evalue_hmmer', 'HMM_model']] 
-  
-#########################################
-    #  AMP_transformer
-#########################################
-def amptransformer(path, p): 
-    # Dictionary to rename columns
-    amptransformer_dict = {'peptides':'contig_id','sequence':'seq_aa','Antimicrobial_Peptide_Prediction':'prob_amptransformer'}
-    # read file as df and rename columns
-    amptransformer_df = pd.read_csv(path, sep='\t').rename(columns=amptransformer_dict) 
-    # apply probability cutoff
-    amptransformer_df = amptransformer_df[(amptransformer_df['prob_amptransformer']>=p)]
-    return amptransformer_df[['contig_id', 'prob_amptransformer']]
 
 #########################################
 # FUNCTION: READ DFs PER SAMPLE 
@@ -151,6 +163,9 @@ def read_path(df_list, file_list, p, hmmevalue, dict, faa_path, samplename):
         elif(path.endswith(dict['macrel'])):
             print('found macrel file')
             df_list.append(macrel(path, p))
+        elif(path.endswith(dict['ampgram'])):
+            print('found ampgram file')
+            df_list.append(ampgram(path, p))
         elif(path.endswith(dict['neubi'])):
             print('found neubi file')
             df_list.append(neubi(path, p))
