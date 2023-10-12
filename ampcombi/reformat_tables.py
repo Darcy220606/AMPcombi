@@ -54,6 +54,7 @@ def ampir(path, p):
     ampir_df['contig_id']=ampir_df['contig_id'].apply(lambda x: x.split()[0])
     # apply probability cutoff
     ampir_df = ampir_df[(ampir_df['prob_ampir']>=p)]
+    ampir_df['prob_ampir'] = ampir_df['prob_ampir'].round(3)
     return ampir_df[['contig_id', 'prob_ampir']]
 
 #########################################
@@ -64,6 +65,7 @@ def amplify(path, p):
     amplify_df = pd.read_csv(path, sep='\t').rename(columns=amplify_dict).dropna()
     # apply probability cutoff
     amplify_df = amplify_df[(amplify_df['prob_amplify']>=p)]
+    amplify_df['prob_amplify'] = amplify_df['prob_amplify'].round(3)
     return amplify_df[['contig_id', 'prob_amplify']]
 
 #########################################
@@ -74,6 +76,7 @@ def amppred(path, p):
     amppred_dict = {4:'index', 14:'prob_amppred'} #{'level_0':1, 'level_1':2, 'level_2':'index', 'level_3':3, 'level_4':4, 'level_5':5, '############':6, 'Prediction':7, 'results':8, 'by':9, 'EnsembleAMPPred':10, '#############':'prob_amppred'}
     amppred_df = pd.read_csv(path, sep=' ', header=None).rename(columns=amppred_dict)
     amppred_df = amppred_df[(amppred_df['prob_amppred']>=p)]
+    amppred_df['prob_amppred'] = amppred_df['prob_amppred'].round(3)
     return amppred_df[['index', 'prob_amppred']]
 
 #########################################
@@ -85,6 +88,7 @@ def macrel(path, p):
     macrel_df = pd.read_csv(path, sep='\t', header=[1]).rename(columns=macrel_dict)
     # apply probability cutoff
     macrel_df = macrel_df[(macrel_df['prob_macrel']>=p)]
+    macrel_df['prob_macrel'] = macrel_df['prob_macrel'].round(3)
     return macrel_df[['contig_id', 'prob_macrel']]
 
 #########################################
@@ -99,6 +103,7 @@ def neubi(path, p):
         contig_id, sequence, description = contig.id, str(contig.seq), float(contig.description.split("|",1)[1])
         neubi_df = neubi_df.append({'contig_id':contig_id, 'aa_sequence':sequence, 'prob_neubi':description}, ignore_index=True)
     neubi_df = neubi_df[(neubi_df['prob_neubi']>=p)]
+    neubi_df['prob_neubi'] = neubi_df['prob_neubi'].round(3)
     return neubi_df[['contig_id', 'prob_neubi']]
 
 #########################################
@@ -111,6 +116,7 @@ def ampgram(path, p):
     ampgram_df = pd.read_csv(path, sep='\t').rename(columns=ampgram_dict) 
     # apply probability cutoff
     ampgram_df = ampgram_df[(ampgram_df['prob_ampgram']>=p)]
+    ampgram_df['prob_ampgram'] = ampgram_df['prob_ampgram'].round(3)
     return ampgram_df[['contig_id', 'prob_ampgram']]
 
 #########################################
@@ -123,6 +129,7 @@ def amptransformer(path, p):
     amptransformer_df = pd.read_csv(path, sep='\t').rename(columns=amptransformer_dict) 
     # apply probability cutoff
     amptransformer_df = amptransformer_df[(amptransformer_df['prob_amptransformer']>=p)]
+    amptransformer_df['prob_amptransformer'] = amptransformer_df['prob_amptransformer'].round(3)
     return amptransformer_df[['contig_id', 'prob_amptransformer']]
   
 ##########################################

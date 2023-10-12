@@ -122,7 +122,7 @@ def main_workflow():
                     # get the path to the samples' corresponding faa file
                     faa_name = check_faa_path(faa_path, samplelist[i])
                     # use main_list to create the summary file for sample i
-                    summary_df = summary(main_list, samplelist[i], faa_name)
+                    summary_df = summary(main_list, samplelist[i], faa_name, aa_len)
                     # Generate the AMP-faa.fasta for sample i
                     out_path = samplelist[i] +'/'+samplelist[i]+'_amp.faa'
                     amp_fasta(summary_df, faa_name, out_path)
@@ -130,12 +130,16 @@ def main_workflow():
                     print(f'The fasta containing AMP sequences for {samplelist[i]} was saved to {samplelist[i]}/ \n')
                     amp_matches = samplelist[i] +'/'+samplelist[i]+'_diamond_matches.txt'
                     print(f'The diamond alignment for {samplelist[i]} in progress ....')
-                    diamond_df = diamond_alignment(db, amp_faa_paths, amp_matches, threads)
+                    diamond_df = diamond_alignment(db, amp_faa_paths, amp_matches, threads, dbevalue)
                     print(f'The diamond alignment for {samplelist[i]} was saved to {samplelist[i]}/.')
                     # Merge summary_df and diamond_df
                     sample_summary_df = pd.merge(summary_df, diamond_df, on = 'contig_id', how='left')
                     # Insert column with sample name on position 0
                     sample_summary_df.insert(0, 'name', samplelist[i])
+                    # Estimate the aa functions: chemical and physical
+                    sample_summary_df_functions = functionality(sample_summary_df)
+                    print(f'The estimation of functional and structural properties for {samplelist[i]} in progress ....')
+                    sample_summary_df = sample_summary_df_functions
                     # Write sample summary into sample output folder
                     sample_summary_df.to_csv(samplelist[i] +'/'+samplelist[i]+'_ampcombi.csv', sep=',', index=False)
                     print(f'The summary file for {samplelist[i]} was saved to {samplelist[i]}/.')
@@ -165,6 +169,10 @@ def main_workflow():
             sample_summary_df = pd.merge(summary_df, diamond_df, on = 'contig_id', how='left')
             # Insert column with sample name on position 0
             sample_summary_df.insert(0, 'name', samplelist[i])
+            # Estimate the aa functions: chemical and physical
+            sample_summary_df_functions = functionality(sample_summary_df)
+            print(f'The estimation of functional and structural properties for {samplelist[i]} in progress ....')
+            sample_summary_df = sample_summary_df_functions
             # Write sample summary into sample output folder
             sample_summary_df.to_csv(samplelist[i] +'/'+samplelist[i]+'_ampcombi.csv', sep=',', index=False)
             print(f'The summary file for {samplelist[i]} was saved to {samplelist[i]}/.')

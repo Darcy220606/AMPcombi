@@ -4,5 +4,5 @@ AMPcombi.egg-info/
 amp_ref_database/
 sample_1/
 sample_2/
-AMPcombi_summary.csv
+AMPcombi_summary.tsv
 Ampcombi.log
