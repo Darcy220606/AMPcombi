@@ -142,14 +142,16 @@ The output will be written into your working directory, containing the following
 ├── sample_1/
 |   ├── sample_1_amp.faa
 |   ├── sample_1_ampcombi.tsv
-|   └── sample_1_diamond_matches.txt
+|   ├── sample_1_diamond_matches.txt
+|   └── sample_1_ampcombi.log
 ├── sample_2/
 |   ├── sample_2_amp.faa
 |   ├── sample_2_ampcombi.tsv
-|   └── sample_2_diamond_matches.txt
+|   ├── sample_2_diamond_matches.txt
+|   └── sample_2_ampcombi.log
 ├── AMPcombi_summary.tsv
 ├── AMPcombi_summary.html
-└── ampcombi.log
+└── Ampcombi.log
 ```
 
 ======================
