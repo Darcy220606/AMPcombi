@@ -118,7 +118,7 @@ def main_workflow():
                     print(f'Processing AMP-files from sample: {samplelist[i]}')
                     os.makedirs(samplelist[i], exist_ok=True)
                     # fill main_list with tool-output filepaths for sample i
-                    read_path(main_list, filepaths[i], p, tooldict, faa_path, samplelist[i])
+                    read_path(main_list, filepaths[i], p, hmmevalue, tooldict, faa_path, samplelist[i])
                     # get the path to the samples' corresponding faa file
                     faa_name = check_faa_path(faa_path, samplelist[i])
                     # use main_list to create the summary file for sample i
