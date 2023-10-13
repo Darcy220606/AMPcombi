@@ -18,3 +18,5 @@ v<0.1.7>, <03.11.2022>
     -- Included the possibility of only submitting one .faa file instead of the faa-folder path (in case of summarizing only one single sample)
 v<0.1.8>, <14.02.2023>
     -- Linked to Zenodo archive
+v<0.1.9>, <XX.10.2023>
+    -- Removed tooldictionary parameter and added a parameter for each tool instead to assign the extension of the files per tool.

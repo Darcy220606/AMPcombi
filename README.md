@@ -59,11 +59,13 @@ There are two basic commands to run AMPcombi:
 ```console
 ampcombi \
 --amp_results path/to/my/result_folder/ \
---faa path/to/sample_faa_files/
+--faa path/to/sample_faa_files/ \
+--<tool>_file '.tsv'
 ```
+*<tool> can be ampir, macrel, amplify, hmmsearch, amppred, ampgram, amptransformer*
 
-Here the head folder containing output files has to be given. AMPcombi finds and summarizes the output files from different tools, if the folder is structured  and named as: `/result_folder/toolsubdir/samplesubdir/sample.tool.filetype`. 
- - Note that the filetype ending might vary and can be specified with `--tooldict`, if it is different from the default. When passing a dictionary via command line, this has to be done as a string with single quotes `' '` and the dictionary keys and items with double quotes `" "`. i.e. `'{"key1":"item1", "key2":"item2"}'`
+Here the head folder containing output files has to be given. AMPcombi finds and summarizes the output files from different tools, if the folder is structured  and named as: `/result_folder/toolsubdir/samplesubdir/sample.filetype`. 
+ - Note that the filetype ending might vary and can be specified with `--<tool>_file`. For example if the user wants to run ampcombi on results from both ampir and amplify, `--ampir_file '.tsv' --amplify_file '.tsv'` . This creates a dictionary with keys and items. i.e. `'{"key1":"item1", "key2":"item2"}'`
 - Note that `--sample_list` can also be given if only specfic samples are needed from the driectory.
 
 The path to the folder containing the respective protein fasta files has to be provided with `--faa`. The files have to be named with `<samplename>.faa`.
@@ -74,27 +76,27 @@ Structure of the results folder:
 amp_results/
 ├── tool_1/
 |   ├── sample_1/
-|   |   └── sample_1.tool_1.tsv
+|   |   └── sample_1.tsv
 |   └── sample_2/
-|   |   └── sample_2.tool_1.tsv
+|   |   └── sample_2.tsv
 ├── tool_2/
 |   ├── sample_1/
-|   |   └── sample_1.tool_2.txt
+|   |   └── sample_1.txt
 |   └── sample_2/
-|   |   └── sample_2.tool_2.txt
+|   |   └── sample_2.txt
 ├── tool_3/
     ├── sample_1/
-    |   └── sample_1.tool_3.predict
+    |   └── sample_1.predict
     └── sample_2/
-        └── sample_2.tool_3.predict
+        └── sample_2.predict
 ```
 
-2. Using `--path_list` and `--sample_list`
+1. Using `--path_list` and `--sample_list`
 
 ```console
 ampcombi \
---path_list path_to_sample_1_tool_1.csv path_to_sample_1_tool_1.csv \
---path_list path_to_sample_2_tool_1.csv path_to_sample_2_tool_1.csv \
+--path_list path_to_sample_1_tool_1.csv path_to_sample_1.csv \
+--path_list path_to_sample_2_tool_1.csv path_to_sample_2.csv \
 --sample_list sample_1 sample_2 \
 --faa path/to/sample_faa_files/
 ```
@@ -154,8 +156,8 @@ In `ampcombi/reformat_tables.py`
 - add the new function to the `read_path` function
 
 
-In `ampcombi/main.py`
-- add your default `tool:tool.fileending` to the default of `--tooldict`
+In `ampcombi/ampcombi.py`
+- add a new parameter equivalent to the tool `<--tool_file>`.
 
 
 ======================

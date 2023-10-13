@@ -101,9 +101,9 @@ if amppred_file is not None:
 tools = [key for key in tooldict]
 # extract list of tool-output file-endings. If not given, default dict contains default endings.
 fileending = [val for val in tooldict.values()]
+#print(tooldict)
+#print(tools, fileending)
 
-print(tooldict)
-print(tools, fileending)
 # supress panda warnings
 warnings.simplefilter(action='ignore', category=FutureWarning)
 
