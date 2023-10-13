@@ -16,6 +16,8 @@ v<0.1.6>, <02.11.2022>
     -- included check if database was downloaded once to not download again
 v<0.1.7>, <03.11.2022>
     -- Included the possibility of only submitting one .faa file instead of the faa-folder path (in case of summarizing only one single sample)
+v<0.1.8>, <14.02.2023>
+    -- Linked to Zenodo archive
 v<0.1.9>, <XX.10.2023>
     -- Change the output extension from `.csv` to `.tsv`
     -- Added parameter `--hmm_evalue` to filter the hmm results in table based on evalue
@@ -29,3 +31,4 @@ v<0.1.9>, <XX.10.2023>
     -- Fixed hmmsearch to now parse both single and multi models
     -- Fixed the dependencies in the environment.yml file
     -- Added a log file for each sample, besides the main log for the complete summary. Beneficial when used in pipelines like nfcore/funcscan
+    -- Removed tooldictionary parameter '--tooldict' and added a parameter for each tool instead '--tool_file' to assign the extension of the files per tool.

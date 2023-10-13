@@ -34,14 +34,14 @@ def check_faa_path(faa_path, samplename):
     if(os.path.isdir(faa_path)):
         path_list = list(pathlib.Path(faa_path).rglob(f"*{samplename}*.faa"))
         if (len(path_list)>1):
-            sys.exit(f'AMPcombi interrupted: There is more than one .faa file for {samplename} in the folder given with --faa_path')
+            sys.exit(f'AMPcombi interrupted: There is more than one .faa file for {samplename} in the folder given with --faa')
         elif(not path_list):
-            sys.exit(f'AMPcombi interrupted: There is no .faa file containing {samplename} in the folder given with --faa_path')
+            sys.exit(f'AMPcombi interrupted: There is no .faa file containing {samplename} in the folder given with --faa')
         return path_list[0]
     elif(os.path.isfile(faa_path)):
         return faa_path
     else:
-        sys.exit(f'AMPcombi interrupted: The input given with --faa_path does not seem to be a valid directory or file. Please check.')
+        sys.exit(f'AMPcombi interrupted: The input given with --faa does not seem to be a valid directory or file. Please check.')
 
     
 

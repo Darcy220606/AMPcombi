@@ -36,7 +36,7 @@ parser.add_argument("--amp_results", dest="amp", nargs='?', help="Enter the path
                     type=str, default='./test_files/')
 parser.add_argument("--sample_list", dest="samples", nargs='*', help="Enter a list of sample-names, e.g. sample_1 sample_2 sample_n. \n If not given, the sample-names will be inferred from the folder structure",
                     default=[])
-parser.add_argument("--path_list", dest="files", nargs='*', action='append', help="Enter the list of paths to the files to be summarized as a list of lists, e.g. --path_list path/to/my/sample1.ampir.tsv path/to/my/sample1.amplify.tsv --path_list path/to/my/sample2.ampir.ts path/to/my/sample2.amplify.tsv. \n If not given, the file-paths will be inferred from the folder structure",
+parser.add_argument("--path_list", dest="files", nargs='*', action='append', help="Enter the list of paths to the files to be summarized as a list of lists, e.g. --path_list path/to/my/sample1.ampir.tsv path/to/my/sample1.amplify.tsv --path_list path/to/my/sample2.ampir.tsv path/to/my/sample2.amplify.tsv. \n If not given, the file-paths will be inferred from the folder structure",
                     default=[])
 parser.add_argument("--amp_cutoff", dest="p", help="Enter the probability cutoff for AMPs for all tools except for HMMsearch \n (default: %(default)s)",
                     type=float, default=0)
@@ -48,8 +48,24 @@ parser.add_argument("--aminoacid_length", dest="length", help="Enter the length 
                     type=int, default=100)
 parser.add_argument("--faa", dest="faa", help="Enter the path to the folder containing the reference .faa files or to one .faa file (running only one sample). Filenames have to contain the corresponding sample-name, i.e. sample_1.faa \n (default: %(default)s)",
                     type=str, default='./test_faa/')
-parser.add_argument("--tooldict", dest="tools", help="Enter a dictionary of the AMP-tools used with their output file endings (as they appear in the directory tree), \n Tool-names have to be written as in default: \n (default: %(default)s)",
-                    type=str, default='{"ampir":"ampir.tsv", "amplify":"amplify.tsv", "macrel":"macrel.tsv", "neubi":"neubi.fasta", "ampgram":"ampgram.tsv", "amptransformer":"amptransformer.txt", "hmmer_hmmsearch":"hmmsearch.txt", "ensembleamppred":"ensembleamppred.txt"}')
+parser.add_argument("--ampir_file", dest="ampir", nargs='?', help="If AMPir was used, enter the ending of the input files (as they appear in the directory tree), e.g. 'ampir.tsv'",
+                    type=str, default=None)
+parser.add_argument("--amplify_file", dest="amplify", nargs='?', help="If AMPlify was used, enter the ending of the input files (as they appear in the directory tree), e.g. 'amplify.tsv'",
+                    type=str, default=None)
+parser.add_argument("--macrel_file", dest="macrel", nargs='?', help="If Macrel was used, enter the ending of the input files (as they appear in the directory tree), e.g. 'macrel.tsv'",
+                    type=str, default=None)
+parser.add_argument("--neubi_file", dest="neubi", nargs='?', help="If Neubi was used, enter the ending of the input files (as they appear in the directory tree), e.g. 'neubi.fasta'",
+                    type=str, default=None)
+parser.add_argument("--hmmsearch_file", dest="hmmsearch", nargs='?', help="If HMMer/HMMsearch was used, enter the ending of the input files (as they appear in the directory tree), e.g. 'hmmsearch.txt'",
+                    type=str, default=None)
+parser.add_argument("--ensemblamppred_file", dest="amppred", nargs='?', help="If EnsemblAMPpred was used, enter the ending of the input files (as they appear in the directory tree), e.g. 'ensembleamppred.txt'",
+                    type=str, default=None)
+parser.add_argument("--ampgram_file", dest="ampgram", nargs='?', help="If AMPgram was used, enter the ending of the input files (as they appear in the directory tree), e.g. 'ampgram.txt'",
+                    type=str, default=None)
+parser.add_argument("--amptransformer_file", dest="amptransformer", nargs='?', help="If AMPtransformer was used, enter the ending of the input files (as they appear in the directory tree), e.g. 'amptransformer.txt'",
+                    type=str, default=None)
+#parser.add_argument("--tooldict", dest="tools", help="Enter a dictionary of the AMP-tools used with their output file endings (as they appear in the directory tree), \n Tool-names have to be written as in default: \n (default: %(default)s)",
+#                    type=str, default='{"ampir":"ampir.tsv", "amplify":"amplify.tsv", "macrel":"macrel.tsv", "neubi":"neubi.fasta", "ampgram":"ampgram.tsv", "amptransformer":"amptransformer.txt", "hmmer_hmmsearch":"hmmsearch.txt", "ensembleamppred":"ensembleamppred.txt"}')
 parser.add_argument("--amp_database", dest="ref_db", nargs='?', help="Enter the path to the folder containing the reference database files (.fa and .tsv); a fasta file and the corresponding table with functional and taxonomic classifications. \n (default: DRAMP database)",
                     type=str, default=None)
 parser.add_argument("--complete_summary", dest="complete", nargs='?', help="Concatenates all sample summaries to one final summary and outputs both csv and interactive html files",
@@ -68,20 +84,48 @@ path = args.amp
 samplelist_in = args.samples
 filepaths_in = args.files
 p = args.p
+aa_len = args.length
 dbevalue = args.dbevalue
 hmmevalue = args.hmmevalue
 faa_path = args.faa
-tooldict = json.loads(args.tools)
+#tooldict = json.loads(args.tools)
+ampir_file = args.ampir
+amplify_file = args.amplify
+macrel_file = args.macrel
+neubi_file = args.neubi
+ampgram_file = args.ampgram
+amptransformer_file = args.amptransformer
+hmmer_file = args.hmmsearch
+amppred_file = args.amppred
 database = args.ref_db
 complete_summary = args.complete
 threads = args.cores
-aa_len = args.length
 
 # additional variables
+tooldict = dict()
+#check fileending input (at least one has to be given)
+if ampir_file is not None:
+    tooldict['ampir'] = ampir_file
+if amplify_file is not None:
+    tooldict['amplify'] = amplify_file
+if macrel_file is not None:
+    tooldict['macrel'] = macrel_file
+if neubi_file is not None:
+    tooldict['neubi'] = neubi_file
+if ampgram_file is not None:
+    tooldict['ampgram'] = ampgram_file
+if amptransformer_file is not None:
+    tooldict['amptransformer'] = amptransformer_file
+if hmmer_file is not None:
+    tooldict['hmmer_hmmsearch'] = hmmer_file
+if amppred_file is not None:
+    tooldict['ensembleamppred'] = amppred_file
 # extract list of tools from input dictionary. If not given, default dict contains all possible tools
 tools = [key for key in tooldict]
 # extract list of tool-output file-endings. If not given, default dict contains default endings.
 fileending = [val for val in tooldict.values()]
+#print(tooldict)
+#print(tools, fileending)
 
 # supress panda warnings
 warnings.simplefilter(action='ignore', category=FutureWarning)
@@ -151,11 +195,11 @@ def main_workflow():
             print(f'Processing AMP-files from sample: {samplelist[i]}')
             os.makedirs(samplelist[i], exist_ok=True)
             # fill main_list with tool-output filepaths for sample i
-            read_path(main_list, filepaths[i], p, tooldict, faa_path, samplelist[i])
+            read_path(main_list, filepaths[i], p, hmmevalue, tooldict, faa_path, samplelist[i])
             # get the path to the samples' corresponding faa file
             faa_name = check_faa_path(faa_path, samplelist[i])
             # use main_list to create the summary file for sample i
-            summary_df = summary(main_list, samplelist[i], faa_name)
+            summary_df = summary(main_list, samplelist[i], faa_name, aa_len)
             # Generate the AMP-faa.fasta for sample i
             out_path = samplelist[i] +'/'+samplelist[i]+'_amp.faa'
             amp_fasta(summary_df, faa_name, out_path)
