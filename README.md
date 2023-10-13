@@ -14,12 +14,16 @@ For parsing: AMPcombi is developed to parse the output of these **AMP prediction
 | HMMsearch  | 3.3.2  | https://github.com/EddyRivasLab/hmmer |
 | EnsembleAMPpred  | - | https://pubmed.ncbi.nlm.nih.gov/33494403/ |
 | NeuBI  | -  | https://github.com/nafizh/NeuBI |
+| AMPgram  | -  | https://github.com/michbur/AmpGram |
+| AMPtransformer  | -  | https://github.com/Brendan-P-Moore/AMPTransformer |
 
 For classification: AMPcombi is developed to offer functional annotation of the detected AMPs by alignment to an **AMP reference databases**, for e.g.,:
 
 | Tool | Version | Link |
 | ------------- | ------------- | ------------- |
 | DRAMP  | 3.0 | https://github.com/CPU-DRAMP/DRAMP-3.0 |
+
+<span style="color:yellow">**Please Note:** In the latest version of AMPcombi, if no database is provided by the user, it will automatically download the [DRAMP db](https://github.com/CPU-DRAMP/DRAMP-3.0)</span>
 
 Alignment to the reference database is done using [diamond blastp v.2.0.15](https://www.nature.com/articles/s41592-021-01101-x)
 
@@ -29,7 +33,12 @@ Alignment to the reference database is done using [diamond blastp v.2.0.15](http
 
 To install AMPcombi:
 
-Add dependencies of the tool; `python` > 3.0, `biopython`, `pandas` and `diamond`.
+Install the dependencies of the tool:
+- `python` > 3.0
+- `biopython`
+- `pandas`
+- `diamond`
+  
 Installation can be done using:
 
  - pip installation
@@ -111,10 +120,13 @@ Either the path to the folder containing the respective protein fasta files has 
 | --amp_results | path to the folder containing different tool's output files | ./test_files/ | ../amp_results/ |
 | --sample_list  | list of samples' names | - | sample_1 sample_2 |
 | --path_list  | list of paths to output files | - | path_to_sample_1_tool_1.csv path_to_sample_1_tool_1.csv |
-| --cutoff  | probability cutoff to filter AMPs | 0 | 0.5 |
+| --amp_cutoff  | probability cutoff to filter AMPs by probability (not applicable for hmmsearch) | 0 | 0.5 |
+| --hmm_evalue  | probability cutoff to filter AMPs by evalue (only applicable for HMMsearch) | None | 0.05 |
+| --db_evalue  | probability cutoff to filter database classifications by evalue -any hit with value below this will have it's database classification removed-| None | 0.05 |
+| --aminoacid_length  | probability cutoff to filter AMP hits by the length of the amino acid sequence| 100 | 60 |
 | --faa  | path to the folder containing the samples`.faa` files or, in case of only one sample, the path to the corresponding `.faa` file. Filenames have to contain the corresponding sample-name, i.e. sample_1.faa | ./test_faa/ | ./faa_files/|
-| --tooldict | dictionary of AMP-tools and their respective output file endings | '{"ampir":"ampir.tsv", "amplify":"amplify.tsv", "macrel":"macrel.tsv", "hmmer_hmmsearch":"hmmsearch.txt", "ensembleamppred":"ensembleamppred.txt"}' | - |
-| --amp_database | path to the folder containing the reference database files: (1) a fasta file with <.fasta> file extension and (2) the corresponding table with with functional and taxonomic classifications in <.tsv> file extension | [DRAMP 'general amps'](http://dramp.cpu-bioinfor.org/downloads/) database | ./amp_ref_database/ |
+| --tooldict | dictionary of AMP-tools and their respective output file endings | '{"ampir":"ampir.tsv", "amplify":"amplify.tsv", "macrel":"macrel.tsv", "hmmer_hmmsearch":"hmmsearch.txt", "ensembleamppred":"ensembleamppred.txt", "ampgram":"ampgram.tsv", "amptransformer":"amptransformer.txt"}' | - |
+| --amp_database | path to the folder containing the reference database files: (1) a fasta file with <.fasta> file extension and (2) the corresponding table with functional and taxonomic classifications in <.tsv> file extension | [DRAMP 'general amps'](http://dramp.cpu-bioinfor.org/downloads/) database | ./amp_ref_database/ |
 | --complete_summary | concatenates all samples' summarized tables into one and generates both 'csv' and interactive 'html' files | False | True |
 | --log  | print messages into log file instead of stdout | False | True |
 | --threads  | adjust the number of threads required for DIAMOND alignemnt depending on the computing resources available  | 4 | 32 |
@@ -133,15 +145,17 @@ The output will be written into your working directory, containing the following
 |   └── general_amps_<DATE>.tsv
 ├── sample_1/
 |   ├── sample_1_amp.faa
-|   ├── sample_1_ampcombi.csv
-|   └── sample_1_diamond_matches.txt
+|   ├── sample_1_ampcombi.tsv
+|   ├── sample_1_diamond_matches.txt
+|   └── sample_1_ampcombi.log
 ├── sample_2/
 |   ├── sample_2_amp.faa
-|   ├── sample_2_ampcombi.csv
-|   └── sample_2_diamond_matches.txt
-├── AMPcombi_summary.csv
+|   ├── sample_2_ampcombi.tsv
+|   ├── sample_2_diamond_matches.txt
+|   └── sample_2_ampcombi.log
+├── AMPcombi_summary.tsv
 ├── AMPcombi_summary.html
-└── ampcombi.log
+└── Ampcombi.log
 ```
 
 ======================

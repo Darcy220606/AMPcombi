@@ -5,7 +5,7 @@ with open('README.md') as fh:
 
 setup(
     name='AMPcombi',
-    version='0.1.7',
+    version='0.1.9',
     author='Anan Ibrahim, Louisa Perelo',
     author_email='ananhamido@hotmail.com, louperelo@gmail.com',
     packages=['ampcombi'],
@@ -16,6 +16,8 @@ setup(
              'ampcombi/diamond_alignment.sh',
              'ampcombi/diamond_makedb.sh',
              'ampcombi/reformat_tables.py',
+             'ampcombi/functionality.py',
+             'ampcombi/hmm_to_csv_input_file.py',
              'ampcombi/print_header.py',
              'ampcombi/version.py',
              'ampcombi/visualise_complete_summary.py',

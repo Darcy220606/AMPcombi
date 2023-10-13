@@ -23,7 +23,9 @@ def download_DRAMP(db):
     ##Convert excel to tab sep file and write it to a file in the DRAMP_db directly with the date its downloaded
     date = datetime.now().strftime("%Y_%m_%d")
     ref_amps=pd.read_excel (db +'/'+ r'general_amps.xlsx')
-    ref_amps.to_csv (db +'/' + f'general_amps_{date}.tsv', index = None, header=True,sep='\t')
+    # Add the column names you want to keep
+    columns_to_keep = ['DRAMP_ID','Sequence', 'Family', 'Source', 'PDB_ID','Linear/Cyclic/Branched','Other_Modifications','Pubmed_ID','Reference']
+    ref_amps[columns_to_keep].to_csv (db +'/' + f'general_amps_{date}.tsv', index = None, header=True,sep='\t')
     ##Download the (fasta) file and store it in a results directory 
     urlfasta = 'http://dramp.cpu-bioinfor.org/downloads/download.php?filename=download_data/DRAMP3.0_new/general_amps.fasta'
     z = requests.get(urlfasta)
@@ -59,7 +61,7 @@ def create_diamond_ref_db(db,threads):
 ########################################
 #  FUNCTION: DIAMOND ALIGNMENT
 #########################################
-def diamond_alignment(db, amp_faa_paths, amp_matches,threads):
+def diamond_alignment(db, amp_faa_paths, amp_matches,threads, dbevalue):
     #create temp folder and delete at the end
     cwd = os.getcwd()
     for path in amp_faa_paths:
@@ -68,9 +70,13 @@ def diamond_alignment(db, amp_faa_paths, amp_matches,threads):
         subprocess.run('diamond_alignment.sh', text=True, input=f'{path}\n{temp}\n{db}\n{threads}')
         shutil.move(temp+'/diamond_matches.tsv', amp_matches)
         shutil.rmtree(temp)
-        # mege the diamond_alignment with the ref_db table
+        # merge the diamond_alignment with the ref_db table
         dd_align = pd.read_csv(amp_matches, delimiter='\t')
         dd_align = dd_align[['target_id','contig_id','pident','evalue']]
+        # make sure the evalues are float type 
+        dd_align['evalue'] = dd_align['evalue'].astype(float)
+        # removes only the classification below evalue
+        dd_align = dd_align[dd_align['evalue'] <= float(dbevalue)]
         for file in os.listdir(db):
             if file.endswith('.tsv'):
                 path_2 = os.path.join(os.path.abspath(db) + '/' + file)
