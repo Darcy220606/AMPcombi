@@ -207,7 +207,7 @@ def main_workflow():
             print(f'The fasta containing AMP sequences for {samplelist[i]} was saved to {samplelist[i]}/ \n')
             amp_matches = samplelist[i] +'/'+samplelist[i]+'_diamond_matches.txt'
             print(f'The diamond alignment for {samplelist[i]} in progress ....')
-            diamond_df = diamond_alignment(db, amp_faa_paths, amp_matches, threads)
+            diamond_df = diamond_alignment(db, amp_faa_paths, amp_matches, threads, dbevalue)
             print(f'The diamond alignment for {samplelist[i]} was saved to {samplelist[i]}/.')
             # Merge summary_df and diamond_df
             sample_summary_df = pd.merge(summary_df, diamond_df, on = 'contig_id', how='left')
