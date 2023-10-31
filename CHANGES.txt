@@ -20,10 +20,6 @@ v<0.1.8>, <14.02.2023>
     -- Linked to Zenodo archive
 v<0.1.9>, <XX.10.2023>
     -- Change the output extension from `.csv` to `.tsv`
-    -- Added parameter `--hmm_evalue` to filter the hmm results in table based on evalue
-    -- Added the parameter `--aminoacid_length` to retain hits with a specific length
-    -- Added the paarmeter `db_evalue` to filter out classification hits below specific diamond evalues
-    -- Renamed the parameter `--cutoff` to `--amp_cutoff`
     -- Added a new feature to estimates the isoelectric point, mwt, structure fraction and hydrophobicity
     -- The DRAMP db `.tsv` was filtered to retain only necessary columns
     -- Added the tool AMPtransformer
@@ -31,4 +27,12 @@ v<0.1.9>, <XX.10.2023>
     -- Fixed hmmsearch to now parse both single and multi models
     -- Fixed the dependencies in the environment.yml file
     -- Added a log file for each sample, besides the main log for the complete summary. Beneficial when used in pipelines like nfcore/funcscan
-    -- Removed tooldictionary parameter '--tooldict' and added a parameter for each tool instead '--tool_file' to assign the extension of the files per tool.
+    -- Removed tooldictionary parameter '--tooldict' and added a parameter for each tool instead '--tool_file' to assign the extension of the files per tool
+    -- Added the parameter `--hmm_evalue` to filter the hmm results in table based on evalue
+    -- Added the parameter `--aminoacid_length` to retain hits with a specific length
+    -- Added the paarmeter `db_evalue` to filter out classification hits below specific diamond evalues
+    -- Renamed the parameter `--cutoff` to `--amp_cutoff`
+    -- Added the parameter '--gbk' to add gbk files as input for parsing to add contig ids and other important values
+    -- Added the parametr '--window_size_stop_codon' that adjusts the window size to look for stop codons
+    -- Added the parameter '--remove_stop_codons' that removes hits with no stop codons found in teh vicinity
+    -- Added the parameter '--window_size_transporter' that adjusts the window size to look for 'transporter' proteins
