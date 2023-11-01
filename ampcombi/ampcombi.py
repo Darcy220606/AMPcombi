@@ -199,8 +199,11 @@ def main_workflow():
                     sample_summary_df_functions = functionality(sample_summary_df)
                     print(f'The estimation of functional and structural properties for {samplelist[i]} in progress ....')
                     sample_summary_df = sample_summary_df_functions
-                    # Add contig_ids and filter by stop codon presence
-                    sample_summary_df = gbkparsing(sample_summary_df, gbk_dir, stop_codon_window, filter_stop_codon, transporter_window)
+                    # Add contig_ids and filter by stop codon presence and extract new gbks
+                    outgbk = samplelist[i] + '/contig_gbks'
+                    # Create the new gbks dir
+                    os.makedirs(outgbk, exist_ok=True)
+                    sample_summary_df = gbkparsing(sample_summary_df, gbk_dir, stop_codon_window, transporter_window, filter_stop_codon, outgbk)
                     print(f'Parsing of the corresponding genebank file for {samplelist[i]} in progress ....')
                     # Write sample summary into sample output folder
                     sample_summary_df.to_csv(samplelist[i] +'/'+samplelist[i]+'_ampcombi.tsv', sep='\t', index=False)
@@ -235,8 +238,11 @@ def main_workflow():
             sample_summary_df_functions = functionality(sample_summary_df)
             print(f'The estimation of functional and structural properties for {samplelist[i]} in progress ....')
             sample_summary_df = sample_summary_df_functions
-            # Add contig_ids and filter by stop codon presence
-            sample_summary_df = gbkparsing(sample_summary_df, gbk_dir, stop_codon_window, filter_stop_codon, transporter_window)
+            # Add contig_ids and filter by stop codon presence and extract new gbks
+            outgbk = samplelist[i] + '/contig_gbks'
+            # Create the new gbks dir
+            os.makedirs(outgbk, exist_ok=True)
+            sample_summary_df = gbkparsing(sample_summary_df, gbk_dir, stop_codon_window, transporter_window, filter_stop_codon, outgbk)
             print(f'Parsing of the corresponding genebank file for {samplelist[i]} in progress ....')
             # Write sample summary into sample output folder
             sample_summary_df.to_csv(samplelist[i] +'/'+samplelist[i]+'_ampcombi.tsv', sep='\t', index=False)

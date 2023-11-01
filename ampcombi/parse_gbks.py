@@ -34,7 +34,7 @@ def ampcombi_input(sample_ampcombi_file):
 ########################################
 #  FUNCTION: Parse the GBK/GBFF file 
 #########################################
-def gbk_parse(gbk_dir, stop_codon_window, ampcombi_dict_mod, transporter_window):
+def gbk_parse(gbk_dir, stop_codon_window, ampcombi_dict_mod, transporter_window,filter_stop_codon, outgbk):
     """
     This parses the gbk files in two steps:
     
@@ -178,12 +178,28 @@ def gbk_parse(gbk_dir, stop_codon_window, ampcombi_dict_mod, transporter_window)
                                             #print(f"Codon sequence '{stop_minus}' not found in the window up and down stream of the hit '{start}'") 
                                             dict['CDS_stop_codon_found'] = 'no'
                                         listdict.append(dict.copy())
+                    
+                    # if flagged remove hits with no stop codons found
+                    if filter_stop_codon == True:
+                        listdict = [d for d in listdict if d.get('CDS_stop_codon_found') != 'no']
+
+                    #########
+                    #  Step3: Extract the new gbks that contain the hits
+                    #########
+                    for item in listdict:
+                        if item['name'] in filename and item['contig_name'] == record.id:
+                            name = item['name']
+                            contig_name = item['contig_name']
+                            new_seq_record = record
+                            print(f'writing {name}_{contig_name}.gbk')
+                            SeqIO.write(new_seq_record, f'{outgbk}/{name}_{contig_name}.gbk', "genbank")
+
     return listdict
 
 ########################################
 #  FUNCTION: Extract contig names, and transporters if present and filter by stop codon presence and add 
 #########################################
-def gbkparsing(sample_ampcombi_file, gbk_dir, stop_codon_window, filter_stop_codon, transporter_window):
+def gbkparsing(sample_ampcombi_file, gbk_dir, stop_codon_window, transporter_window, filter_stop_codon, outgbk):
     """
     This parses the ampcombi and gbk files, and extracts necessary information like:
     contig_name, CDS_location, stop codon and any transporter found in the vicinity,
@@ -191,7 +207,7 @@ def gbkparsing(sample_ampcombi_file, gbk_dir, stop_codon_window, filter_stop_cod
     """
 
     ampcombi_main, ampcombi_dict_mod = ampcombi_input(sample_ampcombi_file)
-    listdict = gbk_parse(gbk_dir, stop_codon_window, ampcombi_dict_mod, transporter_window)
+    listdict = gbk_parse(gbk_dir, stop_codon_window, ampcombi_dict_mod, transporter_window, filter_stop_codon, outgbk)
     
     # clear the dictionary to clear memory allocated
     ampcombi_dict_mod.clear()                      
@@ -203,10 +219,5 @@ def gbkparsing(sample_ampcombi_file, gbk_dir, stop_codon_window, filter_stop_cod
 
     # clear the dictionary to clear memory allocated
     listdict.clear()                      
-
-    # only on if filter by stop codons presence = True otherwise all hits are retained
-    if filter_stop_codon == True:
-        # Filter out hits that have 'no' in the CDS_stop_codon_found
-        merged_df = merged_df[merged_df['CDS_stop_codon_found'] != 'no']
 
     return merged_df
