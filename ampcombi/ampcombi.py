@@ -253,7 +253,7 @@ def main_workflow():
             complete_summary_df = pd.concat([complete_summary_df, sample_summary_df], ignore_index=True)
             complete_summary_df.to_csv('AMPcombi_summary.tsv', sep='\t', index=False)
             html_generator() 
-            print(f'\n FINISHED: File AMPcombi_summary.tsv and folder AMPcombi_interactive_summary/ were saved to your current working directory.')
+            print(f'\n FINISHED: Appended {samplelist[i]} summary file to complete AMPcombi_summary.tsv (and folder AMPcombi_interactive_summary/ were) and saved to your current working directory.')
         else: 
             print(f'\n FINISHED: AMPcombi created summaries for all input samples.')
 
