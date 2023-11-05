@@ -18,6 +18,7 @@ from amp_database import *
 from print_header import *
 from visualise_complete_summary import *
 from functionality import *
+from optional_inputs import *
 
 # Define input arguments:
 parser = argparse.ArgumentParser(prog = 'ampcombi', formatter_class=argparse.RawDescriptionHelpFormatter,
@@ -70,6 +71,8 @@ parser.add_argument("--amp_database", dest="ref_db", nargs='?', help="Enter the 
                     type=str, default=None)
 parser.add_argument("--complete_summary", dest="complete", nargs='?', help="Concatenates all sample summaries to one final summary and outputs both csv and interactive html files",
                     type=bool, default=False)
+parser.add_argument("--metadata", dest="addmetadata", help="Adds metadata to the samples given a path to the file. The metadata table can have more information to identify the samples e,g, 'path/to/metadata.tsv' , but its important that the first column contains the sample names. \n (default: %(default)s)",
+                    type=str, default=None)
 parser.add_argument("--log", dest="log_file", nargs='?', help="Silences the standard output and captures it in a log file)",
                     type=bool, default=False)
 parser.add_argument("--threads", dest="cores", nargs='?', help="Changes the threads used for DIAMOND alignment (default: %(default)s)",
@@ -99,6 +102,7 @@ hmmer_file = args.hmmsearch
 amppred_file = args.amppred
 database = args.ref_db
 complete_summary = args.complete
+add_metadata = args.addmetadata
 threads = args.cores
 
 # additional variables
@@ -184,6 +188,9 @@ def main_workflow():
                     sample_summary_df_functions = functionality(sample_summary_df)
                     print(f'The estimation of functional and structural properties for {samplelist[i]} in progress ....')
                     sample_summary_df = sample_summary_df_functions
+                    # Merge metadata if present
+                    metadata_df = metadata_addition(sample_summary_df, add_metadata)
+                    sample_summary_df = metadata_df
                     # Write sample summary into sample output folder
                     sample_summary_df.to_csv(samplelist[i] +'/'+samplelist[i]+'_ampcombi.csv', sep=',', index=False)
                     print(f'The summary file for {samplelist[i]} was saved to {samplelist[i]}/.')
@@ -217,6 +224,9 @@ def main_workflow():
             sample_summary_df_functions = functionality(sample_summary_df)
             print(f'The estimation of functional and structural properties for {samplelist[i]} in progress ....')
             sample_summary_df = sample_summary_df_functions
+            # Merge metadata if present
+            metadata_df = metadata_addition(sample_summary_df, add_metadata)
+            sample_summary_df = metadata_df
             # Write sample summary into sample output folder
             sample_summary_df.to_csv(samplelist[i] +'/'+samplelist[i]+'_ampcombi.csv', sep=',', index=False)
             print(f'The summary file for {samplelist[i]} was saved to {samplelist[i]}/.')
