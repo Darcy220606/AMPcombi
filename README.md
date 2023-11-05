@@ -4,7 +4,11 @@
 
 This tool parses the results of antimicrobial peptide (AMP) prediction tools into a single table and aligns the hits against a reference AMP database for functional classifications.
 
-For parsing: AMPcombi is developed to parse the output of these **AMP prediction tools**:
+======================
+## Tool functions
+======================
+
+<span style="color:green">*For parsing: AMPcombi is developed to parse the output of only these **AMP prediction tools**:
  
 | Tool | Version | Link |
 | ------------- | ------------- | ------------- |
@@ -17,15 +21,24 @@ For parsing: AMPcombi is developed to parse the output of these **AMP prediction
 | AMPgram  | -  | https://github.com/michbur/AmpGram |
 | AMPtransformer  | -  | https://github.com/Brendan-P-Moore/AMPTransformer |
 
-For classification: AMPcombi is developed to offer functional annotation of the detected AMPs by alignment to an **AMP reference databases**, for e.g.,:
+<span style="color:green">For classification: AMPcombi is developed to offer 
+- functional annotation of the detected AMPs by alignment to an **AMP reference databases** using [diamond blastp v.2.0.15](https://www.nature.com/articles/s41592-021-01101-x), for e.g.,:
 
 | Tool | Version | Link |
 | ------------- | ------------- | ------------- |
 | DRAMP  | 3.0 | https://github.com/CPU-DRAMP/DRAMP-3.0 |
 
-<span style="color:yellow">**Please Note:** In the latest version of AMPcombi, if no database is provided by the user, it will automatically download the [DRAMP db](https://github.com/CPU-DRAMP/DRAMP-3.0)</span>
+<span style="color:grey">**Please Note:** If no database is provided by the user, AMPcombi will automatically download the [DRAMP db](https://github.com/CPU-DRAMP/DRAMP-3.0) and use the files for classification</span>
 
-Alignment to the reference database is done using [diamond blastp v.2.0.15](https://www.nature.com/articles/s41592-021-01101-x)
+- structural and physical annotations by providing teh corresponding molecularweight, isoelectric point, hydrophobicity, pH and the fraction of helix turns and beta sheets.
+
+<span style="color:green">For filtering AMP hits: AMPcombi is developed to filter hits based on
+
+- their AMP probabilities from the different AMP tools (evalues in case of HMMsearch)
+- the presence of stop-codons and transporter genes downstream and upstream of the AMP hit.
+
+<span style="color:green">For comparison purposes: AMPcombi allows the user to 
+- add more details to the AMP hits, e.g., metadata, pydamage, contig taxonomic classification, etc..
 
 ======================
 ## Installation
@@ -33,13 +46,14 @@ Alignment to the reference database is done using [diamond blastp v.2.0.15](http
 
 To install AMPcombi:
 
-Install the dependencies of the tool:
+First, install the dependencies of the tool ⬇ the carry on with the AMPcombi tool installation
 - `python` > 3.0
 - `biopython`
 - `pandas`
 - `diamond`
   
-Installation can be done using:
+
+Installation of AMPcombi (the tool) can be done using:
 
  - pip installation
 ```
@@ -64,11 +78,12 @@ or
 
 There are two basic commands to run AMPcombi:
 
-1. Using `--amp_results`
+1. *By folder:*  Using `--amp_results`
 ```console
 ampcombi \
 --amp_results path/to/my/result_folder/ \
 --faa path/to/sample_faa_files/ \
+--gbk path/to/sample_gbk/gbff_files/ \
 --<tool>_file '.tsv'
 ```
 *<tool> can be ampir, macrel, amplify, hmmsearch, amppred, ampgram, amptransformer*
@@ -79,7 +94,9 @@ Here the head folder containing output files has to be given. AMPcombi finds and
 
 The path to the folder containing the respective protein fasta files has to be provided with `--faa`. The files have to be named with `<samplename>.faa`.
 
-Structure of the results folder:
+The path to the folder containing the respective genebank files has to be provided with `--gbk`. This can be the output from `prokka`, `pyrodigal` as `.gbk` and from `bakta` as `gbff`. The files have to be named with `<samplename>.faa` and `<samplename>.gbk/gbff`.
+
+Structure of the results folder to be used as input for `--amp_results`:
 
 ```console
 amp_results/
@@ -99,19 +116,26 @@ amp_results/
     └── sample_2/
         └── sample_2.predict
 ```
+In this case the command should include:
+```console
+--<tool1>_file '.tsv' --<tool2>_file '.txt' --<tool3>_file '.predict' \
+```
 
-1. Using `--path_list` and `--sample_list`
+1. *By lists:* Using `--path_list` and `--sample_list`
 
 ```console
 ampcombi \
 --path_list path_to_sample_1_tool_1.csv path_to_sample_1.csv \
 --path_list path_to_sample_2_tool_1.csv path_to_sample_2.csv \
 --sample_list sample_1 sample_2 \
---faa path/to/sample_faa_files/
+--faa path/to/sample_faa_files/ \
+--gbk path/to/sample_gbk/gbff_files/ \
+--<tool>_file '.tsv'
+
 ```
 
 Here the paths to the output-files to be summarized can be given by `--path_list` for each sample. Together with this option a list of sample-names has to be supplied.
-Either the path to the folder containing the respective protein fasta files has to be provided with `--faa` or, in case of only one sample, the path to the corresponding `.faa` file. The files have to be named with `<samplename>.faa`.
+Either the path to the folder containing the respective protein fasta files has to be provided with `--faa` or, in case of only one sample, the path to the corresponding `.faa` file. The files have to be named with `<samplename>.faa`. SAmple applies for the corresponding gbk files using `--gbk`.
 
 
 ### Input options:
@@ -125,12 +149,22 @@ Either the path to the folder containing the respective protein fasta files has 
 | --db_evalue  | probability cutoff to filter database classifications by evalue -any hit with value below this will have it's database classification removed-| None | 0.05 |
 | --aminoacid_length  | probability cutoff to filter AMP hits by the length of the amino acid sequence| 100 | 60 |
 | --faa  | path to the folder containing the samples`.faa` files or, in case of only one sample, the path to the corresponding `.faa` file. Filenames have to contain the corresponding sample-name, i.e. sample_1.faa | ./test_faa/ | ./faa_files/|
-| --tooldict | dictionary of AMP-tools and their respective output file endings | '{"ampir":"ampir.tsv", "amplify":"amplify.tsv", "macrel":"macrel.tsv", "hmmer_hmmsearch":"hmmsearch.txt", "ensembleamppred":"ensembleamppred.txt", "ampgram":"ampgram.tsv", "amptransformer":"amptransformer.txt"}' | - |
+| --gbk  | path to the folder containing the samples`.gbk` or `.gbff` files or, in case of only one sample, the path to the corresponding `.gbk/gbff` file. Filenames have to contain the corresponding sample-name, i.e. sample_1.gbk | ./test_gbk/ | ./gbk_files/|
+| --ampir_file  | file extension corresponding to the ampir results. Filenames have to contain the corresponding sample-name, i.e. sample_1.tsv | None | `.tsv` |
+| --amplify_file  | file extension corresponding to the amplify results. Filenames have to contain the corresponding sample-name, i.e. sample_1.tsv | None | `.tsv` |
+| --macrel_file  | file extension corresponding to the macrel results. Filenames have to contain the corresponding sample-name, i.e. sample_1.tsv | None | `.tsv` |
+| --neubi_file  | file extension corresponding to the neubi results. Filenames have to contain the corresponding sample-name, i.e. sample_1.fasta | None | `.fasta` |
+| --hmmsearch_file  | file extension corresponding to the hmmsearch results. Filenames have to contain the corresponding sample-name, i.e. sample_1.txt | None | `.txt` |
+| --ampgram_file  | file extension corresponding to the ampgram results. Filenames have to contain the corresponding sample-name, i.e. sample_1.tsv | None | `.tsv` |
+| --amptransformer_file  | file extension corresponding to the amptransformer results. Filenames have to contain the corresponding sample-name, i.e. sample_1.txt | None | `.txt` |
+| --window_size_stop_codon  | the length of the window size required to look for stop codons downstream and upstream of the CDS hits | 60 | 40 |
+| --window_size_transporter  | the length of the window size required to look for a 'transporter' e.g. ABC transporter downstream and upstream of the CDS hits | 11 | 20 |
+| --remove_stop_codons  | removes any AMP hits that dont have a stop codon found in the window downstream or upstream of the CDS assigned by '--window_size_stop_codon'. Must be turned on if hits are to be removed | False | True |
 | --amp_database | path to the folder containing the reference database files: (1) a fasta file with <.fasta> file extension and (2) the corresponding table with functional and taxonomic classifications in <.tsv> file extension | [DRAMP 'general amps'](http://dramp.cpu-bioinfor.org/downloads/) database | ./amp_ref_database/ |
 | --complete_summary | concatenates all samples' summarized tables into one and generates both 'csv' and interactive 'html' files | False | True |
 | --log  | print messages into log file instead of stdout | False | True |
 | --threads  | adjust the number of threads required for DIAMOND alignemnt depending on the computing resources available  | 4 | 32 |
-| --version  | print the version number into stdout | - | 0.1.4 |
+| --version  | print the version number into stdout | - | 0.1.9 |
 
  - Note: The fasta file corresponding to the AMP database should not contain any characters other than ['A','C','D','E','F','G','H','I','K','L','M','N','P','Q','R','S','T','V','W','Y']
   - Note: The reference database table should be tab delimited.
@@ -144,11 +178,13 @@ The output will be written into your working directory, containing the following
 |   ├── general_amps_<DATE>_clean.fasta
 |   └── general_amps_<DATE>.tsv
 ├── sample_1/
+|   ├── contig_gbks
 |   ├── sample_1_amp.faa
 |   ├── sample_1_ampcombi.tsv
 |   ├── sample_1_diamond_matches.txt
 |   └── sample_1_ampcombi.log
 ├── sample_2/
+|   ├── contig_gbks
 |   ├── sample_2_amp.faa
 |   ├── sample_2_ampcombi.tsv
 |   ├── sample_2_diamond_matches.txt
@@ -157,6 +193,7 @@ The output will be written into your working directory, containing the following
 ├── AMPcombi_summary.html
 └── Ampcombi.log
 ```
+The folder 'contig_gbks' within each sample result directory contains the GBK files. Each `.gbk` contains the contig annotations in which AMP hits were predicted. This is for further downstream analysis that requires the contig GBKS as input.
 
 ======================
 ## Contribution:
