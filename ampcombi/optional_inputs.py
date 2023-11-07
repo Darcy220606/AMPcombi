@@ -21,6 +21,6 @@ def metadata_addition(merged_df, metadata):
         metadata_df = pd.read_csv(metadata, sep='\t')
         metadata_df.rename(columns={metadata_df.columns[0]: 'name'}, inplace=True)
         # merge it to the df using sample name 'name' as common
-        df1 = merged_df.merge(metadata_df, on=['name'], how='left')
+        df1 = merged_df.merge(metadata_df, on='name', how='left')
         return df1
     
