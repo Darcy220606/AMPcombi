@@ -71,7 +71,7 @@ parser.add_argument("--amp_database", dest="ref_db", nargs='?', help="Enter the 
                     type=str, default=None)
 parser.add_argument("--complete_summary", dest="complete", nargs='?', help="Concatenates all sample summaries to one final summary and outputs both csv and interactive html files",
                     type=bool, default=False)
-parser.add_argument("--metadata", dest="addmetadata", help="Adds metadata to the samples given a path to the file. The metadata table can have more information to identify the samples e,g, 'path/to/metadata.tsv' , but its important that the first column contains the sample names. \n (default: %(default)s)",
+parser.add_argument("--metadata", dest="addmetadata", help="Path to a tsv-file containing sample metadata, e,g, 'path/to/metadata.tsv'. The metadata table can have more information for sample identification that will be added to the output summary. The table needs to contain the sample names in the first column. \n (default: %(default)s)",
                     type=str, default=None)
 parser.add_argument("--log", dest="log_file", nargs='?', help="Silences the standard output and captures it in a log file)",
                     type=bool, default=False)
