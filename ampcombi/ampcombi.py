@@ -71,7 +71,9 @@ parser.add_argument("--amp_database", dest="ref_db", nargs='?', help="Enter the 
                     type=str, default=None)
 parser.add_argument("--complete_summary", dest="complete", nargs='?', help="Concatenates all sample summaries to one final summary and outputs both csv and interactive html files",
                     type=bool, default=False)
-parser.add_argument("--metadata", dest="addmetadata", help="Path to a tsv-file containing sample metadata, e,g, 'path/to/metadata.tsv'. The metadata table can have more information for sample identification that will be added to the output summary. The table needs to contain the sample names in the first column. \n (default: %(default)s)",
+parser.add_argument("--sample_metadata", dest="samplemetadata", help="Path to a tsv-file containing sample metadata, e,g, 'path/to/sample_metadata.tsv'. The metadata table can have more information for sample identification that will be added to the output summary. The table needs to contain the sample names in the first column. \n (default: %(default)s)",
+                    type=str, default=None)
+parser.add_argument("--contig_metadata", dest="contigmetadata", help="Path to a tsv-file containing contig metadata, e,g, 'path/to/contig_metadata.tsv'. The metadata table can have more information for contig classification that will be added to the output summary. The table needs to contain the sample names in the first column and the contig_ID in the second column. This can be the output from MMseqs2, pydamage and MetaWrap. \n (default: %(default)s)",
                     type=str, default=None)
 parser.add_argument("--log", dest="log_file", nargs='?', help="Silences the standard output and captures it in a log file)",
                     type=bool, default=False)
@@ -102,7 +104,8 @@ hmmer_file = args.hmmsearch
 amppred_file = args.amppred
 database = args.ref_db
 complete_summary = args.complete
-add_metadata = args.addmetadata
+add_samplemetadata = args.samplemetadata
+add_contigmetadata = args.contigmetadata
 threads = args.cores
 
 # additional variables
@@ -188,9 +191,12 @@ def main_workflow():
                     sample_summary_df_functions = functionality(sample_summary_df)
                     print(f'The estimation of functional and structural properties for {samplelist[i]} in progress ....')
                     sample_summary_df = sample_summary_df_functions
-                    # Merge metadata if present
-                    metadata_df = metadata_addition(sample_summary_df, add_metadata)
-                    sample_summary_df = metadata_df
+                    # Merge sample metadata if present
+                    sample_metadata_df = sample_metadata_addition(sample_summary_df, add_samplemetadata)
+                    sample_summary_df = sample_metadata_df
+                    # Merge contig metadata if present
+                    contig_metadata_df = sample_metadata_addition(sample_summary_df, add_contigmetadata)
+                    sample_summary_df = contig_metadata_df
                     # Write sample summary into sample output folder
                     sample_summary_df.to_csv(samplelist[i] +'/'+samplelist[i]+'_ampcombi.csv', sep=',', index=False)
                     print(f'The summary file for {samplelist[i]} was saved to {samplelist[i]}/.')
@@ -227,6 +233,9 @@ def main_workflow():
             # Merge metadata if present
             metadata_df = metadata_addition(sample_summary_df, add_metadata)
             sample_summary_df = metadata_df
+            # Merge contig metadata if present
+            contig_metadata_df = sample_metadata_addition(sample_summary_df, add_contigmetadata)
+            sample_summary_df = contig_metadata_df
             # Write sample summary into sample output folder
             sample_summary_df.to_csv(samplelist[i] +'/'+samplelist[i]+'_ampcombi.csv', sep=',', index=False)
             print(f'The summary file for {samplelist[i]} was saved to {samplelist[i]}/.')

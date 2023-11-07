@@ -125,7 +125,8 @@ Either the path to the folder containing the respective protein fasta files has 
 | --db_evalue  | probability cutoff to filter database classifications by evalue -any hit with value below this will have it's database classification removed-| None | 0.05 |
 | --aminoacid_length  | probability cutoff to filter AMP hits by the length of the amino acid sequence| 100 | 60 |
 | --faa  | path to the folder containing the samples`.faa` files or, in case of only one sample, the path to the corresponding `.faa` file. Filenames have to contain the corresponding sample-name, i.e. sample_1.faa | ./test_faa/ | ./faa_files/|
-| --metadata  | path to the folder containing samples metadata `.tsv`. The first column must contain the sample names. | None | ./metadata.tsv/ |
+| --sample_metadata  | path to a tsv-file containing sample metadata, e,g, 'path/to/sample_metadata.tsv'. The metadata table can have more information for sample identification that will be added to the output summary. The table needs to contain the sample names in the first column. | None | ./sample_metadata.tsv/ |
+| --contig_metadata  | path to a tsv-file containing contig metadata, e,g, 'path/to/contig_metadata.tsv'. The metadata table can have more information for contig classification that will be added to the output summary. The table needs to contain the sample names in the first column and the contig_ID in the second column. This can be the output from MMseqs2, pydamage and MetaWrap. | None | ./contig_metadata.tsv/ |
 | --tooldict | dictionary of AMP-tools and their respective output file endings | '{"ampir":"ampir.tsv", "amplify":"amplify.tsv", "macrel":"macrel.tsv", "hmmer_hmmsearch":"hmmsearch.txt", "ensembleamppred":"ensembleamppred.txt", "ampgram":"ampgram.tsv", "amptransformer":"amptransformer.txt"}' | - |
 | --amp_database | path to the folder containing the reference database files: (1) a fasta file with <.fasta> file extension and (2) the corresponding table with functional and taxonomic classifications in <.tsv> file extension | [DRAMP 'general amps'](http://dramp.cpu-bioinfor.org/downloads/) database | ./amp_ref_database/ |
 | --complete_summary | concatenates all samples' summarized tables into one and generates both 'csv' and interactive 'html' files | False | True |
@@ -135,7 +136,8 @@ Either the path to the folder containing the respective protein fasta files has 
 
  - Note: The fasta file corresponding to the AMP database should not contain any characters other than ['A','C','D','E','F','G','H','I','K','L','M','N','P','Q','R','S','T','V','W','Y']
   - Note: The reference database table should be tab delimited.
-  - Note: Further details on the samples (i.e. metadata) can be added optionally.
+  - Note: Further details on the samples (i.e. sample_metadata) can be added optionally.
+  - Note: Further details on the contigs (i.e. contig_metadata) can be added optionally.
 
 ### Output:
 The output will be written into your working directory, containing the following files and folders:
