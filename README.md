@@ -135,7 +135,7 @@ Either the path to the folder containing the respective protein fasta files has 
 
  - Note: The fasta file corresponding to the AMP database should not contain any characters other than ['A','C','D','E','F','G','H','I','K','L','M','N','P','Q','R','S','T','V','W','Y']
   - Note: The reference database table should be tab delimited.
-  - Note: Further details on teh samples (i.e. metadata) can be optionally added.
+  - Note: Further details on the samples (i.e. metadata) can be added optionally.
 
 ### Output:
 The output will be written into your working directory, containing the following files and folders:
