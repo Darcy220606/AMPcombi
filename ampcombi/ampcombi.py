@@ -195,8 +195,10 @@ def main_workflow():
                     sample_metadata_df = sample_metadata_addition(sample_summary_df, add_samplemetadata)
                     sample_summary_df = sample_metadata_df
                     # Merge contig metadata if present
-                    contig_metadata_df = sample_metadata_addition(sample_summary_df, add_contigmetadata)
+                    contig_metadata_df = contig_metadata_addition(sample_summary_df, add_contigmetadata)
                     sample_summary_df = contig_metadata_df
+                    # Fix the column names to match other summary files 
+                    sample_summary_df.rename(columns={'name': 'sample_id', 'contig_id':'CDS_id', 'contig_name':'contig_id' }, inplace=True)
                     # Write sample summary into sample output folder
                     sample_summary_df.to_csv(samplelist[i] +'/'+samplelist[i]+'_ampcombi.csv', sep=',', index=False)
                     print(f'The summary file for {samplelist[i]} was saved to {samplelist[i]}/.')
@@ -230,12 +232,14 @@ def main_workflow():
             sample_summary_df_functions = functionality(sample_summary_df)
             print(f'The estimation of functional and structural properties for {samplelist[i]} in progress ....')
             sample_summary_df = sample_summary_df_functions
-            # Merge metadata if present
-            metadata_df = metadata_addition(sample_summary_df, add_metadata)
-            sample_summary_df = metadata_df
+            # Merge sample metadata if present
+            metadata_df = sample_metadata_addition(sample_summary_df, add_samplemetadata)
+            sample_summary_df = sample_metadata_df
             # Merge contig metadata if present
-            contig_metadata_df = sample_metadata_addition(sample_summary_df, add_contigmetadata)
+            contig_metadata_df = contig_metadata_addition(sample_summary_df, add_contigmetadata)
             sample_summary_df = contig_metadata_df
+            # Fix the column names to match other summary files 
+            sample_summary_df.rename(columns={'name': 'sample_id', 'contig_id':'CDS_id', 'contig_name':'contig_id' }, inplace=True)
             # Write sample summary into sample output folder
             sample_summary_df.to_csv(samplelist[i] +'/'+samplelist[i]+'_ampcombi.csv', sep=',', index=False)
             print(f'The summary file for {samplelist[i]} was saved to {samplelist[i]}/.')
