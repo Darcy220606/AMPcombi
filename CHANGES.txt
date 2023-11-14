@@ -18,7 +18,7 @@ v<0.1.7>, <03.11.2022>
     -- Included the possibility of only submitting one .faa file instead of the faa-folder path (in case of summarizing only one single sample)
 v<0.1.8>, <14.02.2023>
     -- Linked to Zenodo archive
-v<0.1.9>, <XX.10.2023>
+v<0.1.9>, <XX.11.2023>
     -- Change the output extension from `.csv` to `.tsv`
     -- Added a new feature to estimates the isoelectric point, mwt, structure fraction and hydrophobicity
     -- The DRAMP db `.tsv` was filtered to retain only necessary columns
@@ -27,6 +27,8 @@ v<0.1.9>, <XX.10.2023>
     -- Fixed hmmsearch to now parse both single and multi models
     -- Fixed the dependencies in the environment.yml file
     -- Added a log file for each sample, besides the main log for the complete summary. Beneficial when used in pipelines like nfcore/funcscan
+    -- Added the parameter '--sample_metadata' an optional flag to add a file with sample metadata
+    -- Added the parameter '--contig_metadata' an optional flag to add a file with contig metadata
     -- Removed tooldictionary parameter '--tooldict' and added a parameter for each tool instead '--<tool>_file' to assign the extension of the files per tool
     -- Added the parameter `--hmm_evalue` to filter the hmm results in the table based on evalue
     -- Added the parameter `--aminoacid_length` to retain hits with a specific length
@@ -37,3 +39,4 @@ v<0.1.9>, <XX.10.2023>
     -- Added the parameter '--remove_stop_codons' that removes hits with no stop codons found in the vicinity
     -- Added the parameter '--window_size_transporter' that adjusts the window size to look for 'transporter' proteins
     -- Added a new output directory per sample that holds the gbk files for the contigs with hits
+    

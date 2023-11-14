@@ -17,6 +17,7 @@ setup(
              'ampcombi/diamond_makedb.sh',
              'ampcombi/reformat_tables.py',
              'ampcombi/functionality.py',
+             'ampcombi/optional_inputs.py',
              'ampcombi/parse_gbks.py',
              'ampcombi/hmm_to_csv_input_file.py',
              'ampcombi/print_header.py',
