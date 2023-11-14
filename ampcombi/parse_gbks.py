@@ -43,7 +43,7 @@ def gbk_parse(gbk_dir, stop_codon_window, ampcombi_dict_mod, transporter_window,
     
     Step2: Extracts whether there is a stop_codon in the vicinity of the CDS hit
            This is around the hit -20 and +20 codons.
-           These windows can be changed accordingly by changing the respective parametrs.
+           These windows can be changed accordingly by changing the respective parameters.
     """    
     for root, dirs, files in os.walk(gbk_dir):
         abs_path = root
