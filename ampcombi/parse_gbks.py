@@ -41,7 +41,7 @@ def gbk_parse(gbk_dir, stop_codon_window, ampcombi_dict_mod, transporter_window,
     Step1: Extracts whether a 'transporter' is present in the vicinity of the hit.
            This is around the hit -10 and +10 CDSs (type = gene is not considered!)
     
-    Step2: Extracts whether theers is a stop_codon in the vicinity of the CDS hit
+    Step2: Extracts whether there is a stop_codon in the vicinity of the CDS hit
            This is around the hit -20 and +20 codons.
            These windows can be changed accordingly by changing the respective parametrs.
     """    
