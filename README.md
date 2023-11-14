@@ -83,7 +83,7 @@ There are two basic commands to run AMPcombi:
 ampcombi \
 --amp_results path/to/my/result_folder/ \
 --faa path/to/sample_faa_files/ \
---gbk path/to/sample_gbk/gbff_files/ \
+--gbk path/to/sample_gbk_or_gbff_files/ \
 --<tool>_file '.tsv'
 ```
 *<tool> can be ampir, macrel, amplify, hmmsearch, amppred, ampgram, amptransformer*
