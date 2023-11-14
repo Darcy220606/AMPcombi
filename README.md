@@ -30,7 +30,7 @@ This tool parses the results of antimicrobial peptide (AMP) prediction tools int
 
 <span style="color:grey">**Please Note:** If no database is provided by the user, AMPcombi will automatically download the [DRAMP db](https://github.com/CPU-DRAMP/DRAMP-3.0) and use the files for classification</span>
 
-- structural and physical annotations by providing teh corresponding molecularweight, isoelectric point, hydrophobicity, pH and the fraction of helix turns and beta sheets.
+- structural and physical annotations by providing the corresponding molecular weight, isoelectric point, hydrophobicity, pH and the fraction of helix turns and beta sheets.
 
 <span style="color:green">For filtering AMP hits: AMPcombi is developed to filter hits based on
 
