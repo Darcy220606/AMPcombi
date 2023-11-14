@@ -34,6 +34,6 @@ v<0.1.9>, <XX.10.2023>
     -- Renamed the parameter `--cutoff` to `--amp_cutoff`
     -- Added the parameter '--gbk' to add gbk files as input for parsing to add contig ids and other important values
     -- Added the parameter '--window_size_stop_codon' that adjusts the window size to look for stop codons
-    -- Added the parameter '--remove_stop_codons' that removes hits with no stop codons found in teh vicinity
+    -- Added the parameter '--remove_stop_codons' that removes hits with no stop codons found in the vicinity
     -- Added the parameter '--window_size_transporter' that adjusts the window size to look for 'transporter' proteins
     -- Added a new output dir per sample that holds the gbk files for the contigs with hits
