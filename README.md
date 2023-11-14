@@ -160,6 +160,8 @@ Either the path to the folder containing the respective protein fasta files has 
 | --window_size_stop_codon  | the length of the window size required to look for stop codons downstream and upstream of the CDS hits | 60 | 40 |
 | --window_size_transporter  | the length of the window size required to look for a 'transporter' e.g. ABC transporter downstream and upstream of the CDS hits | 11 | 20 |
 | --remove_stop_codons  | removes any AMP hits that dont have a stop codon found in the window downstream or upstream of the CDS assigned by '--window_size_stop_codon'. Must be turned on if hits are to be removed | False | True |
+| --sample_metadata  | path to a tsv-file containing sample metadata, e,g, 'path/to/sample_metadata.tsv'. The metadata table can have more information for sample identification that will be added to the output summary. The table needs to contain the sample names in the first column. | None | ./sample_metadata.tsv/ |
+| --contig_metadata  | path to a tsv-file containing contig metadata, e,g, 'path/to/contig_metadata.tsv'. The metadata table can have more information for contig classification that will be added to the output summary. The table needs to contain the sample names in the first column and the contig_ID in the second column. This can be the output from MMseqs2, pydamage and MetaWrap. | None | ./contig_metadata.tsv/ |
 | --amp_database | path to the folder containing the reference database files: (1) a fasta file with <.fasta> file extension and (2) the corresponding table with functional and taxonomic classifications in <.tsv> file extension | [DRAMP 'general amps'](http://dramp.cpu-bioinfor.org/downloads/) database | ./amp_ref_database/ |
 | --complete_summary | concatenates all samples' summarized tables into one and generates both 'csv' and interactive 'html' files | False | True |
 | --log  | print messages into log file instead of stdout | False | True |
@@ -168,6 +170,8 @@ Either the path to the folder containing the respective protein fasta files has 
 
  - Note: The fasta file corresponding to the AMP database should not contain any characters other than ['A','C','D','E','F','G','H','I','K','L','M','N','P','Q','R','S','T','V','W','Y']
   - Note: The reference database table should be tab delimited.
+  - Note: Further details on the samples (i.e. sample_metadata) can be added optionally.
+  - Note: Further details on the contigs (i.e. contig_metadata) can be added optionally.
 
 ### Output:
 The output will be written into your working directory, containing the following files and folders:
