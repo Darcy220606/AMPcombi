@@ -38,7 +38,7 @@ def gbk_parse(gbk_dir, stop_codon_window, ampcombi_dict_mod, transporter_window,
     """
     This parses the gbk files in two steps:
     
-    Step1: Extracts whether a 'transporter' is present in teh vicinity of the hit.
+    Step1: Extracts whether a 'transporter' is present in the vicinity of the hit.
            This is around the hit -10 and +10 CDSs (type = gene is not considered!)
     
     Step2: Extracts whether theers is a stop_codon in the vicinity of the CDS hit
