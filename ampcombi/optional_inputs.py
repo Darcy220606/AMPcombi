@@ -42,6 +42,12 @@ def contig_metadata_addition(merged_df, cmetadata):
         metadata_df.rename(columns={metadata_df.columns[0]: 'name'}, inplace=True)
         # rename second column _ must contain the contig names
         metadata_df.rename(columns={metadata_df.columns[1]: 'contig_name'}, inplace=True)
-        # merge it to the df using sample name 'name' as common
-        df2 = merged_df.merge(metadata_df, on=['name', 'contig_name'], how='left')
+        # ensure that the dataframe is not empty or else KeyError arises
+        if not merged_df.empty:
+            # remove duplicate entries
+            merged_df.drop_duplicates(inplace=True)
+            # merge it to the df using sample name 'name' as common
+            df2 = pd.merge(merged_df, metadata_df, on=['contig_name', 'name'], how='left')
+        else:
+            df2 = merged_df
         return df2
