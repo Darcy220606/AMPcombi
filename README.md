@@ -46,7 +46,7 @@ This tool parses the results of antimicrobial peptide (AMP) prediction tools int
 
 To install AMPcombi:
 
-First, install the dependencies of the tool ⬇ the carry on with the AMPcombi tool installation
+First, install the dependencies of the tool ⬇ then carry on with the AMPcombi tool installation
 - `python` > 3.0
 - `biopython`
 - `pandas`
