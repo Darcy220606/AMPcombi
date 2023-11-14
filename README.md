@@ -34,7 +34,7 @@ This tool parses the results of antimicrobial peptide (AMP) prediction tools int
 
 <span style="color:green">For filtering AMP hits: AMPcombi is developed to filter hits based on
 
-- their AMP probabilities from the different AMP tools (evalues in case of HMMsearch)
+- their AMP probabilities given by each AMP tool (evalues in case of HMMsearch)
 - the presence of stop-codons and transporter genes downstream and upstream of the AMP hit.
 
 <span style="color:green">For comparison purposes: AMPcombi allows the user to 
