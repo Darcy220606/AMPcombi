@@ -18,6 +18,7 @@ from amp_database import *
 from print_header import *
 from visualise_complete_summary import *
 from functionality import *
+from parse_gbks import *
 
 # Define input arguments:
 parser = argparse.ArgumentParser(prog = 'ampcombi', formatter_class=argparse.RawDescriptionHelpFormatter,
@@ -46,8 +47,16 @@ parser.add_argument("--db_evalue", dest="dbevalue", help="Enter the evalue cutof
                     type=float, default=0.05)
 parser.add_argument("--aminoacid_length", dest="length", help="Enter the length of the aa sequences required. Any hits below that cutoff will be removed \n (default: %(default)s)",
                     type=int, default=100)
+parser.add_argument("--window_size_stop_codon", dest="stopwindowsize", help="Enter the length of the window size required to look for stop codons downstream and upstream of the CDS hits. \n (default: %(default)s)",
+                    type=int, default=60)
+parser.add_argument("--window_size_transporter", dest="transporterwindowsize", help="Enter the length of the window size required to look for a 'transporter' e.g. ABC transporter downstream and upstream of the CDS hits. \n (default: %(default)s)",
+                    type=int, default=11)
+parser.add_argument("--remove_stop_codons", dest="removestops", help="Removes any hits/CDSs that dont have a stop codon found in the window below or upstream of the CDS assigned by '--window_size_stop_codon'. Must be turned on if hits are to be removed. \n (default: %(default)s)",
+                    type=bool, default=False)
 parser.add_argument("--faa", dest="faa", help="Enter the path to the folder containing the reference .faa files or to one .faa file (running only one sample). Filenames have to contain the corresponding sample-name, i.e. sample_1.faa \n (default: %(default)s)",
                     type=str, default='./test_faa/')
+parser.add_argument("--gbk", dest="gbk", help="Enter the path to the folder containing the reference .gbk/.gbff files or to one .gbk/.gbff file (running only one sample). Filenames have to contain the corresponding sample-name, i.e. sample_1.gbk/ sample_1.gbff \n (default: %(default)s)",
+                    type=str, default='./test_gbff/')
 parser.add_argument("--ampir_file", dest="ampir", nargs='?', help="If AMPir was used, enter the ending of the input files (as they appear in the directory tree), e.g. 'ampir.tsv'",
                     type=str, default=None)
 parser.add_argument("--amplify_file", dest="amplify", nargs='?', help="If AMPlify was used, enter the ending of the input files (as they appear in the directory tree), e.g. 'amplify.tsv'",
@@ -88,6 +97,10 @@ aa_len = args.length
 dbevalue = args.dbevalue
 hmmevalue = args.hmmevalue
 faa_path = args.faa
+gbk_dir = args.gbk
+stop_codon_window = args.stopwindowsize 
+filter_stop_codon = args.removestops
+transporter_window = args.transporterwindowsize
 #tooldict = json.loads(args.tools)
 ampir_file = args.ampir
 amplify_file = args.amplify
@@ -129,6 +142,8 @@ fileending = [val for val in tooldict.values()]
 
 # supress panda warnings
 warnings.simplefilter(action='ignore', category=FutureWarning)
+# supress bipython warnings
+warnings.filterwarnings("ignore", category=DeprecationWarning) 
 
 #########################################
 # MAIN FUNCTION
@@ -184,8 +199,14 @@ def main_workflow():
                     sample_summary_df_functions = functionality(sample_summary_df)
                     print(f'The estimation of functional and structural properties for {samplelist[i]} in progress ....')
                     sample_summary_df = sample_summary_df_functions
+                    # Add contig_ids and filter by stop codon presence and extract new gbks
+                    outgbk = samplelist[i] + '/contig_gbks'
+                    # Create the new gbks dir
+                    os.makedirs(outgbk, exist_ok=True)
+                    sample_summary_df = gbkparsing(sample_summary_df, gbk_dir, stop_codon_window, transporter_window, filter_stop_codon, outgbk)
+                    print(f'Parsing of the corresponding genebank file for {samplelist[i]} in progress ....')
                     # Write sample summary into sample output folder
-                    sample_summary_df.to_csv(samplelist[i] +'/'+samplelist[i]+'_ampcombi.csv', sep=',', index=False)
+                    sample_summary_df.to_csv(samplelist[i] +'/'+samplelist[i]+'_ampcombi.tsv', sep='\t', index=False)
                     print(f'The summary file for {samplelist[i]} was saved to {samplelist[i]}/.')
                     # Write the log file in the respective sample directory
                     shutil.move(f'{samplelist[i]}_ampcombi.log', samplelist[i] + '/' + samplelist[i]+'_ampcombi.log')
@@ -217,15 +238,22 @@ def main_workflow():
             sample_summary_df_functions = functionality(sample_summary_df)
             print(f'The estimation of functional and structural properties for {samplelist[i]} in progress ....')
             sample_summary_df = sample_summary_df_functions
+            # Add contig_ids and filter by stop codon presence and extract new gbks
+            outgbk = samplelist[i] + '/contig_gbks'
+            # Create the new gbks dir
+            os.makedirs(outgbk, exist_ok=True)
+            sample_summary_df = gbkparsing(sample_summary_df, gbk_dir, stop_codon_window, transporter_window, filter_stop_codon, outgbk)
+            print(f'Parsing of the corresponding genebank file for {samplelist[i]} in progress ....')
             # Write sample summary into sample output folder
-            sample_summary_df.to_csv(samplelist[i] +'/'+samplelist[i]+'_ampcombi.csv', sep=',', index=False)
+            sample_summary_df.to_csv(samplelist[i] +'/'+samplelist[i]+'_ampcombi.tsv', sep='\t', index=False)
             print(f'The summary file for {samplelist[i]} was saved to {samplelist[i]}/.')
+        
         if (complete_summary):
         # concatenate the sample summary to the complete summary and overwrite it
-            complete_summary_df = pd.concat([complete_summary_df, sample_summary_df])
+            complete_summary_df = pd.concat([complete_summary_df, sample_summary_df], ignore_index=True)
             complete_summary_df.to_csv('AMPcombi_summary.tsv', sep='\t', index=False)
             html_generator() 
-            print(f'\n FINISHED: File AMPcombi_summary.csv and folder AMPcombi_interactive_summary/ were saved to your current working directory.')
+            print(f'\n FINISHED: Appended {samplelist[i]} summary file to complete AMPcombi_summary.tsv (and folder AMPcombi_interactive_summary/ were) and saved to your current working directory.')
         else: 
             print(f'\n FINISHED: AMPcombi created summaries for all input samples.')
 
