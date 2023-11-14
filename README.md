@@ -129,7 +129,7 @@ ampcombi \
 --path_list path_to_sample_2_tool_1.csv path_to_sample_2_tool_2.csv \
 --sample_list sample_1 sample_2 \
 --faa path/to/sample_faa_files/ \
---gbk path/to/sample_gbk/gbff_files/ \
+--gbk path/to/sample_gbk_or_gbff_files/ \
 --<tool>_file '.tsv'
 
 ```
