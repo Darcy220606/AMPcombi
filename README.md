@@ -182,13 +182,13 @@ The output will be written into your working directory, containing the following
 |   ├── general_amps_<DATE>_clean.fasta
 |   └── general_amps_<DATE>.tsv
 ├── sample_1/
-|   ├── contig_gbks
+|   ├── contig_gbks/
 |   ├── sample_1_amp.faa
 |   ├── sample_1_ampcombi.tsv
 |   ├── sample_1_diamond_matches.txt
 |   └── sample_1_ampcombi.log
 ├── sample_2/
-|   ├── contig_gbks
+|   ├── contig_gbks/
 |   ├── sample_2_amp.faa
 |   ├── sample_2_ampcombi.tsv
 |   ├── sample_2_diamond_matches.txt
