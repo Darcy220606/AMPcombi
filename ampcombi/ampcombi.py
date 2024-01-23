@@ -15,6 +15,7 @@ from reformat_tables import *
 from amp_fasta import *
 from check_input import *
 from amp_database import *
+from clustering_hits import *
 from print_header import *
 from visualise_complete_summary import *
 from functionality import *
@@ -80,6 +81,24 @@ parser.add_argument("--amp_database", dest="ref_db", nargs='?', help="Enter the 
                     type=str, default=None)
 parser.add_argument("--complete_summary", dest="complete", nargs='?', help="Concatenates all sample summaries to one final summary and outputs both csv and interactive html files",
                     type=bool, default=False)
+parser.add_argument("--cluster_hits", dest="cluster", nargs='?', help="Clusters the amp hits only if complete summary is activated",
+                    type=bool, default=False)
+parser.add_argument("--cluster_cov_mode", dest="mmseqscovmode", nargs='?', help="This assigns the cov. mode to the mmseqs2 cluster module- More information can be obtained in mmseqs2 docs at https://mmseqs.com/latest/userguide.pdf",
+                    type=int, default=0)
+parser.add_argument("--cluster_mode", dest="mmseqsclustermode", nargs='?', help="This assigns the cluster mode to the mmseqs2 cluster module- More information can be obtained in mmseqs2 docs at https://mmseqs.com/latest/userguide.pdf",
+                    type=int, default=1)
+parser.add_argument("--cluster_coverage", dest="mmseqscoverage", nargs='?', help="This assigns the coverage to the mmseqs2 cluster module- More information can be obtained in mmseqs2 docs at https://mmseqs.com/latest/userguide.pdf",
+                    type=float, default=0.8)
+parser.add_argument("--cluster_seq_id", dest="mmseqsseqid", nargs='?', help="This assigns the seqsid to the mmseqs2 cluster module- More information can be obtained in mmseqs2 docs at https://mmseqs.com/latest/userguide.pdf",
+                    type=float, default=0.4)
+parser.add_argument("--cluster_sensitivity", dest="mmseqssensitivity", nargs='?', help="This assigns sensitivity of alignment to the mmseqs2 cluster module- More information can be obtained in mmseqs2 docs at https://mmseqs.com/latest/userguide.pdf",
+                    type=float, default=4.0)
+parser.add_argument("--cluster_remove_singletons", dest="removesingletons", nargs='?', help="This removes any hits that did not form a cluster",
+                    type=bool, default=True)
+parser.add_argument("--cluster_retain_label", dest="retainlabels", nargs='?', help="This removes any cluster that only has a certain label in the sample name. For example if you have samples labels with 'S1_metaspades' and 'S1_megahit', you can retain clusters that have samples with suffix '_megahit' by running '--retain_clusters_label megahit'",
+                    type=str, default='megahit')
+parser.add_argument("--cluster_min_member", dest="minnumber", nargs='?', help="This removes any cluster that has a hit number lower than this",
+                    type=int, default=3)
 parser.add_argument("--sample_metadata", dest="samplemetadata", help="Path to a tsv-file containing sample metadata, e,g, 'path/to/sample_metadata.tsv'. The metadata table can have more information for sample identification that will be added to the output summary. The table needs to contain the sample names in the first column. \n (default: %(default)s)",
                     type=str, default=None)
 parser.add_argument("--contig_metadata", dest="contigmetadata", help="Path to a tsv-file containing contig metadata, e,g, 'path/to/contig_metadata.tsv'. The metadata table can have more information for contig classification that will be added to the output summary. The table needs to contain the sample names in the first column and the contig_ID in the second column. This can be the output from MMseqs2, pydamage and MetaWrap. \n (default: %(default)s)",
@@ -87,7 +106,7 @@ parser.add_argument("--contig_metadata", dest="contigmetadata", help="Path to a 
 parser.add_argument("--log", dest="log_file", nargs='?', help="Silences the standard output and captures it in a log file)",
                     type=bool, default=False)
 parser.add_argument("--threads", dest="cores", nargs='?', help="Changes the threads used for DIAMOND alignment (default: %(default)s)",
-                    type=bool, default='4')
+                    type=int, default=4)
 parser.add_argument('--version', action='version', version='%(prog)s ' + __version__)
 
 # get command line arguments
@@ -117,6 +136,15 @@ hmmer_file = args.hmmsearch
 amppred_file = args.amppred
 database = args.ref_db
 complete_summary = args.complete
+clustering = args.cluster
+cov_mod = args.mmseqscovmode
+cluster_mode = args.mmseqsclustermode
+coverage = args.mmseqscoverage
+seq_id = args.mmseqsseqid
+sensitivity = args.mmseqssensitivity
+remove_singletons = args.removesingletons
+min_cluster_members = args.minnumber
+retain_clusters_with = args.retainlabels
 add_samplemetadata = args.samplemetadata
 add_contigmetadata = args.contigmetadata
 threads = args.cores
@@ -202,16 +230,18 @@ def main_workflow():
                     sample_summary_df = pd.merge(summary_df, diamond_df, on = 'contig_id', how='left')
                     # Insert column with sample name on position 0
                     sample_summary_df.insert(0, 'name', samplelist[i])
+                    # Remove the temp directory
+                    shutil.rmtree('./temp')
                     # Estimate the aa functions: chemical and physical
-                    sample_summary_df_functions = functionality(sample_summary_df)
                     print(f'The estimation of functional and structural properties for {samplelist[i]} in progress ....')
+                    sample_summary_df_functions = functionality(sample_summary_df)
                     sample_summary_df = sample_summary_df_functions
                     # Add contig_ids and filter by stop codon presence and extract new gbks
                     outgbk = samplelist[i] + '/contig_gbks'
                     # Create the new gbks dir
                     os.makedirs(outgbk, exist_ok=True)
-                    sample_summary_df = gbkparsing(sample_summary_df, gbk_dir, stop_codon_window, transporter_window, filter_stop_codon, outgbk)
                     print(f'Parsing of the corresponding genebank file for {samplelist[i]} in progress ....')
+                    sample_summary_df = gbkparsing(sample_summary_df, gbk_dir, stop_codon_window, transporter_window, filter_stop_codon, outgbk)
                     # Merge sample metadata if present
                     sample_metadata_df = sample_metadata_addition(sample_summary_df, add_samplemetadata)
                     sample_summary_df = sample_metadata_df
@@ -219,7 +249,7 @@ def main_workflow():
                     contig_metadata_df = contig_metadata_addition(sample_summary_df, add_contigmetadata)
                     sample_summary_df = contig_metadata_df
                     # Fix the column names to match other summary files 
-                    sample_summary_df.rename(columns={'name': 'sample_id', 'contig_id':'CDS_id', 'contig_name':'contig_id' }, inplace=True)           
+                    sample_summary_df.rename(columns={'name': 'sample_id', 'contig_id':'CDS_id', 'contig_name':'contig_id' }, inplace=True)
                     # Write sample summary into sample output folder
                     sample_summary_df.to_csv(samplelist[i] +'/'+samplelist[i]+'_ampcombi.tsv', sep='\t', index=False)
                     print(f'The summary file for {samplelist[i]} was saved to {samplelist[i]}/.')
@@ -249,16 +279,18 @@ def main_workflow():
             sample_summary_df = pd.merge(summary_df, diamond_df, on = 'contig_id', how='left')
             # Insert column with sample name on position 0
             sample_summary_df.insert(0, 'name', samplelist[i])
+            # Remove the temp directory
+            shutil.rmtree('./temp')
             # Estimate the aa functions: chemical and physical
-            sample_summary_df_functions = functionality(sample_summary_df)
             print(f'The estimation of functional and structural properties for {samplelist[i]} in progress ....')
+            sample_summary_df_functions = functionality(sample_summary_df)
             sample_summary_df = sample_summary_df_functions
             # Add contig_ids and filter by stop codon presence and extract new gbks
             outgbk = samplelist[i] + '/contig_gbks'
             # Create the new gbks dir
             os.makedirs(outgbk, exist_ok=True)
-            sample_summary_df = gbkparsing(sample_summary_df, gbk_dir, stop_codon_window, transporter_window, filter_stop_codon, outgbk)
             print(f'Parsing of the corresponding genebank file for {samplelist[i]} in progress ....')
+            sample_summary_df = gbkparsing(sample_summary_df, gbk_dir, stop_codon_window, transporter_window, filter_stop_codon, outgbk)
             # Merge sample metadata if present
             metadata_df = sample_metadata_addition(sample_summary_df, add_samplemetadata)
             sample_summary_df = sample_metadata_df
@@ -269,16 +301,29 @@ def main_workflow():
             sample_summary_df.rename(columns={'name': 'sample_id', 'contig_id':'CDS_id', 'contig_name':'contig_id' }, inplace=True)
             # Write sample summary into sample output folder
             sample_summary_df.to_csv(samplelist[i] +'/'+samplelist[i]+'_ampcombi.tsv', sep='\t', index=False)
-            print(f'The summary file for {samplelist[i]} was saved to {samplelist[i]}/.')
+            print(f'The summary file for {samplelist[i]} was saved to {samplelist[i]}/.tsv')
         
         if (complete_summary):
         # concatenate the sample summary to the complete summary and overwrite it
             complete_summary_df = pd.concat([complete_summary_df, sample_summary_df], ignore_index=True)
             complete_summary_df.to_csv('AMPcombi_summary.tsv', sep='\t', index=False)
-            html_generator() 
-            print(f'\n FINISHED: Appended {samplelist[i]} summary file to complete AMPcombi_summary.tsv (and folder AMPcombi_interactive_summary/ were) and saved to your current working directory.')
+#           html_generator() 
+            print(f'\n DONE: Appended {samplelist[i]} summary file to complete AMPcombi_summary.tsv and saved to your current working directory.')
         else: 
-            print(f'\n FINISHED: AMPcombi created summaries for all input samples.')
+            print(f'\n DONE: AMPcombi created summaries for all input samples.')
+    
+    # Only if complete summary and clustering is activated:
+    if (complete_summary and clustering):
+        #retain_clusters_with = 'megahit'
+        #remove_singletons = True
+        #min_cluster_members = 3
+        print(f'\n All hits in the AMPcombi_summary.tsv will now be clustered by MMSeqs2')
+        merged_df = parsing_input_for_cluster(complete_summary_df)
+        mmseqs_cluster(cov_mod,cluster_mode,coverage,seq_id,sensitivity,threads)
+        complete_summary_clusters_df = compile_clusters(merged_df,retain_clusters_with,remove_singletons,min_cluster_members)
+        complete_summary_clusters_df.to_csv(f'AMPcombi_summary_clusters.tsv', sep='\t', index=False)
+        print(f'\n DONE: AMPcombi_summary_clusters.tsv was saved to your current working directory.')
+        print('\n ########################################################## ')
 
 #########################################
 # LOG FUNCTION

@@ -5,7 +5,7 @@ with open('README.md') as fh:
 
 setup(
     name='AMPcombi',
-    version='0.1.9',
+    version='0.1.9dev2',
     author='Anan Ibrahim, Louisa Perelo',
     author_email='ananhamido@hotmail.com, louperelo@gmail.com',
     packages=['ampcombi'],
@@ -20,6 +20,7 @@ setup(
              'ampcombi/optional_inputs.py',
              'ampcombi/parse_gbks.py',
              'ampcombi/hmm_to_csv_input_file.py',
+             'ampcombi/clustering_hits.py',
              'ampcombi/print_header.py',
              'ampcombi/version.py',
              'ampcombi/visualise_complete_summary.py',
@@ -29,7 +30,7 @@ setup(
     description='A parsing tool for AMP tools.',
     long_description=long_description,
     long_description_content_type='text/markdown',
-    keywords=["Proteomics", "Antimicrobial peptides", "Diamond"
+    keywords=["Proteomics", "Antimicrobial peptides", "Diamond", "MMSeqs2"
               "Standardization", "Formatting","Functional annotation"],
     install_requires=['pandas'],
     entry_points={  
