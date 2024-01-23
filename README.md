@@ -51,6 +51,7 @@ First, install the dependencies of the tool ⬇ then carry on with the AMPcombi 
 - `biopython`
 - `pandas`
 - `diamond`
+- `mmseqs2`==15.6f
   
 
 Installation of AMPcombi (the tool) can be done using:
@@ -163,7 +164,16 @@ Either the path to the folder containing the respective protein fasta files has 
 | --sample_metadata  | path to a tsv-file containing sample metadata, e,g, 'path/to/sample_metadata.tsv'. The metadata table can have more information for sample identification that will be added to the output summary. The table needs to contain the sample names in the first column. | None | ./sample_metadata.tsv/ |
 | --contig_metadata  | path to a tsv-file containing contig metadata, e,g, 'path/to/contig_metadata.tsv'. The metadata table can have more information for contig classification that will be added to the output summary. The table needs to contain the sample names in the first column and the contig_ID in the second column. This can be the output from MMseqs2, pydamage and MetaWrap. | None | ./contig_metadata.tsv/ |
 | --amp_database | path to the folder containing the reference database files: (1) a fasta file with <.fasta> file extension and (2) the corresponding table with functional and taxonomic classifications in <.tsv> file extension | [DRAMP 'general amps'](http://dramp.cpu-bioinfor.org/downloads/) database | ./amp_ref_database/ |
-| --complete_summary | concatenates all samples' summarized tables into one and generates both 'csv' and interactive 'html' files | False | True |
+| --complete_summary | concatenates all samples' summarized tables into one and generates a 'tsv' file. | False | True |
+| --cluster_hits | Clusters the amp hits using [MMMSeqs2]( https://mmseqs.com/latest/userguide.pdf). This is ONLY to be activated when `--complete_summary` is activated. | False | True |
+| --cluster_cov_mode | This assigns the cov. mode to the mmseqs2 cluster module- More information can be obtained in mmseqs2 docs at https://mmseqs.com/latest/userguide.pdf. | 0 | 2 |
+| --cluster_mode | This assigns the cluster mode to the mmseqs2 cluster module- More information can be obtained in mmseqs2 docs at https://mmseqs.com/latest/userguide.pdf. | 1 | 2 |
+| --cluster_coverage | This assigns the coverage to the mmseqs2 cluster module- More information can be obtained in mmseqs2 docs at https://mmseqs.com/latest/userguide.pdf. | 0.8 | 0.9 |
+| --cluster_seq_id | This assigns the seqsid to the mmseqs2 cluster module- More information can be obtained in mmseqs2 docs at https://mmseqs.com/latest/userguide.pdf. | 0.4 | 0.7 |
+| --cluster_sensitivity | This assigns sensitivity of alignment to the mmseqs2 cluster module- More information can be obtained in mmseqs2 docs at https://mmseqs.com/latest/userguide.pdf. | 4.0 | 7.0 |
+| --cluster_remove_singletons | This removes any hits that did not form a cluster. | True | False |
+| --cluster_retain_label | This removes any cluster that only has a certain label in the sample name. For example if you have samples labels with 'S1_metaspades' and 'S1_megahit', you can retain clusters that have samples with suffix '_megahit' by running '--retain_clusters_label megahit'. | megahit | None |
+| --cluster_min_member | This removes any cluster that has a hit number lower than assigned here. | 3 | 1 |
 | --log  | print messages into log file instead of stdout | False | True |
 | --threads  | adjust the number of threads required for DIAMOND alignemnt depending on the computing resources available  | 4 | 32 |
 | --version  | print the version number into stdout | - | 0.1.9 |
@@ -194,6 +204,8 @@ The output will be written into your working directory, containing the following
 |   ├── sample_2_diamond_matches.txt
 |   └── sample_2_ampcombi.log
 ├── AMPcombi_summary.tsv
+├── AMPcombi_summary_clusters.tsv
+├── AMPcombi_summary_cluster_representative_seq.tsv
 ├── AMPcombi_summary.html
 └── Ampcombi.log
 ```
