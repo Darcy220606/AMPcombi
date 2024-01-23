@@ -17,7 +17,6 @@ from check_input import *
 from amp_database import *
 from clustering_hits import *
 from print_header import *
-from visualise_complete_summary import *
 from functionality import *
 from optional_inputs import *
 from parse_gbks import *
@@ -79,9 +78,9 @@ parser.add_argument("--amptransformer_file", dest="amptransformer", nargs='?', h
 #                    type=str, default='{"ampir":"ampir.tsv", "amplify":"amplify.tsv", "macrel":"macrel.tsv", "neubi":"neubi.fasta", "ampgram":"ampgram.tsv", "amptransformer":"amptransformer.txt", "hmmer_hmmsearch":"hmmsearch.txt", "ensembleamppred":"ensembleamppred.txt"}')
 parser.add_argument("--amp_database", dest="ref_db", nargs='?', help="Enter the path to the folder containing the reference database files (.fa and .tsv); a fasta file and the corresponding table with functional and taxonomic classifications. \n (default: DRAMP database)",
                     type=str, default=None)
-parser.add_argument("--complete_summary", dest="complete", nargs='?', help="Concatenates all sample summaries to one final summary and outputs both csv and interactive html files",
+parser.add_argument("--complete_summary", dest="complete", nargs='?', help="Concatenates all sample summaries to one final summary and outputs a tsv file",
                     type=bool, default=False)
-parser.add_argument("--cluster_hits", dest="cluster", nargs='?', help="Clusters the amp hits only if complete summary is activated",
+parser.add_argument("--cluster_hits", dest="cluster", nargs='?', help="Clusters the amp hits ONLY if complete summary is activated. Clusztering is done by MMseqs2 cluster",
                     type=bool, default=False)
 parser.add_argument("--cluster_cov_mode", dest="mmseqscovmode", nargs='?', help="This assigns the cov. mode to the mmseqs2 cluster module- More information can be obtained in mmseqs2 docs at https://mmseqs.com/latest/userguide.pdf",
                     type=int, default=0)
@@ -307,16 +306,12 @@ def main_workflow():
         # concatenate the sample summary to the complete summary and overwrite it
             complete_summary_df = pd.concat([complete_summary_df, sample_summary_df], ignore_index=True)
             complete_summary_df.to_csv('AMPcombi_summary.tsv', sep='\t', index=False)
-#           html_generator() 
             print(f'\n DONE: Appended {samplelist[i]} summary file to complete AMPcombi_summary.tsv and saved to your current working directory.')
         else: 
             print(f'\n DONE: AMPcombi created summaries for all input samples.')
     
     # Only if complete summary and clustering is activated:
     if (complete_summary and clustering):
-        #retain_clusters_with = 'megahit'
-        #remove_singletons = True
-        #min_cluster_members = 3
         print(f'\n All hits in the AMPcombi_summary.tsv will now be clustered by MMSeqs2')
         merged_df = parsing_input_for_cluster(complete_summary_df)
         mmseqs_cluster(cov_mod,cluster_mode,coverage,seq_id,sensitivity,threads)

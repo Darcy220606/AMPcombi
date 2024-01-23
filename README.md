@@ -206,7 +206,6 @@ The output will be written into your working directory, containing the following
 ├── AMPcombi_summary.tsv
 ├── AMPcombi_summary_clusters.tsv
 ├── AMPcombi_summary_cluster_representative_seq.tsv
-├── AMPcombi_summary.html
 └── Ampcombi.log
 ```
 The folder 'contig_gbks' within each sample result directory contains the GBK files. Each `.gbk` contains the contig annotations in which AMP hits were predicted. This is for further downstream analysis that requires the contig GBKS as input.

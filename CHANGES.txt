@@ -40,3 +40,4 @@ v<0.1.9>, <XX.02.2024>
     -- Added the parameter '--window_size_transporter' that adjusts the window size to look for 'transporter' proteins
     -- Added a new output directory per sample that holds the gbk files for the contigs with hits
     -- Aded the paarmeter to cluster the AMP hits with '--cluster_hits' and the parameters to modify the clustering using MMSeqs2 '--cluster_cov_mode' '--cluster_mode' '--cluster_coverage' '--cluster_seq_id' '--cluster_sensitivity' '--cluster_remove_singletons' '--cluster_retain_label' '--cluster_min_member'
+    -- Removed the HTML output for the complete summary
