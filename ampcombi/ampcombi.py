@@ -21,8 +21,12 @@ from functionality import *
 from optional_inputs import *
 from parse_gbks import *
 
+# add subparsers: https://docs.python.org/3/library/argparse.html
+# https://realpython.com/comparing-python-command-line-parsing-libraries-argparse-docopt-click/
+
 # Define input arguments:
 parser = argparse.ArgumentParser(prog = 'ampcombi', formatter_class=argparse.RawDescriptionHelpFormatter,
+                                usage='%(prog)s [options]',
                                  description=('''\
     .............................................................................
                                     *AMP-combi*
@@ -230,7 +234,7 @@ def main_workflow():
                     # Insert column with sample name on position 0
                     sample_summary_df.insert(0, 'name', samplelist[i])
                     # Remove the temp directory
-                    shutil.rmtree('./temp')
+                    # shutil.rmtree('./temp')
                     # Estimate the aa functions: chemical and physical
                     print(f'The estimation of functional and structural properties for {samplelist[i]} in progress ....')
                     sample_summary_df_functions = functionality(sample_summary_df)
@@ -279,7 +283,7 @@ def main_workflow():
             # Insert column with sample name on position 0
             sample_summary_df.insert(0, 'name', samplelist[i])
             # Remove the temp directory
-            shutil.rmtree('./temp')
+            # shutil.rmtree('./temp')
             # Estimate the aa functions: chemical and physical
             print(f'The estimation of functional and structural properties for {samplelist[i]} in progress ....')
             sample_summary_df_functions = functionality(sample_summary_df)
@@ -302,7 +306,7 @@ def main_workflow():
             sample_summary_df.to_csv(samplelist[i] +'/'+samplelist[i]+'_ampcombi.tsv', sep='\t', index=False)
             print(f'The summary file for {samplelist[i]} was saved to {samplelist[i]}/.tsv')
         
-        if (complete_summary):
+        if (complete_summary == True):
         # concatenate the sample summary to the complete summary and overwrite it
             complete_summary_df = pd.concat([complete_summary_df, sample_summary_df], ignore_index=True)
             complete_summary_df.to_csv('AMPcombi_summary.tsv', sep='\t', index=False)
@@ -311,13 +315,16 @@ def main_workflow():
             print(f'\n DONE: AMPcombi created summaries for all input samples.')
     
     # Only if complete summary and clustering is activated:
-    if (complete_summary and clustering):
+    if (clustering is not False):
         print(f'\n All hits in the AMPcombi_summary.tsv will now be clustered by MMSeqs2')
         merged_df = parsing_input_for_cluster(complete_summary_df)
         mmseqs_cluster(cov_mod,cluster_mode,coverage,seq_id,sensitivity,threads)
         complete_summary_clusters_df = compile_clusters(merged_df,retain_clusters_with,remove_singletons,min_cluster_members)
         complete_summary_clusters_df.to_csv(f'AMPcombi_summary_clusters.tsv', sep='\t', index=False)
         print(f'\n DONE: AMPcombi_summary_clusters.tsv was saved to your current working directory.')
+        print('\n ########################################################## ')
+    else:
+        print(f'\n DONE: AMPcombi finished processing.')
         print('\n ########################################################## ')
 
 #########################################

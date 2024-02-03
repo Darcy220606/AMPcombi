@@ -214,7 +214,7 @@ def gbkparsing(sample_ampcombi_file, gbk_dir, stop_codon_window, transporter_win
     
     # merge ampcombi and the dict_df based on name and contig_id
     # convert the dictionary to a DataFrame
-    dict_df = pd.DataFrame.from_dict(listdict)
+    dict_df = pd.DataFrame.from_dict(listdict)        
     try:
         merged_df = ampcombi_main.merge(dict_df, on=['name','contig_id'])
     except KeyError as e:
@@ -222,7 +222,33 @@ def gbkparsing(sample_ampcombi_file, gbk_dir, stop_codon_window, transporter_win
         if str(e) == "'name'":
             print("No hits were found in the sample using these parameters, skipping ...")
             merged_df = ampcombi_main
-         
+        else:
+            import traceback
+            traceback.print_exc()
+            print(f"KeyError occurred: {e}")
+            merged_df = ampcombi_main
+    except Exception as e:
+        import traceback
+        traceback.print_exc()
+        print(f"An error occurred: {e}")
+        merged_df = ampcombi_main
+
+    #except KeyError as e:
+    #    #specify the error exactly : no sample name and contig id is found due to empty results
+    #    if str(e) == "'name'":
+    #        print("No hits were found in the sample using these parameters, skipping ...")
+    #        #merged_df = ampcombi_main
+    #    else:
+    #        import traceback
+    #        traceback.print_exc()
+    #        print(f"KeyError occurred: {e}")
+    #    merged_df = ampcombi_main
+    #except Exception as e:
+    #    import traceback
+    #    traceback.print_exc()
+    #    print(f"An error occurred: {e}")
+    #    merged_df = ampcombi_main
+    
     # clear the dictionary to clear memory allocated
     listdict.clear()                      
 
