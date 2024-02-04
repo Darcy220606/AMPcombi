@@ -91,6 +91,7 @@ parse_all_parser.add_argument("--log", dest="log_file", nargs='?', help="Silence
                     type=bool, default=False)
 parse_all_parser.add_argument("--threads", dest="cores", nargs='?', help="Changes the threads used for DIAMOND alignment (default: %(default)s)",
                     type=int, default=4)
+parse_all_parser.add_argument('--version', action='version', version='%(prog)s ' + __version__)
 #parse_all_parser.set_defaults(func=parse_tables)  # default function is parse tables
 
 # Subparser: Complete summary
@@ -104,6 +105,7 @@ complete_parser.add_argument("--log", dest="log_file", nargs='?', help="Silences
                     type=bool, default=False)
 complete_parser.add_argument("--threads", dest="cores", nargs='?', help="Changes the threads used for DIAMOND alignment (default: %(default)s)",
                     type=int, default=4)
+complete_parser.add_argument('--version', action='version', version='%(prog)s ' + __version__)
 
 ## Subparser: Cluster
 #goodbye_parser = subparsers.add_parser('complete')
