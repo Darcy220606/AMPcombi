@@ -122,13 +122,13 @@ def hmmsearch(path, hmmevalue):
     hmm_df.columns = ['HMM_model','evalue_hmmer','contig_id']
     hmm_df['evalue_hmmer'] = hmm_df['evalue_hmmer']
     hmm_df['evalue_hmmer'] = pd.to_numeric(hmm_df['evalue_hmmer'], errors='coerce')
-    # remove temp dir
-    # shutil.rmtree('./temp')
     # remove any hits below evalue specified
     if hmmevalue is not None:
         # make sure the evalues are float type 
         # remove any hits below evalue
         hmm_df = hmm_df[hmm_df['evalue_hmmer'] < float(hmmevalue)]
+    # remove temp dir
+    # shutil.rmtree('./temp')
     return hmm_df[['HMM_model', 'evalue_hmmer', 'contig_id']] 
 
 #########################################
@@ -222,7 +222,6 @@ def summary(df_list, samplename, faa_path, aa_len):
     merge_df = merge_df.set_index('contig_id')
     merge_df['p_sum']= merge_df.sum(axis=1)#.sort_values(ascending=False)
     merge_df = merge_df.sort_values('p_sum', ascending=False).drop(['p_sum', 'aa_lengths'], axis=1).reset_index()
-    merge_df.to_csv('./temp/output_test_before_gbk.csv', index=False)
     return merge_df
 
 #########################################

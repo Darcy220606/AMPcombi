@@ -5,7 +5,7 @@ with open('README.md') as fh:
 
 setup(
     name='AMPcombi',
-    version='0.1.9dev2',
+    version='0.2dev',
     author='Anan Ibrahim, Louisa Perelo',
     author_email='ananhamido@hotmail.com, louperelo@gmail.com',
     packages=['ampcombi'],
@@ -18,6 +18,7 @@ setup(
              'ampcombi/reformat_tables.py',
              'ampcombi/functionality.py',
              'ampcombi/optional_inputs.py',
+             'ampcombi/complete_summary.py',
              'ampcombi/parse_gbks.py',
              'ampcombi/hmm_to_csv_input_file.py',
              'ampcombi/clustering_hits.py',

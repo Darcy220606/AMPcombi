@@ -43,7 +43,19 @@ def check_faa_path(faa_path, samplename):
     else:
         sys.exit(f'AMPcombi interrupted: The input given with --faa does not seem to be a valid directory or file. Please check.')
 
-    
+def check_gbk_path(gbk_path, samplename):
+    if(os.path.isdir(gbk_path)):
+        path_list = list(pathlib.Path(gbk_path).rglob(f"*{samplename}*.[gG][bB][fFkK]")) #gbk or gbff
+        if (len(path_list)>1):
+            sys.exit(f'AMPcombi interrupted: There is more than one .gbk file for {samplename} in the folder given with --gbk')
+        elif(not path_list):
+            sys.exit(f'AMPcombi interrupted: There is no .gbk file containing {samplename} in the folder given with --gbk')
+        return path_list[0]
+    elif(os.path.isfile(gbk_path)):
+        return gbk_path
+    else:
+        sys.exit(f'AMPcombi interrupted: The input given with --gbk does not seem to be a valid directory or file. Please check.')
+
 
 def check_ref_database(database):
     if((database==None) and (not os.path.exists('amp_ref_database'))):
