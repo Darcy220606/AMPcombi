@@ -182,7 +182,7 @@ def gbk_parse(gbk_dir, stop_codon_window, ampcombi_dict_mod, transporter_window,
                 #  Step3: Extract the new gbks that contain the hits
                 #########
                 for item in listdict:
-                    if item['name'] in filename and item['contig_name'] == record.id:
+                    if item['name'] in gbk_dir and item['contig_name'] == record.id:
                         name = item['name']
                         contig_name = item['contig_name']
                         new_seq_record = record
