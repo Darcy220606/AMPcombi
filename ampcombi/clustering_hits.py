@@ -8,11 +8,7 @@ import subprocess
 import os
 import pandas as pd
 
-########################################
-#  Adjust the inputs
 #########################################
-
-########################################
 # FUNCTION: PARSE INPUT FILE
 #########################################
 def parsing_input_for_cluster(merged_df):

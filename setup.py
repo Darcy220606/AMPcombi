@@ -19,6 +19,7 @@ setup(
              'ampcombi/functionality.py',
              'ampcombi/optional_inputs.py',
              'ampcombi/complete_summary.py',
+             'ampcombi/signalpep_pred.py',
              'ampcombi/parse_gbks.py',
              'ampcombi/hmm_to_csv_input_file.py',
              'ampcombi/clustering_hits.py',
