@@ -37,7 +37,7 @@ def signalp6(wdir, signalp6_model, ampcombi):
     This detects the presence of signaling peptides if any.
     By running SignalP6slow-sequential
     """
-    signalp_commands =f'signalp6 --fastafile representative_seq.fasta --model_dir {signalp6_model} --organism other --output_dir {wdir} --format png --mode slow-sequential'
+    signalp_commands =f'signalp6 --fastafile representative_seq.fasta --model_dir {signalp6_model} --organism other --output_dir {wdir} --format all --mode slow-sequential'
     # execute the signalp6 command
     try:
         subprocess.run(signalp_commands, shell=True, text=True)

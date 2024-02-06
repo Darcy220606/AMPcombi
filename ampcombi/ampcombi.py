@@ -425,12 +425,12 @@ def signalpeptide(args):
     ampcombi_cluster_df = args.clustersummary
     signalp_models = args.signalpmodels
     
-    signal_dir = 'signalip'
+    signal_dir = 'signalp'
     os.makedirs(signal_dir, exist_ok=True)
     signal_df = table_to_fasta_sp(ampcombi_cluster_df)
     ampcombi_signal_df = signalp6(signal_dir, signalp_models, signal_df)
     remove_clusters_no_sp(ampcombi_signal_df)
-    print(f'\n DONE: Ampcombi_summary_cluster_SP.tsv and Ampcombi_summary_cluster_SP_onlyclusterswithSP.tsv were saved to your current working directory.')
+    print(f'\n DONE: Ampcombi_summary_cluster_SP.tsv and Ampcombi_summary_cluster_SP_onlyclusterswithSP.tsv and ./signalp and the representative_seq.fasta were saved to your current working directory.')
     print('\n ########################################################## ')
 
 #########################################
