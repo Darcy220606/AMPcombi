@@ -4,7 +4,7 @@ import os
 import sys
 import argparse
 import warnings
-from contextlib import redirect_stdout
+from contextlib import redirect_stdout, redirect_stderr
 from version import __version__
 import json
 import os.path
@@ -23,9 +23,9 @@ from optional_inputs import *
 from parse_gbks import *
 from complete_summary import *
 
-## ATENTION: GBK_DIR wont work with FUNCSCAN AND SO I CHANGED IT TO TAKE A DIR OR A SINGLE FILE TO AVOID PROBLEMS WITH FUNCSCAN.
-
-# top level programme
+#########################################
+# TOP LEVEL: AMPCOMBI
+#########################################
 parser = argparse.ArgumentParser(prog = 'ampcombi', formatter_class=argparse.RawDescriptionHelpFormatter,
                                 usage='%(prog)s [options]',
                                 description=('''\
@@ -40,11 +40,16 @@ parser = argparse.ArgumentParser(prog = 'ampcombi', formatter_class=argparse.Raw
                                 add_help=True)
 parser.add_argument('--version', action='version', version='%(prog)s ' + __version__)
 
-# subparsers
-subparsers = parser.add_subparsers(dest='command')
+#########################################
+# SUBPARSERS
+#########################################
+subparsers = parser.add_subparsers() #dest='command'
 
-# Subparser: Parse and align
+#########################################
+# SUBPARSERS : PARSE AND ALIGN AND FILTER
+#########################################
 parse_all_parser = subparsers.add_parser('parse_tables')
+
 parse_all_parser.add_argument("--amp_results", dest="amp", nargs='?', help="Enter the path to the folder that contains the different tool's output files in sub-folders named by sample name. \n If paths are to be inferred, sub-folders in this results-directory have to be organized like '/amp_results/toolsubdir/samplesubdir/tool.sample.filetype' \n (default: %(default)s)",
                     type=str, default='./test_files/')
 parse_all_parser.add_argument("--sample_list", dest="samples", nargs='*', help="Enter a list of sample-names, e.g. sample_1 sample_2 sample_n. \n If not given, the sample-names will be inferred from the folder structure",
@@ -87,83 +92,93 @@ parse_all_parser.add_argument("--amptransformer_file", dest="amptransformer", na
                     type=str, default=None)
 parse_all_parser.add_argument("--amp_database", dest="ref_db", nargs='?', help="Enter the path to the folder containing the reference database files (.fa and .tsv); a fasta file and the corresponding table with functional and taxonomic classifications. \n (default: DRAMP database)",
                     type=str, default=None)
+parse_all_parser.add_argument("--sample_metadata", dest="samplemetadata", help="Path to a tsv-file containing sample metadata, e,g, 'path/to/sample_metadata.tsv'. The metadata table can have more information for sample identification that will be added to the output summary. The table needs to contain the sample names in the first column. \n (default: %(default)s)",
+                    type=str, default=None)
+parse_all_parser.add_argument("--contig_metadata", dest="contigmetadata", help="Path to a tsv-file containing contig metadata, e,g, 'path/to/contig_metadata.tsv'. The metadata table can have more information for contig classification that will be added to the output summary. The table needs to contain the sample names in the first column and the contig_ID in the second column. This can be the output from MMseqs2, pydamage and MetaWrap. \n (default: %(default)s)",
+                    type=str, default=None)
 parse_all_parser.add_argument("--log", dest="log_file", nargs='?', help="Silences the standard output and captures it in a log file)",
                     type=bool, default=False)
 parse_all_parser.add_argument("--threads", dest="cores", nargs='?', help="Changes the threads used for DIAMOND alignment (default: %(default)s)",
                     type=int, default=4)
-parse_all_parser.add_argument('--version', action='version', version='%(prog)s ' + __version__)
-#parse_all_parser.set_defaults(func=parse_tables)  # default function is parse tables
+parse_all_parser.add_argument('--version', action='version', version='ampcombi' + __version__)
 
-# Subparser: Complete summary
+#########################################
+# SUBPARSERS : COMPLETE SUMMARY
+#########################################
 complete_parser = subparsers.add_parser('complete')
-# TODO !! directory or list of files
+
 complete_parser.add_argument("--summaries_directory", dest="summarydir", nargs='?', help="Enter a directory path in which summaries are in samples directories, e.g. './ampcombi/samplename/samplename_ampcombi.tsv'",
                     type=str)
-complete_parser.add_argument("--summaries_files", dest="summaryfile", nargs='+', help="Enter a list of samples' ampcombi summaries, e.g. './ampcombi/sample_1/sample_1_ampcombi.tsv './ampcombi/sample_2_ampcombi.tsv'",
+complete_parser.add_argument("--summaries_files", dest="summaryfile", nargs='+', help="Enter a list of samples' ampcombi summaries, e.g. ./ampcombi/sample_1/sample_1_ampcombi.tsv ./ampcombi/sample_2_ampcombi.tsv",
                     type=str)
 complete_parser.add_argument("--log", dest="log_file", nargs='?', help="Silences the standard output and captures it in a log file)",
                     type=bool, default=False)
-complete_parser.add_argument("--threads", dest="cores", nargs='?', help="Changes the threads used for DIAMOND alignment (default: %(default)s)",
+complete_parser.add_argument('--version', action='version', version='ampcombi' + __version__)
+
+#########################################
+# SUBPARSERS : CLUSTER SUMMARY
+#########################################
+cluster_parser = subparsers.add_parser('cluster')
+
+cluster_parser.add_argument("--ampcombi_summary", dest="completesummary", nargs='?', help="Enter a file path corresponding to the Ampcombi_summary.tsv that can be generated by running --ampcombi complete. \n (default: %(default)s)",
+                    type=str, default='./Ampcombi_summary')
+cluster_parser.add_argument("--cluster_cov_mode", dest="mmseqscovmode", nargs='?', help="This assigns the cov. mode to the mmseqs2 cluster module- More information can be obtained in mmseqs2 docs at https://mmseqs.com/latest/userguide.pdf",
+                    type=int, default=0)
+cluster_parser.add_argument("--cluster_mode", dest="mmseqsclustermode", nargs='?', help="This assigns the cluster mode to the mmseqs2 cluster module- More information can be obtained in mmseqs2 docs at https://mmseqs.com/latest/userguide.pdf",
+                    type=int, default=1)
+cluster_parser.add_argument("--cluster_coverage", dest="mmseqscoverage", nargs='?', help="This assigns the coverage to the mmseqs2 cluster module- More information can be obtained in mmseqs2 docs at https://mmseqs.com/latest/userguide.pdf",
+                    type=float, default=0.8)
+cluster_parser.add_argument("--cluster_seq_id", dest="mmseqsseqid", nargs='?', help="This assigns the seqsid to the mmseqs2 cluster module- More information can be obtained in mmseqs2 docs at https://mmseqs.com/latest/userguide.pdf",
+                    type=float, default=0.4)
+cluster_parser.add_argument("--cluster_sensitivity", dest="mmseqssensitivity", nargs='?', help="This assigns sensitivity of alignment to the mmseqs2 cluster module- More information can be obtained in mmseqs2 docs at https://mmseqs.com/latest/userguide.pdf",
+                    type=float, default=4.0)
+cluster_parser.add_argument("--cluster_remove_singletons", dest="removesingletons", nargs='?', help="This removes any hits that did not form a cluster",
+                    type=bool, default=True)
+cluster_parser.add_argument("--cluster_retain_label", dest="retainlabels", nargs='?', help="This removes any cluster that only has a certain label in the sample name. For example if you have samples labels with 'S1_metaspades' and 'S1_megahit', you can retain clusters that have samples with suffix '_megahit' by running '--retain_clusters_label megahit'",
+                    type=str, default='megahit')
+cluster_parser.add_argument("--cluster_min_member", dest="minnumber", nargs='?', help="This removes any cluster that has a hit number lower than this",
+                    type=int, default=3)
+cluster_parser.add_argument("--threads", dest="cores", nargs='?', help="Changes the threads used for DIAMOND alignment (default: %(default)s)",
                     type=int, default=4)
-complete_parser.add_argument('--version', action='version', version='%(prog)s ' + __version__)
+cluster_parser.add_argument("--log", dest="log_file", nargs='?', help="Silences the standard output and captures it in a log file)",
+                    type=bool, default=False)
+cluster_parser.add_argument('--version', action='version', version='ampcombi' + __version__)
 
-## Subparser: Cluster
-#goodbye_parser = subparsers.add_parser('complete')
-#
-## Subparser: SignalPeptide
-#goodbye_parser = subparsers.add_parser('signalpeptide')
-#
-## Subparser: LocalColabFold
-#goodbye_parser = subparsers.add_parser('colabfold')
+#########################################
+# FUNCTION : PARSING
+#########################################
+def parse_tables(args):
+    # supress panda warnings
+    warnings.simplefilter(action='ignore', category=FutureWarning)
+    # supress bipython warnings
+    warnings.filterwarnings("ignore", category=DeprecationWarning) 
 
-# supress panda warnings
-warnings.simplefilter(action='ignore', category=FutureWarning)
-# supress bipython warnings
-warnings.filterwarnings("ignore", category=DeprecationWarning) 
+    # assign input arguments to variables
+    path = args.amp
+    samplelist_in = args.samples
+    filepaths_in = args.files
+    p = args.p
+    aa_len = args.length
+    dbevalue = args.dbevalue
+    hmmevalue = args.hmmevalue
+    faa_path = args.faa
+    gbk_dir = args.gbk
+    stop_codon_window = args.stopwindowsize 
+    filter_stop_codon = args.removestops
+    transporter_window = args.transporterwindowsize
+    ampir_file = args.ampir
+    amplify_file = args.amplify
+    macrel_file = args.macrel
+    neubi_file = args.neubi
+    ampgram_file = args.ampgram
+    amptransformer_file = args.amptransformer
+    hmmer_file = args.hmmsearch
+    amppred_file = args.amppred
+    database = args.ref_db
+    add_samplemetadata = args.samplemetadata
+    add_contigmetadata = args.contigmetadata
+    threads = args.cores
 
-# get command line arguments
-args = parser.parse_args()
-
-# assign input arguments to variables
-path = args.amp
-samplelist_in = args.samples
-filepaths_in = args.files
-p = args.p
-aa_len = args.length
-dbevalue = args.dbevalue
-hmmevalue = args.hmmevalue
-faa_path = args.faa
-gbk_dir = args.gbk
-stop_codon_window = args.stopwindowsize 
-filter_stop_codon = args.removestops
-transporter_window = args.transporterwindowsize
-#tooldict = json.loads(args.tools)
-ampir_file = args.ampir
-amplify_file = args.amplify
-macrel_file = args.macrel
-neubi_file = args.neubi
-ampgram_file = args.ampgram
-amptransformer_file = args.amptransformer
-hmmer_file = args.hmmsearch
-amppred_file = args.amppred
-database = args.ref_db
-complete_summary = args.complete
-clustering = args.cluster
-cov_mod = args.mmseqscovmode
-cluster_mode = args.mmseqsclustermode
-coverage = args.mmseqscoverage
-seq_id = args.mmseqsseqid
-sensitivity = args.mmseqssensitivity
-remove_singletons = args.removesingletons
-min_cluster_members = args.minnumber
-retain_clusters_with = args.retainlabels
-add_samplemetadata = args.samplemetadata
-add_contigmetadata = args.contigmetadata
-threads = args.cores
-summary_dir = args.summarydir
-summary_file = args.summaryfile
-
-def parse_tables():
     # additional variables
     tooldict = dict()
     #check fileending input (at least one has to be given)
@@ -256,6 +271,8 @@ def parse_tables():
                     shutil.rmtree('./temp')
                     # Fix the column names to match other summary files 
                     sample_summary_df.rename(columns={'name': 'sample_id', 'contig_id':'CDS_id', 'contig_name':'contig_id' }, inplace=True)
+                    # Remove duplicates
+                    sample_summary_df = sample_summary_df.drop_duplicates()
                     # Write sample summary into sample output folder
                     sample_summary_df.to_csv(samplelist[i] +'/'+samplelist[i]+'_ampcombi.tsv', sep='\t', index=False)
                     print(f'The summary file for {samplelist[i]} was saved to {samplelist[i]}/.')
@@ -306,36 +323,120 @@ def parse_tables():
             shutil.rmtree('./temp')
             # Fix the column names to match other summary files 
             sample_summary_df.rename(columns={'name': 'sample_id', 'contig_id':'CDS_id', 'contig_name':'contig_id' }, inplace=True)
+            # Remove duplicates
+            sample_summary_df = sample_summary_df.drop_duplicates()
             # Write sample summary into sample output folder
             sample_summary_df.to_csv(samplelist[i] +'/'+samplelist[i]+'_ampcombi.tsv', sep='\t', index=False)
             print(f'The summary file for {samplelist[i]} was saved to {samplelist[i]}/.tsv')
 
-def complete():
+#########################################
+# FUNCTION : CONCATENATING
+######################################### 
+def complete(args):
+    # print AMPcombi header
+    print_header()
+    print('\n ########################################################## ')
+    print(f'AMPcombi will now concatenate all files into Ampcombi_summary.tsv')
+    # supress panda warnings
+    warnings.simplefilter(action='ignore', category=FutureWarning)
+    # supress bipython warnings
+    warnings.filterwarnings("ignore", category=DeprecationWarning) 
+
+    # assign input arguments to variables
+    summary_dir = args.summarydir
+    summary_file = args.summaryfile
+
     if summary_dir:
-        #check if its directory, if not directory print (path not directory)
-        if( not os.path.isdir(summary_dir)):
+        # check if it's a directory
+        if not os.path.isdir(summary_dir):
             sys.exit(f'AMPcombi interrupted: Directory path {summary_dir} provided to --summaries_dir does not exist. Please provide a valid directory path')
-        else:
-            # is directory
-            file_list = glob.glob(summary_dir + '/**/*_ampcombi.tsv', recursive=True)
-            #check if all paths exists
-            for file_path in file_list:
-                concatenate_summaries(file_path)
+        file_list = glob.glob(summary_dir + '/**/*_ampcombi.tsv', recursive=True)
+        # check if any files matching the pattern were found
+        if not file_list:
+            sys.exit(f'AMPcombi interrupted: No ampcombi summary files found in the directory {summary_dir}')
+        # process the file list to create the complete summary
+        concatenate_summaries(file_list)
+        print(f'\n DONE: Ampcombi_summary.tsv was saved to your current working directory.')
     elif summary_file:
-        # check if its a list of files 
-        if(len(summary_file) == 1):
+        # check if it's a list of files
+        if len(summary_file) <= 1:
             sys.exit(f'AMPcombi interrupted: Only one file was given in --summaries_files. Please provide more than one file')
-        elif(len(summary_file) > 1):
-            #check if all paths exists
-            for file_path in summary_file:
-                concatenate_summaries(file_path)
+        # check if all file paths exist
+        for file_path in summary_file:
+            if not os.path.isfile(file_path):
+                sys.exit(f'AMPcombi interrupted: File path {file_path} does not exist. Please provide a valid file path')
+        # process the list of files to create the complete summary
+        concatenate_summaries(summary_file)
+        print(f'\n DONE: Ampcombi_summary.tsv was saved to your current working directory.')
+    else:
+        sys.exit('AMPcombi interrupted: Please provide either a directory path using --summaries_directory or a list of files using --summaries_files')
 
-# Call teh appropriate subcommand accordingly based on the command argument 
-if args.command == 'parse_tables':
-    parse_tables(args)
-elif args.command == 'complete':
-    complete(args)
+#########################################
+# FUNCTION : CLUSTERING
+######################################### 
+def cluster(args):
+    # print AMPcombi header
+    print_header()
+    print(f'\n All hits in the AMPcombi_summary.tsv will now be clustered by MMSeqs2')
 
-if __name__ == '__main__':
+    # assign input arguments to variables
+    ampcombi_summary = args.completesummary
+    cov_mod = args.mmseqscovmode
+    cluster_mode = args.mmseqsclustermode
+    coverage = args.mmseqscoverage
+    seq_id = args.mmseqsseqid
+    sensitivity = args.mmseqssensitivity
+    remove_singletons = args.removesingletons
+    min_cluster_members = args.minnumber
+    retain_clusters_with = args.retainlabels
+    threads = args.cores
+    
+    # Grab the AMPcombi summary file 
+    ampcombi_summary_df = pd.read_csv(ampcombi_summary, delimiter='\t')
+    merged_df = parsing_input_for_cluster(ampcombi_summary_df)
+    mmseqs_cluster(cov_mod,cluster_mode,coverage,seq_id,sensitivity,threads)
+    compile_clusters(merged_df,retain_clusters_with,remove_singletons,min_cluster_members)
+    print(f'\n DONE: Ampcombi_summary_clusters.tsv and AMPcombi_summary_cluster_representative_seq.tsv was saved to your current working directory.')
+    print('\n ########################################################## ')
+
+# TODO the log is not capturing the info from mmseqs (not verbose)
+#########################################
+# FUNCTION : LOGGING
+######################################### 
+def log_output(log_file_name, args, func):
+    if args.log_file and not os.path.exists(log_file_name):
+        with open(f'{log_file_name}', 'w') as f:
+            with redirect_stdout(f), redirect_stderr(f):
+                func(args)
+    elif args.log_file and os.path.exists(log_file_name):
+        with open(f'{log_file_name}', 'a') as f:
+            with redirect_stdout(f), redirect_stderr(f):
+                func(args)
+    else:
+        func(args)
+
+#########################################
+# FUNCTION : MAIN FUNCTIONS
+#########################################        
+def parse_table_log(args):
+    log_output('Ampcombi_parse_tables.log', args, parse_tables)
+
+def complete_log(args):
+    log_output('Ampcombi_complete.log', args, complete)
+
+def cluster_log(args):
+    log_output('Ampcombi_cluster.log', args, cluster)
+    
+#########################################
+# SUBPARSERS : DEFAULT
+######################################### 
+parse_all_parser.set_defaults(func=parse_table_log)  # default function is parse_tables
+complete_parser.set_defaults(func=complete_log)  # default function is complete
+cluster_parser.set_defaults(func=cluster_log)  # default function is cluster
+
+def main():
     args = parser.parse_args()
     args.func(args)  # call the default function
+         
+if __name__ == '__main__':
+    main()

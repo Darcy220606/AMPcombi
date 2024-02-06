@@ -127,8 +127,6 @@ def hmmsearch(path, hmmevalue):
         # make sure the evalues are float type 
         # remove any hits below evalue
         hmm_df = hmm_df[hmm_df['evalue_hmmer'] < float(hmmevalue)]
-    # remove temp dir
-    # shutil.rmtree('./temp')
     return hmm_df[['HMM_model', 'evalue_hmmer', 'contig_id']] 
 
 #########################################
@@ -222,6 +220,8 @@ def summary(df_list, samplename, faa_path, aa_len):
     merge_df = merge_df.set_index('contig_id')
     merge_df['p_sum']= merge_df.sum(axis=1)#.sort_values(ascending=False)
     merge_df = merge_df.sort_values('p_sum', ascending=False).drop(['p_sum', 'aa_lengths'], axis=1).reset_index()
+    # cleanup remove temp dir
+    shutil.rmtree('./temp')
     return merge_df
 
 #########################################

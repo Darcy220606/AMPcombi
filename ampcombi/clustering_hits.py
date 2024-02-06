@@ -59,10 +59,10 @@ def mmseqs_cluster(cov_mod,cluster_mode,coverage,seq_id,sensitivity,threads):
     # define mmseqs db and cluster and align commands 
     os.makedirs('tmp', exist_ok=True)
     mmseqs_commands = [
-        f'mmseqs createdb ./clusters/merged_fastas.fasta ./clusters/sequenceDB',
+        f'mmseqs createdb ./clusters/merged_fastas.fasta ./clusters/sequenceDB -v 1',
         # The combination chosen was tested on the simulated data and its values that make most sense 
-        f'mmseqs cluster ./clusters/sequenceDB ./clusters/sequenceDBclu ./tmp --cov-mode {cov_mod} --cluster-mode {cluster_mode} -c {coverage} --min-seq-id {seq_id} -s {sensitivity} --threads {threads}',
-        f'mmseqs createtsv ./clusters/sequenceDB ./clusters/sequenceDB ./clusters/sequenceDBclu ./clusters/sequenceDBclu.tsv --threads {threads}'
+        f'mmseqs cluster ./clusters/sequenceDB ./clusters/sequenceDBclu ./tmp --cov-mode {cov_mod} --cluster-mode {cluster_mode} -c {coverage} --min-seq-id {seq_id} -s {sensitivity} --threads {threads} -v 1',
+        f'mmseqs createtsv ./clusters/sequenceDB ./clusters/sequenceDB ./clusters/sequenceDBclu ./clusters/sequenceDBclu.tsv --threads {threads} -v 1'
     ]
     # execute the MMseqs2 command
     for command in mmseqs_commands:
@@ -137,7 +137,7 @@ def compile_clusters(merged_df,retain_clusters_with, remove_singletons, min_clus
                     
     # write the clusters represnetative (e.g. after filtering out the modern clusters and the clusters that have < 3 members) in a file (dict to df)
     representative_seq = pd.DataFrame(listdict, columns=['seq_headers', 'index', 'total_cluster_members'])
-    representative_seq.to_csv(f'AMPcombi_summary_cluster_representative_seq.tsv', sep='\t', index=False) # REMOBER TO ACTIVATE IN FUNCTION
+    representative_seq.to_csv(f'Ampcombi_summary_cluster_representative_seq.tsv', sep='\t', index=False) # REMOBER TO ACTIVATE IN FUNCTION
 
     # clear the dictionary to clear memory allocated
     listdict.clear()                      
@@ -159,4 +159,4 @@ def compile_clusters(merged_df,retain_clusters_with, remove_singletons, min_clus
     # remove cds_ID to grab only the gbk files corresponding to the dereplicated hits 
     ampcombi_cluster['seq_headers'] = ampcombi_cluster['seq_headers'].str.split('!', n=2).str[:2].str.join('!')
     ampcombi_cluster['seq_headers'] = ampcombi_cluster['seq_headers'].str.replace('!', '_')
-    return ampcombi_cluster
+    ampcombi_cluster.to_csv(f'Ampcombi_summary_cluster.tsv', sep='\t', index=False)

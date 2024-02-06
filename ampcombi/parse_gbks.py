@@ -59,135 +59,132 @@ def gbk_parse(gbk_dir, stop_codon_window, ampcombi_dict_mod, transporter_window,
     
     # look for the file name with correct ampcombi sample
     for d in ampcombi_dict_mod:
-        if d['name'] in gbk_dir:
-            # open gbk file
-            GBKfile = gbk_dir
-            for record in SeqIO.parse(GBKfile, "genbank"):
-            
-                #########
-                #  Step1: Grab the vicinity CDSs and search for any 'transporter' gene
-                #########
-                # count the number of features in the record that contains the hit/CDS
-                cds_count = sum(1 
-                                for feature in record.features 
-                                if feature.type == "CDS" and "locus_tag" in feature.qualifiers)
-                # grab only the features with CDS and index from 0--
-                cds_features = [feature 
-                                for feature in record.features 
-                                if feature.type == "CDS" and "locus_tag" in feature.qualifiers]
-                # iterate over every feature in cds_features
-                for i, feature in enumerate(cds_features):
+        for record in SeqIO.parse(gbk_dir, "genbank"):
+        
+            #########
+            #  Step1: Grab the vicinity CDSs and search for any 'transporter' gene
+            #########
+            # count the number of features in the record that contains the hit/CDS
+            cds_count = sum(1 
+                            for feature in record.features 
+                            if feature.type == "CDS" and "locus_tag" in feature.qualifiers)
+            # grab only the features with CDS and index from 0--
+            cds_features = [feature 
+                            for feature in record.features 
+                            if feature.type == "CDS" and "locus_tag" in feature.qualifiers]
+            # iterate over every feature in cds_features
+            for i, feature in enumerate(cds_features):
+                locus_tag = feature.qualifiers["locus_tag"][0]
+                # check if locus_tag is present in the list of contig_ids in dict.
+                if locus_tag in d['contig_id']:
+                    # grab the index of the locus_tag in cds_features
+                    index = cds_features.index(feature)
+                    # calculate the start and end indices for the preceding and following CDSs = 10
+                    start_index = max(0, index - transporter_window)
+                    end_index = min(index + transporter_window, cds_count)
+                    # grab the preceding and following CDS from the matching index
+                    preceding_cds_features = cds_features[start_index:index]
+                    following_cds_features = cds_features[index:end_index]
+                    # check if the 'transporter' is a product in any of the preceding and following CDSs
+                    for f in preceding_cds_features + following_cds_features:
+                        if 'product' in f.qualifiers and 'transporter' in f.qualifiers['product'][0]:
+                             dict['transporter_protein'] = f.qualifiers['product'][0]
+                        else:
+                            dict['transporter_protein'] = 'no'
+                    
+            #########
+            #  Step2: Grab the contig_ids - CDS start and end - look for stop codon in vicinity
+            #########
+            for feature in record.features:
+                if feature.type == "CDS" and "locus_tag" in feature.qualifiers:
                     locus_tag = feature.qualifiers["locus_tag"][0]
-                    # check if locus_tag is present in the list of contig_ids in dict.
-                    if locus_tag in d['contig_id']:
-                        # grab the index of the locus_tag in cds_features
-                        index = cds_features.index(feature)
-                        # calculate the start and end indices for the preceding and following CDSs = 10
-                        start_index = max(0, index - transporter_window)
-                        end_index = min(index + transporter_window, cds_count)
-                        # grab the preceding and following CDS from the matching index
-                        preceding_cds_features = cds_features[start_index:index]
-                        following_cds_features = cds_features[index:end_index]
-                        # check if the 'transporter' is a product in any of the preceding and following CDSs
-                        for f in preceding_cds_features + following_cds_features:
-                            if 'product' in f.qualifiers and 'transporter' in f.qualifiers['product'][0]:
-                                 dict['transporter_protein'] = f.qualifiers['product'][0]
-                            else:
-                                dict['transporter_protein'] = 'no'
-                        
-                #########
-                #  Step2: Grab the contig_ids - CDS start and end - look for stop codon in vicinity
-                #########
-                for feature in record.features:
-                    if feature.type == "CDS" and "locus_tag" in feature.qualifiers:
-                        locus_tag = feature.qualifiers["locus_tag"][0]
-                        # for every CDS in the list of contig_ids check if its present in the features and add contig name and CDS location and direction
-                        for item in d['contig_id']:
-                            if locus_tag == item:
-                                # add the contig_id and _name
-                                dict['name'] = d['name']
-                                dict['contig_name'] = record.id
-                                dict['contig_id'] = locus_tag
-                                # add the CDS location
-                                start = feature.location.start.position 
-                                end = feature.location.end.position
-                                dict['CDS_start'] = start
-                                dict['CDS_end'] = end
-                                cds_dir = feature.location.strand
-                                dict['CDS_dir'] = cds_dir
-                                # add and search for any stop codons in the vicinity of the hit
-                                sequence = record.seq
-                                # define the search window
-                                start_window = max(start - window_size, 0)  # Make sure not to go beyond the start of the sequence
-                                end_window = min(end + window_size, len(sequence))  # Make sure not to go beyond the end of the sequence
-                                # extract the window sequence before and after the CDS
-                                start_window_seq = sequence[start_window:start]
-                                end_window_seq = sequence[end:end_window]
-                                # flag to check if any of the codons are found : keeps iterating until codon_found
-                                codon_found = False
-                                # check if the strand 5'-3'
-                                if cds_dir == 1:
-                                    # iterate over the start window sequences first in a window of 3 bases from right to left
-                                    for i in range(len(start_window_seq), -1, -window_step):
-                                        codon = start_window_seq[i:i+3]
+                    # for every CDS in the list of contig_ids check if its present in the features and add contig name and CDS location and direction
+                    for item in d['contig_id']:
+                        if locus_tag == item:
+                            # add the contig_id and _name
+                            dict['name'] = d['name']
+                            dict['contig_name'] = record.id
+                            dict['contig_id'] = locus_tag
+                            # add the CDS location
+                            start = feature.location.start.position 
+                            end = feature.location.end.position
+                            dict['CDS_start'] = start
+                            dict['CDS_end'] = end
+                            cds_dir = feature.location.strand
+                            dict['CDS_dir'] = cds_dir
+                            # add and search for any stop codons in the vicinity of the hit
+                            sequence = record.seq
+                            # define the search window
+                            start_window = max(start - window_size, 0)  # Make sure not to go beyond the start of the sequence
+                            end_window = min(end + window_size, len(sequence))  # Make sure not to go beyond the end of the sequence
+                            # extract the window sequence before and after the CDS
+                            start_window_seq = sequence[start_window:start]
+                            end_window_seq = sequence[end:end_window]
+                            # flag to check if any of the codons are found : keeps iterating until codon_found
+                            codon_found = False
+                            # check if the strand 5'-3'
+                            if cds_dir == 1:
+                                # iterate over the start window sequences first in a window of 3 bases from right to left
+                                for i in range(len(start_window_seq), -1, -window_step):
+                                    codon = start_window_seq[i:i+3]
+                                    if codon in stop_plus:
+                                        codon_found = True
+                                        #print(f"Codon sequence '{codon}' was found in '{start}'")
+                                        dict['CDS_stop_codon_found'] = str(codon)
+                                        break # Exit the loop if any of the stop codon is found
+                                # if the codon is not found in the start window, check the end window
+                                if not codon_found:    
+                                    for i in range(len(end_window_seq), -1, -window_step):
+                                        codon = end_window_seq[i:i+3]
                                         if codon in stop_plus:
                                             codon_found = True
                                             #print(f"Codon sequence '{codon}' was found in '{start}'")
                                             dict['CDS_stop_codon_found'] = str(codon)
-                                            break # Exit the loop if any of the stop codon is found
-                                    # if the codon is not found in the start window, check the end window
-                                    if not codon_found:    
-                                        for i in range(len(end_window_seq), -1, -window_step):
-                                            codon = end_window_seq[i:i+3]
-                                            if codon in stop_plus:
-                                                codon_found = True
-                                                #print(f"Codon sequence '{codon}' was found in '{start}'")
-                                                dict['CDS_stop_codon_found'] = str(codon)
-                                                break  # Exit the loop if any of the stop codon is found
-                                    # if the codon is not found in either the start or end window
-                                    if not codon_found:
-                                        #print(f"Codon sequence '{stop_plus}' not found in the window up and down stream of the hit '{start}'") 
-                                        dict['CDS_stop_codon_found'] = 'no' 
-                                    listdict.append(dict.copy())
-                                # check if the strand 3'-5'
-                                else:
-                                    # iterate over the start window sequences first in a window of 3 bases from right to left
-                                    for i in range(len(start_window_seq), -1, -window_step):
-                                        codon = start_window_seq[i:i+3]
+                                            break  # Exit the loop if any of the stop codon is found
+                                # if the codon is not found in either the start or end window
+                                if not codon_found:
+                                    #print(f"Codon sequence '{stop_plus}' not found in the window up and down stream of the hit '{start}'") 
+                                    dict['CDS_stop_codon_found'] = 'no' 
+                                listdict.append(dict.copy())
+                            # check if the strand 3'-5'
+                            else:
+                                # iterate over the start window sequences first in a window of 3 bases from right to left
+                                for i in range(len(start_window_seq), -1, -window_step):
+                                    codon = start_window_seq[i:i+3]
+                                    if codon in stop_minus:
+                                        codon_found = True
+                                        #print(f"Codon sequence '{codon}' was found in '{start}'") 
+                                        dict['CDS_stop_codon_found'] = str(codon)
+                                        break # Exit the loop if any of the stop codon is found
+                                # if the codon is not found in the start window, check the end window
+                                if not codon_found:    
+                                    for i in range(len(end_window_seq), -1, -window_step):
+                                        codon = end_window_seq[i:i+3]
                                         if codon in stop_minus:
                                             codon_found = True
-                                            #print(f"Codon sequence '{codon}' was found in '{start}'") 
+                                            #print(f"Codon sequence '{codon}' was found in '{start}'")
                                             dict['CDS_stop_codon_found'] = str(codon)
-                                            break # Exit the loop if any of the stop codon is found
-                                    # if the codon is not found in the start window, check the end window
-                                    if not codon_found:    
-                                        for i in range(len(end_window_seq), -1, -window_step):
-                                            codon = end_window_seq[i:i+3]
-                                            if codon in stop_minus:
-                                                codon_found = True
-                                                #print(f"Codon sequence '{codon}' was found in '{start}'")
-                                                dict['CDS_stop_codon_found'] = str(codon)
-                                                break  # Exit the loop if any of the stop codon is found
-                                    # if the codon is not found in either the start or end window
-                                    if not codon_found:
-                                        #print(f"Codon sequence '{stop_minus}' not found in the window up and down stream of the hit '{start}'") 
-                                        dict['CDS_stop_codon_found'] = 'no'
-                                    listdict.append(dict.copy())
-                
-                # if flagged remove hits with no stop codons found
-                if filter_stop_codon == True:
-                    listdict = [d for d in listdict if d.get('CDS_stop_codon_found') != 'no']
-
-                #########
-                #  Step3: Extract the new gbks that contain the hits
-                #########
-                for item in listdict:
-                    if item['name'] in gbk_dir and item['contig_name'] == record.id:
-                        name = item['name']
-                        contig_name = item['contig_name']
-                        new_seq_record = record
-                        print(f'writing {name}_{contig_name}.gbk')
-                        SeqIO.write(new_seq_record, f'{outgbk}/{name}_{contig_name}.gbk', "genbank")
+                                            break  # Exit the loop if any of the stop codon is found
+                                # if the codon is not found in either the start or end window
+                                if not codon_found:
+                                    #print(f"Codon sequence '{stop_minus}' not found in the window up and down stream of the hit '{start}'") 
+                                    dict['CDS_stop_codon_found'] = 'no'
+                                listdict.append(dict.copy())
+            
+            # if flagged remove hits with no stop codons found
+            if filter_stop_codon == True:
+                listdict = [d for d in listdict if d.get('CDS_stop_codon_found') != 'no']
+        
+            #########
+            #  Step3: Extract the new gbks that contain the hits
+            #########
+            for item in listdict:
+                if item['name'] and item['contig_name'] == record.id:
+                    name = item['name']
+                    contig_name = item['contig_name']
+                    new_seq_record = record
+                    print(f'writing {name}_{contig_name}.gbk')
+                    SeqIO.write(new_seq_record, f'{outgbk}/{name}_{contig_name}.gbk', "genbank")
 
     return listdict
 
@@ -227,22 +224,6 @@ def gbkparsing(sample_ampcombi_file, gbk_dir, stop_codon_window, transporter_win
         traceback.print_exc()
         print(f"An error occurred: {e}")
         merged_df = ampcombi_main
-
-    #except KeyError as e:
-    #    #specify the error exactly : no sample name and contig id is found due to empty results
-    #    if str(e) == "'name'":
-    #        print("No hits were found in the sample using these parameters, skipping ...")
-    #        #merged_df = ampcombi_main
-    #    else:
-    #        import traceback
-    #        traceback.print_exc()
-    #        print(f"KeyError occurred: {e}")
-    #    merged_df = ampcombi_main
-    #except Exception as e:
-    #    import traceback
-    #    traceback.print_exc()
-    #    print(f"An error occurred: {e}")
-    #    merged_df = ampcombi_main
     
     # clear the dictionary to clear memory allocated
     listdict.clear()                      
