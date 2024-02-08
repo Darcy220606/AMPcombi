@@ -333,11 +333,15 @@ The output will be written into your working directory, containing the following
 
 To test the function and outpur for AMPcombi, we provide test files that can be found in `test_faa`, `test_gbk` and `test_files`.
 
-Step1: Download the test directories:
+Step1: Download the test directories and unzip :
 ```
-wget https://github.com/Darcy220606/AMPcombi/tree/main/test_faa 
-wget https://github.com/Darcy220606/AMPcombi/tree/main/test_gbk 
-wget https://github.com/Darcy220606/AMPcombi/tree/main/test_files
+wget https://github.com/Darcy220606/AMPcombi/tree/main/test_faa.tar.gz 
+wget https://github.com/Darcy220606/AMPcombi/tree/main/test_gbk.tar.gz 
+wget https://github.com/Darcy220606/AMPcombi/tree/main/test_files.tar.gz
+
+tar -xzvf test_faa.tar.gz
+tar -xzvf test_gbk.tar.gz
+tar -xzvf test_files.tar.gz
 ```
 
 Step2: Parse tables from all AMP tools. This can be produced by running the AMP workflow from [FUNCSCAN](https://github.com/nf-core/funcscan). A pipeline for predicting functional genes.
