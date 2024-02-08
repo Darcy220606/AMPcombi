@@ -18,7 +18,7 @@ v<0.1.7>, <03.11.2022>
     -- Included the possibility of only submitting one .faa file instead of the faa-folder path (in case of summarizing only one single sample)
 v<0.1.8>, <14.02.2023>
     -- Linked to Zenodo archive
-v<0.1.9>, <XX.02.2024>
+v<0.2.0>, <09.02.2024>
     -- Change the output extension from `.csv` to `.tsv`
     -- Added a new feature to estimates the isoelectric point, mwt, structure fraction and hydrophobicity
     -- The DRAMP db `.tsv` was filtered to retain only necessary columns
@@ -39,5 +39,7 @@ v<0.1.9>, <XX.02.2024>
     -- Added the parameter '--remove_stop_codons' that removes hits with no stop codons found in the vicinity
     -- Added the parameter '--window_size_transporter' that adjusts the window size to look for 'transporter' proteins
     -- Added a new output directory per sample that holds the gbk files for the contigs with hits
-    -- Aded the paarmeter to cluster the AMP hits with '--cluster_hits' and the parameters to modify the clustering using MMSeqs2 '--cluster_cov_mode' '--cluster_mode' '--cluster_coverage' '--cluster_seq_id' '--cluster_sensitivity' '--cluster_remove_singletons' '--cluster_retain_label' '--cluster_min_member'
+    -- Added the parmeter to cluster the AMP hits with the parameters to modify the clustering using [MMSeqs2](https://github.com/soedinglab/MMseqs2) '--cluster_cov_mode' '--cluster_mode' '--cluster_coverage' '--cluster_seq_id' '--cluster_sensitivity' '--cluster_remove_singletons' '--cluster_retain_label' '--cluster_min_member'
+    -- Added the parameter to predict signaling peptide using [SignalP-6.0h](https://services.healthtech.dtu.dk/services/SignalP-6.0/)
     -- Removed the HTML output for the complete summary
+    -- Updated AMPcombi to use subcommands instead for ease of use with piplines

@@ -69,17 +69,6 @@ def amplify(path, p):
     return amplify_df[['contig_id', 'prob_amplify']]
 
 #########################################
-    #  AMP_ensembleamppred
-#########################################
-def amppred(path, p):
-    trim_text(path, 'Sequence')
-    amppred_dict = {4:'index', 14:'prob_amppred'} #{'level_0':1, 'level_1':2, 'level_2':'index', 'level_3':3, 'level_4':4, 'level_5':5, '############':6, 'Prediction':7, 'results':8, 'by':9, 'EnsembleAMPPred':10, '#############':'prob_amppred'}
-    amppred_df = pd.read_csv(path, sep=' ', header=None).rename(columns=amppred_dict)
-    amppred_df = amppred_df[(amppred_df['prob_amppred']>=p)]
-    amppred_df['prob_amppred'] = amppred_df['prob_amppred'].round(3)
-    return amppred_df[['index', 'prob_amppred']]
-
-#########################################
     #  AMP_macrel
 #########################################
 def macrel(path, p):
@@ -119,19 +108,6 @@ def ampgram(path, p):
     ampgram_df['prob_ampgram'] = ampgram_df['prob_ampgram'].round(3)
     return ampgram_df[['contig_id', 'prob_ampgram']]
 
-#########################################
-    #  AMP_transformer
-#########################################
-def amptransformer(path, p): 
-    # Dictionary to rename columns
-    amptransformer_dict = {'peptides':'contig_id','sequence':'seq_aa','Antimicrobial_Peptide_Prediction':'prob_amptransformer'}
-    # read file as df and rename columns
-    amptransformer_df = pd.read_csv(path, sep='\t').rename(columns=amptransformer_dict) 
-    # apply probability cutoff
-    amptransformer_df = amptransformer_df[(amptransformer_df['prob_amptransformer']>=p)]
-    amptransformer_df['prob_amptransformer'] = amptransformer_df['prob_amptransformer'].round(3)
-    return amptransformer_df[['contig_id', 'prob_amptransformer']]
-  
 ##########################################
     #  AMP_hmmsearch (single and multi HMM models)
 ##########################################
@@ -142,18 +118,40 @@ def hmmsearch(path, hmmevalue):
     command = f'hmm_to_csv_input_file.py -i {path} -o ./temp/hmm_stats.csv'
     subprocess.run(command, text=True, shell=True)
     # open the csv file and extract what you need from there
-    hmm_dict = {'Query':'HMM_model', 'E-value':'evalue_hmmer', 'Sequence':'contig_id'}
-    # set header to second row to skip first line starting with #
-    hmm_df = pd.read_csv('./temp/hmm_stats.csv', sep=',').rename(columns=hmm_dict)
-    # remove temp dir
-    shutil.rmtree('./temp')
+    hmm_df = pd.read_csv('./temp/hmm_stats.csv', sep=',', header = None, skiprows=1,usecols=[1, 3, 11])
+    hmm_df.columns = ['HMM_model','evalue_hmmer','contig_id']
+    hmm_df['evalue_hmmer'] = hmm_df['evalue_hmmer']
+    hmm_df['evalue_hmmer'] = pd.to_numeric(hmm_df['evalue_hmmer'], errors='coerce')
     # remove any hits below evalue specified
     if hmmevalue is not None:
         # make sure the evalues are float type 
-        hmm_df['evalue_hmmer'] = hmm_df['evalue_hmmer'].astype(float)
         # remove any hits below evalue
-        hmm_df = hmm_df[hmm_df['evalue_hmmer'] <= float(hmmevalue)]
-    return hmm_df[['contig_id','evalue_hmmer', 'HMM_model']] 
+        hmm_df = hmm_df[hmm_df['evalue_hmmer'] < float(hmmevalue)]
+    return hmm_df[['HMM_model', 'evalue_hmmer', 'contig_id']] 
+
+#########################################
+    #  AMP_transformer
+#########################################
+def amptransformer(path, p):
+    # Dictionary to rename columns
+    amptransformer_dict = {'peptides':'contig_id','sequence':'seq_aa','Antimicrobial_Peptide_Prediction':'prob_amptransformer'}
+    # read file as df and rename columns
+    amptransformer_df = pd.read_csv(path, sep='\t').rename(columns=amptransformer_dict)
+    # apply probability cutoff
+    amptransformer_df = amptransformer_df[(amptransformer_df['prob_amptransformer']>=p)]
+    amptransformer_df['prob_amptransformer'] = amptransformer_df['prob_amptransformer'].round(3)
+    return amptransformer_df[['contig_id', 'prob_amptransformer']]
+
+#########################################
+    #  AMP_ensembleamppred
+#########################################
+def amppred(path, p):
+    trim_text(path, 'Sequence')
+    amppred_dict = {4:'index', 14:'prob_amppred'} #{'level_0':1, 'level_1':2, 'level_2':'index', 'level_3':3, 'level_4':4, 'level_5':5, '############':6, 'Prediction':7, 'results':8, 'by':9, 'EnsembleAMPPred>
+    amppred_df = pd.read_csv(path, sep=' ', header=None).rename(columns=amppred_dict)
+    amppred_df = amppred_df[(amppred_df['prob_amppred']>=p)]
+    amppred_df['prob_amppred'] = amppred_df['prob_amppred'].round(3)
+    return amppred_df[['index', 'prob_amppred']]
 
 #########################################
 # FUNCTION: READ DFs PER SAMPLE 
@@ -165,25 +163,25 @@ def read_path(df_list, file_list, p, hmmevalue, dict, faa_path, samplename):
             if 'ampir' in path and path.endswith(dict.get('ampir')):
                 print('found ampir file')
                 df_list.append(ampir(path, p))
-            elif 'amplify' in path and path.endswith(dict.get('amplify')):
+            if 'amplify' in path and path.endswith(dict.get('amplify')):
                 print('found amplify file')
                 df_list.append(amplify(path, p))
-            elif 'macrel' in path and path.endswith(dict.get('macrel')):
+            if 'macrel' in path and path.endswith(dict.get('macrel')):
                 print('found macrel file')
                 df_list.append(macrel(path, p))
-            elif 'ampgram' in path and path.endswith(dict.get('ampgram')):
+            if 'ampgram' in path and path.endswith(dict.get('ampgram')):
                 print('found ampgram file')
                 df_list.append(ampgram(path, p))
-            elif 'amptransformer' in path and path.endswith(dict.get('amptransformer')):
+            if 'amptransformer' in path and path.endswith(dict.get('amptransformer')):
                 print('found amptransformer file')
                 df_list.append(amptransformer(path, p))
-            elif 'neubi' in path and path.endswith(dict.get('neubi')):
+            if 'neubi' in path and path.endswith(dict.get('neubi')):
                 print('found neubi file')
                 df_list.append(neubi(path, p))
-            elif 'hmmer_hmmsearch' in path and path.endswith(dict.get('hmmer_hmmsearch')):
+            if 'hmmer_hmmsearch' in path and path.endswith(dict.get('hmmer_hmmsearch')):
                 print('found hmmersearch file')
                 df_list.append(hmmsearch(path, hmmevalue))
-            elif 'ensembleamppred' in path and path.endswith(dict.get('ensembleamppred')):
+            if 'ensembleamppred' in path and path.endswith(dict.get('ensembleamppred')):
                 print('found ensemblamppred file')
                 faa_filepath = faa_path+'/'+samplename+'.faa'
                 faa_df = faa2table(faa_filepath)
@@ -194,7 +192,7 @@ def read_path(df_list, file_list, p, hmmevalue, dict, faa_path, samplename):
                     amppred_df.drop(['index', 'aa_sequence'], axis=1)
                     df_list.append(amppred_df)
         except:
-            #print(f'No AMP-output-files could be found with the given path ({path}). \n Please check your file paths and file endings or use the <--path-list> command')
+            print(f'No AMP-output-files could be found with the given path ({path}). \n Please check your file paths and file endings or use the <--path-list> command')
             #break
             pass
 
@@ -222,6 +220,8 @@ def summary(df_list, samplename, faa_path, aa_len):
     merge_df = merge_df.set_index('contig_id')
     merge_df['p_sum']= merge_df.sum(axis=1)#.sort_values(ascending=False)
     merge_df = merge_df.sort_values('p_sum', ascending=False).drop(['p_sum', 'aa_lengths'], axis=1).reset_index()
+    # cleanup remove temp dir
+    shutil.rmtree('./temp')
     return merge_df
 
 #########################################

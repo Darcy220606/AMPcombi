@@ -11,7 +11,7 @@ import argparse, os, re, sys
 
 ## Program variables
 records = {} # All HMM search records
-out = "HMM_stats.csv"
+out = "hmm_stats.csv"
 i = 0 # Iterate over records
 
 ## Set program description and commandline arguments
@@ -65,11 +65,11 @@ with open(inp, "r") as f:
 					
 ### Write the whole bunch into a csv file
 ## The format and header should be:
-#Query,Accession,E-value,score,bias,E-value,score,bias,exp,N,Sequence,Description
+#Query,Accession,E-value,score,bias,E-value,score,bias,exp,N,Sequence,Description,More_description
 #,,|---,full sequence,---|,|---,best domain,---|,#domains,---|,,
 
 with open(out, "w") as o:
-	o.write("Sample,Query,Accession,E-value,score,bias,E-value,score,bias,exp,N,Sequence,Description\n")
+	o.write("Sample,Query,Accession,Evalue,score,bias,E-value_domain,score,bias,exp,N,Sequence,Description,More_description\n")
 	#o.write(",,,|-----,full sequence,-----|,|-----,best domain,-----|,|--- #domains,-----|,,\n")
 
 	for key in sorted(records.keys(), key = int): # Go through all records
@@ -77,6 +77,4 @@ with open(out, "w") as o:
 			output = (",".join(subject) + "\n")
 			o.write(output)
 
-### Finish
-#print("\nFinished successfully.\nThe alignment stats are here: " + out)
-		
+### Finished processing		
