@@ -326,8 +326,54 @@ The output will be written into your working directory, containing the following
 - **Ampcombi_summary_cluster_SP.tsv** contains the contents of the cluster summary plus a column with yes/no indicating the presence of a signal peptide sequence. 
 - **Ampcombi_summary_cluster_SP_onlyclusterswithSP.tsv** contains the contents of the cluster summary plus a column with yes/no indicating the presence of a signal peptide sequence. But in this case clusters were retained only if they conatianed a hit or more with a signaling peptide.
 - **signalp** contains the results from the tool signalp in `*.png` format showing the location of the predicted signaling peptide and the `prediction_results.tsv` contains a table with the location of the signaling peptide and the identity. The `prediction_results_index.tsv` contains a table that gives an index number to every hit found in `./AMPcombi_summary_ao_human_nonhuman_clusters_SP_onlyclusterswithSP.tsv`. This can be used to rename the [localcolabfold](https://github.com/YoshitakaMo/localcolabfold) results downstream in the workflow. 
-  
+
 ---
+
+## Example runs using test files:
+
+To test the function and outpur for AMPcombi, we provide test files that can be found in `test_faa`, `test_gbk` and `test_files`.
+
+Step1: Download the test directories:
+```
+wget https://github.com/Darcy220606/AMPcombi/tree/main/test_faa 
+wget https://github.com/Darcy220606/AMPcombi/tree/main/test_gbk 
+wget https://github.com/Darcy220606/AMPcombi/tree/main/test_files
+```
+
+Step2: Parse tables from all AMP tools. This can be produced by running the AMP workflow from [FUNCSCAN](https://github.com/nf-core/funcscan). A pipeline for predicting functional genes.
+```
+ampcombi parse_tables --amp_results ./test_files/ --faa ./test_faa/ --gbk ./test_gbk/ --sample_list sample_1 sample_2 --ampir_file '.tsv' --amplify_file '.tsv' --macrel_file '.tsv' --neubi_file '.fasta' --hmmsearch_file '.txt' --ampgram_file '.tsv' --amptransformer_file '.txt' --threads 28 --log true
+```
+
+Step3: Concatenate all AMPcombi summary files from all samples:
+```
+ampcombi complete --summaries_directory ./test_ampcombi/ --log true
+```
+
+Step4: Cluster the hits and remove singletons:
+```
+ampcombi cluster --ampcombi_summary Ampcombi_summary.tsv --log true
+```
+
+---
+## References for tools and databases used in AMPcombi:
+
+- Steinegger M and Soeding J. MMseqs2 enables sensitive protein sequence searching for the analysis of massive data sets. Nature Biotechnology, doi: 10.1038/nbt.3988 (2017).
+
+- Steinegger M and Soeding J. Clustering huge protein sequence sets in linear time. Nature Communications, doi: 10.1038/s41467-018-04964-5 (2018).
+
+- Mirdita M, Steinegger M and Soeding J. MMseqs2 desktop and local web server app for fast, interactive sequence searches. Bioinformatics, doi: 10.1093/bioinformatics/bty1057 (2019).
+
+- Mirdita M, Steinegger M, Breitwieser F, Soding J, Levy Karin E: Fast and sensitive taxonomic assignment to metagenomic contigs. Bioinformatics, doi: 10.1093/bioinformatics/btab184 (2021). 
+
+- Teufel, F., Almagro Armenteros, J.J., Johansen, A.R. et al. SignalP 6.0 predicts all five types of signal peptides using protein language models. Nat Biotechnol 40, 1023–1025 doi: 10.1038/s41587-021-01156-3 (2022). 
+
+- Buchfink B, Reuter K, Drost HG, Sensitive protein alignments at tree-of-life scale using DIAMOND. Nature Methods 18, 366–368 doi:10.1038/s41592-021-01101-x  (2021).
+
+- Shi G., Kang X., Dong F., Liu Y., Zhu N., Hu Y., Xu H., Lao X., Zheng H., DRAMP 3.0: an enhanced comprehensive data repository of antimicrobial peptides, Nucleic Acids Research, 50,D1, doi: 10.1093/nar/gkab651 (2022).
+
+---
+
 ## Contribution:
 
 AMPcombi is a tool developed for parsing results from published AMP prediction tools. We therefore welcome fellow contributors who would like to add new AMP prediction tools results for parsing and alignment. 
@@ -343,17 +389,13 @@ In `ampcombi/ampcombi.py`
 
 ---
 
-**Authors**: 
+**Authors and credits**: 
 
-@louperelo and @darcy220606 with input from @RosaLuzia
-
----
-
-**Project**:
-
-@louperelo and @darcy220606 with input from @rosaluzia
+The tool was written mainly by @louperelo and @darcy220606 with major scientific contributions from @RosaLuzia.
 
 ---
+
+**Funding**:
 
 *This project was funded by Werner Siemens Foundation grant 'Palaeobiotechnology'*
 

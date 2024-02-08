@@ -108,7 +108,7 @@ parse_all_parser.add_argument('--version', action='version', version='ampcombi' 
 #########################################
 complete_parser = subparsers.add_parser('complete')
 
-complete_parser.add_argument("--summaries_directory", dest="summarydir", nargs='?', help="Enter a directory path in which summaries are in samples directories, e.g. './ampcombi/samplename/samplename_ampcombi.tsv'",
+complete_parser.add_argument("--summaries_directory", dest="summarydir", nargs='?', help="Enter a directory path in which summaries are in samples directories, e.g. './ampcombi_parse_tables/'",
                     type=str)
 complete_parser.add_argument("--summaries_files", dest="summaryfile", nargs='+', help="Enter a list of samples' ampcombi summaries, e.g. ./ampcombi/sample_1/sample_1_ampcombi.tsv ./ampcombi/sample_2_ampcombi.tsv",
                     type=str)
@@ -281,8 +281,6 @@ def parse_tables(args):
                     # Merge contig metadata if present
                     contig_metadata_df = contig_metadata_addition(sample_summary_df, add_contigmetadata)
                     sample_summary_df = contig_metadata_df
-                    # Remove the temp direc
-                    shutil.rmtree('./temp')
                     # Fix the column names to match other summary files 
                     sample_summary_df.rename(columns={'name': 'sample_id', 'contig_id':'CDS_id', 'contig_name':'contig_id' }, inplace=True)
                     # Remove duplicates
@@ -333,8 +331,6 @@ def parse_tables(args):
             # Merge contig metadata if present
             contig_metadata_df = contig_metadata_addition(sample_summary_df, add_contigmetadata)
             sample_summary_df = contig_metadata_df
-            # Remove the temp direc
-            shutil.rmtree('./temp')
             # Fix the column names to match other summary files 
             sample_summary_df.rename(columns={'name': 'sample_id', 'contig_id':'CDS_id', 'contig_name':'contig_id' }, inplace=True)
             # Remove duplicates
@@ -342,7 +338,7 @@ def parse_tables(args):
             # Write sample summary into sample output folder
             sample_summary_df.to_csv(samplelist[i] +'/'+samplelist[i]+'_ampcombi.tsv', sep='\t', index=False)
             print(f'The summary file for {samplelist[i]} was saved to {samplelist[i]}/.tsv')
-
+            
 #########################################
 # FUNCTION : CONCATENATING
 ######################################### 
