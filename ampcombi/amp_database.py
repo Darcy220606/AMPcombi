@@ -16,7 +16,7 @@ import shutil
 #########################################
 def download_DRAMP(db):
     ##Download the (table) file and store it in a results directory 
-    url = 'http://dramp.cpu-bioinfor.org/downloads/download.php?filename=download_data/DRAMP3.0_new/general_amps.xlsx'
+    url = 'https://github.com/nf-core/test-datasets/raw/modules/data/delete_me/ampcombi/general_amps.xlsx'
     r = requests.get(url, allow_redirects=True)
     with open(db +'/'+ 'general_amps.xlsx', 'wb') as f:
         f.write(r.content)
@@ -27,7 +27,7 @@ def download_DRAMP(db):
     columns_to_keep = ['DRAMP_ID','Sequence', 'Family', 'Source', 'PDB_ID','Linear/Cyclic/Branched','Other_Modifications','Pubmed_ID','Reference']
     ref_amps[columns_to_keep].to_csv (db +'/' + f'general_amps_{date}.tsv', index = None, header=True,sep='\t')
     ##Download the (fasta) file and store it in a results directory 
-    urlfasta = 'http://dramp.cpu-bioinfor.org/downloads/download.php?filename=download_data/DRAMP3.0_new/general_amps.fasta'
+    urlfasta = 'https://github.com/nf-core/test-datasets/raw/modules/data/delete_me/ampcombi/general_amps.fasta'
     z = requests.get(urlfasta)
     fasta_path = os.path.join(db + '/' + f'general_amps_{date}.fasta')
     with open(fasta_path, 'wb') as f:     
