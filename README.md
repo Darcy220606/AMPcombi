@@ -164,7 +164,7 @@ Optional arguments:
 
 | command | definition | default | example |
 | ------------- | ------------- | ------------- | ------------- |
-| --amp_cutoff  | Probability cutoff to filter AMPs by probability (not applicable for hmmsearch) | 0 | 0.5 |
+| --amp_cutoff  | Probability cutoff to filter AMPs by probability (not applicable for hmmsearch) | 0.0 | 0.5 |
 | --hmm_evalue  | Probability cutoff to filter AMPs by evalue (only applicable for HMMsearch) | None | 0.05 |
 | --db_evalue  | Probability cutoff to filter database classifications by evalue -any hit with value below this will have it's database classification removed | None | 0.05 |
 | --aminoacid_length  | Probability cutoff to filter AMP hits by the length of the amino acid sequence| 100 | 60 |
