@@ -1,6 +1,6 @@
-# AMPcombi : AntiMicrobial Peptides parsing and functional classification tool
+# AMPcombi : A parsing, filtering and annotation workflow for tools predicting AntiMicrobial Peptide genes
 
-<img src="https://raw.githubusercontent.com/Darcy220606/AMPcombi/main/docs/amp-combi-logo.png" width="620" height="200" />
+<img src="https://raw.githubusercontent.com/Darcy220606/AMPcombi/dev/docs/amp-combi-logo.png" width="300" height="250" /> 
 
 Ampcombi and its submodules provides a command-line interface to parse the results of antimicrobial peptide (AMP) prediction tools into a single table, aligns the AMP hits against a reference AMP database for functional classifications, filters the AMP hits according to their physiochemical properties, clusters the filtered hits and predicts signaling peptides if present.
 
