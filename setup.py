@@ -32,7 +32,9 @@ setup(
     long_description_content_type='text/markdown',
     keywords=["Proteomics", "Antimicrobial peptides", "Diamond", "MMSeqs2"
               "Standardization", "Formatting","Functional annotation"],
-    install_requires=['pandas'],
+    install_requires=['pandas',
+                      'biopython',
+                      'requests'],
     entry_points={  
         'console_scripts': [
             'ampcombi = ampcombi:main',
