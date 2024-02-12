@@ -6,3 +6,7 @@ sample_1/
 sample_2/
 AMPcombi_summary.tsv
 Ampcombi.log
+
+app.py
+modules.py
+plots.py
