@@ -13,7 +13,6 @@ import urllib, json
 import urllib.request
 import json
 import requests
-import pandas as pd
 import colorsys
 from IPython.display import display, HTML
 
@@ -43,16 +42,12 @@ def plot_ampcombi_upset(df: DataFrame):
      'prob_macrel',
      'prob_amplify']
     df[columns_to_check] = df[columns_to_check].astype(float)
-    #for column in columns_to_check:
-        #df[column] = df[column].map(lambda x: True if x > 0.0 and pd.notna(x) else False)
-        #df[column] = df[column].map(lambda x: False if pd.isna(x) or x == '' or x == 0 or x == 0.0 else True)
-        #df[column] = df[column].map(lambda x: True if x > 0.0 else False)
     for column in columns_to_check:
-        df[column] = df[column].map(lambda x: True if pd.notna(x) and x != '' and float(x) > 0.0 else False)
+        #df[column] = df[column].map(lambda x: True if pd.notna(x) or x != '' or float(x) > 0.0 else False)
+        df[column] = df[column].map(lambda x: True if pd.notna(x) and isinstance(x, (int, float)) and x > 0.0 else False)
     
-    # for HMM_model seperate due to category and 0.0
-    #df['HMM_model'] = df['HMM_model'].map(lambda x: False if pd.isnull(x) or x == '0' or x == '0.0' else True)
-    df['HMM_model'] = df['HMM_model'].map(lambda x: False if pd.isnull(x) or x in ['0', '', '0.0'] else True)
+    #df['HMM_model'] = df['HMM_model'].map(lambda x: False if pd.isnull(x) or x in ['0', '', '0.0'] else True)
+    df['HMM_model'] = df['HMM_model'].map(lambda x: True if pd.notnull(x) and any(char.isalpha() for char in str(x)) else False)
     df = pd.DataFrame(df)
 
     #rename the boolean cols
@@ -137,9 +132,6 @@ def plot_ampcombi_sankey(filtered):
         ]
 
     df_amp = filtered
-    # grab the cluster id if set by the user 
-    #if input.clusters_id_tax() is not None:
-    #    df_amp = df_amp[df_amp['cluster_id'] == input.clusters_id_tax()]
 
     # grab the contig GTDB classifications
     df_amp[['kingdom', 'phylum', 'class', 'order', 'family', 'genus', 'specie']] = df_amp['mmseqs_lineage_contig'].str.split(';', expand=True)
