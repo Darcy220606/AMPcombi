@@ -43,3 +43,4 @@ v<0.2.0>, <09.02.2024>
     -- Added the parameter to predict signaling peptide using [SignalP-6.0h](https://services.healthtech.dtu.dk/services/SignalP-6.0/)
     -- Removed the HTML output for the complete summary
     -- Updated AMPcombi to use subcommands instead for ease of use with piplines
+    -- Added shiny for python app that can be view using the commandline

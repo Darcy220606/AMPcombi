@@ -54,6 +54,13 @@ Ampcombi and its submodules provides a command-line interface to parse the resul
 | ------------- | ------------- |
 | [SignalP](https://services.healthtech.dtu.dk/services/SignalP-6.0/) | 6.0 | 
 
+<span style="color:green"> (F) For visualization: a shiny app is accessible through `./pyshiny`. This is a user interface that renders the AMPcombi summary table and genrates a number of figures for data analysis.
+
+| Tool | Version |
+| ------------- | ------------- |
+| [Shiny](https://shiny.posit.co/py/) | 0.7.1 | 
+
+
 ---
 ## Installation
 
@@ -65,6 +72,7 @@ First, install the dependencies of the tool ⬇ then carry on with the AMPcombi 
 - `pandas` 
 - `diamond`
 - `mmseqs2` == 15.6f
+- `shiny`
 
 Then, install AMPcombi using:
 
@@ -361,6 +369,22 @@ ampcombi cluster --ampcombi_summary Ampcombi_summary.tsv --log true
 ```
 
 ---
+
+## Visualization:
+
+To visualize the result tables from AMPcombi, a pyshiny app can be rendered by running:
+
+```
+cd ./pyshiny
+pip install -r requirements.txt
+shiny run --port 36317 --reload app.py
+```
+ ⚠️ the port can be changed accordingly
+
+The user can upload the `Ampcombi_summary_cluster_SP.tsv` to generate tables and figures ready for publication. 3D structures in PDB format can also be uploaded to generate an overlay structure.
+
+---
+
 ## References for tools and databases used in AMPcombi:
 
 - Steinegger M and Soeding J. MMseqs2 enables sensitive protein sequence searching for the analysis of massive data sets. Nature Biotechnology, doi: 10.1038/nbt.3988 (2017).
