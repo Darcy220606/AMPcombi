@@ -227,7 +227,7 @@ def ampcombi_sankey_ui():
                     """
                     ),
                 ui.input_numeric("clusters_id_tax", "", value=None),
-                ui.output_plot("ampcombi_cluster_plot"), 
+                ui.output_plot("ampcombi_sankey_plot"), 
                 {"style": "font-size: 15px;"},
                 "The sankey plot showing the taxonomic lineage is rendered in a new tab in which the user can interactively adjust.", 
     )
@@ -240,7 +240,7 @@ def ampcombi_sankey_server(
     df: Callable[[], pd.DataFrame],
 ):
     @render.plot  
-    def ampcombi_cluster_plot():
+    def ampcombi_sankey_plot():
         if input.clusters_id_tax() is not None:
             filtered = df()[df()['cluster_id'] == input.clusters_id_tax()]
             return plot_ampcombi_sankey(filtered)

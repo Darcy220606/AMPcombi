@@ -319,7 +319,7 @@ def plot_ampcombi_sankey(filtered):
         hoverlabel=dict(font=dict(family='Arial'))
     )
     #save the plot in html format :
-    #fig.write_html("ampcombi_sankey_plot.html")
+    fig.write_html("ampcombi_sankey_plot.html")
     #fig.write_image("ampcombi_sankey_plot.pdf")
     #fig.write_image("ampcombi_sankey_plot.png", scale=5)
     return fig.show() 
