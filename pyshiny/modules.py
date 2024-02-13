@@ -275,10 +275,3 @@ def ampcombi_pdb_server(
         # grab the file paths
         pdb_files = [file_info['datapath'] for file_info in file_infos]
         return plot_ampcombi_pdb(pdb_files)
-
-
-
-    # TODO: the pdb structures put them in the plots script
-    # TODO: the pdb render in app when possible 
-    # TODO: the remove the comments that rae no longer needed 
-    # Add in ampcombi and release on Monday !!!
