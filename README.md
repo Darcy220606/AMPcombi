@@ -122,7 +122,7 @@ ampcombi parse_tables \
 --faa path/to/sample_faa_files/ \
 --gbk path/to/sample_gbk_or_gbff_files/ \
 --sample_list sample_1 sample_2 \
---contig_metadata path/to/contig metadata.tsv
+--contig_metadata path/to/contig_metadata.tsv
 --<tool_1>_file '.tsv' 
 --<tool_2>_file '.txt' 
 --log true
