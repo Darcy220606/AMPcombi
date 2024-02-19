@@ -40,7 +40,7 @@ AMPcombi and its submodules provide a command-line interface to parse the result
 
 <span style="color:green"> (D) For filtering AMP hits: AMPcombi is developed to filter hits based on their AMP probabilities given by each AMP tool - E-values in case of HMMsearch - and the presence of stop-codons downstream and upstream of the AMP hit on the contig.
 
- ⚠️ If contig or sample details/information are available this can be added here, for e.g., metadata, pydamage, contig taxonomic classification, etc.
+ ⚠️ If contig or sample details/information are available this can be added here, for example, metadata, pydamage, contig taxonomic classification, etc.
 
 <span style="color:green"> (E) For clustering AMP hits: AMPcombi is developed to cluster the AMPs predicted and remove singletons and clusters with a minium number of members or clusters with only a specific string in their name. This is done using:
 
