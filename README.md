@@ -230,7 +230,7 @@ Example usage (1):
 ampcombi complete \
 --summaries_directory path/to/ampcombi_parse_tables_results_folder/ 
 ```
-In this case we use the `--summaries_directory` option, to supply the samples' result folder from `--ampcombi parse_tables` which should contain the folder structure from `ampcombi parse_tables` ina  parent folder for example named `./ampcombi/...`.
+In this case we use the `--summaries_directory` option, to supply the samples' result folder from `--ampcombi parse_tables` which should contain the folder structure from `ampcombi parse_tables` in a  parent folder for example named `./ampcombi/...`.
 
 Example usage (2): 
 
