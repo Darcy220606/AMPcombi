@@ -292,7 +292,7 @@ The output will be written into your working directory, containing the following
 └── Ampcombi_cluster.log
 ```
 
-- **Ampcombi_summary_cluster.tsv** contains the contents of the complete summary plus a column with cluster IDs. 
+- **Ampcombi_summary_cluster.tsv** includes the contents of the complete summary plus a column with cluster IDs. 
 - **Ampcombi_summary_cluster_representative_seq.tsv** a table with all the representative hits from each cluster.
 
 ---
