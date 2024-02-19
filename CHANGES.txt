@@ -20,7 +20,7 @@ v<0.1.8>, <14.02.2023>
     -- Linked to Zenodo archive
 v<0.2.0>, <09.02.2024>
     -- Change the output extension from `.csv` to `.tsv`
-    -- Added a new feature to estimates the isoelectric point, mwt, structure fraction and hydrophobicity
+    -- Added a new feature to estimate the isoelectric point, mwt, structure fraction and hydrophobicity
     -- The DRAMP db `.tsv` was filtered to retain only necessary columns
     -- Added the tool AMPtransformer
     -- Added the tool AMPgram
