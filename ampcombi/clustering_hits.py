@@ -47,7 +47,7 @@ def mmseqs_cluster(cov_mod,cluster_mode,coverage,seq_id,sensitivity,threads):
     - The coverage is bidirectiional query and target, so should have a coverage of 100% : --cov-mode 0 -c 1
     - The sequence identity --min-seq-id 0.4
     - The sensitivity can be changed with -s 7.5 (very sensitive) and 4 is fast (default)
-    - The cluster mode: --cluster-mode 0 (default), so  At each step, it forms a cluster containing the representative sequence with the most alignments above the special or default thresholds with other sequences of the database and these matched sequences. Then, the sequences contained in the cluster are removed and the next representative sequence is chosen
+    - The cluster mode: --cluster-mode 0 (default). At each step, it forms a cluster containing the representative sequence with the most alignments above the special or default thresholds with other sequences of the database and these matched sequences. Then, the sequences contained in the cluster are removed and the next representative sequence is chosen.
     # NOTE: cluster-mode 1 uses CD-HIT algorithm which first sets the cluster according to length and then clusters
     # NOTE: reassign cluster: --cluster-reassign removes sequences from the cascaded cluster result that do not fulfill the cluster criteria and reassigns them (if possible) to a different cluster
     # NOTE: --cov-mode 3 : only sequences are clustered that have a sequence length overlap greater than X% of the query sequence
