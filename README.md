@@ -3,7 +3,7 @@
 <img src="https://raw.githubusercontent.com/Darcy220606/AMPcombi/main/docs/amp-combi-logo.png" width="300" height="250" /> [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT) [![Install with Bioconda](https://anaconda.org/bioconda/ampcombi/badges/downloads.svg)](https://anaconda.org/bioconda/ampcombi) [![Install with Bioconda](https://anaconda.org/bioconda/ampcombi/badges/version.svg)](https://anaconda.org/bioconda/ampcombi)
 
 
-Ampcombi and its submodules provides a command-line interface to parse the results of antimicrobial peptide (AMP) prediction tools into a single table, aligns the AMP hits against a reference AMP database for functional classifications, filters the AMP hits according to their physiochemical properties, clusters the filtered hits and predicts signaling peptides if present.
+AMPcombi and its submodules provide a command-line interface to parse the results of antimicrobial peptide (AMP) prediction tools into a single table, aligns the AMP hits against a reference AMP database for functional classifications, filters the AMP hits according to their physicochemical properties, clusters the filtered hits and predicts signaling peptides if present.
 
 ---
 ## Introduction
