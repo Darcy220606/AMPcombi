@@ -34,7 +34,7 @@ v<0.2.0>, <09.02.2024>
     -- Added the parameter `--aminoacid_length` to retain hits with a specific length
     -- Added the parameter `--db_evalue` to filter out classification hits below specific diamond E-values
     -- Renamed the parameter `--cutoff` to `--amp_cutoff`
-    -- Added the parameter '--gbk' to add gbk files as input for parsing to add contig ids and other important values
+    -- Added the parameter '--gbk' to add gbk files as input for parsing to include contig ids and other important values
     -- Added the parameter '--window_size_stop_codon' that adjusts the window size to look for stop codons
     -- Added the parameter '--remove_stop_codons' that removes hits with no stop codons found in the vicinity
     -- Added the parameter '--window_size_transporter' that adjusts the window size to look for 'transporter' proteins
