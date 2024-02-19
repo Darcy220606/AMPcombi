@@ -274,7 +274,7 @@ Optional arguments:
 | --cluster_cov_mode | This assigns the cov. mode to the mmseqs2 cluster module- More information can be obtained in mmseqs2 docs [here](https://mmseqs.com/latest/userguide.pdf). | 0 | 2 |
 | --cluster_mode | This assigns the cluster mode to the mmseqs2 cluster module- More information can be obtained in mmseqs2 docs [here](https://mmseqs.com/latest/userguide.pdf). | 1 | 2 |
 | --cluster_coverage | This assigns the coverage to the mmseqs2 cluster module- More information can be obtained in mmseqs2 docs[here](https://mmseqs.com/latest/userguide.pdf).  | 0.8 | 0.9 |
-| --cluster_seq_id | This assigns the seqsid to the mmseqs2 cluster module- More information can be obtained in mmseqs2 docs [here](https://mmseqs.com/latest/userguide.pdf).  | 0.4 | 0.7 |
+| --cluster_seq_id | This assigns the seqsID to the mmseqs2 cluster module- More information can be obtained in mmseqs2 docs [here](https://mmseqs.com/latest/userguide.pdf).  | 0.4 | 0.7 |
 | --cluster_sensitivity | This assigns sensitivity of alignment to the mmseqs2 cluster module- More information can be obtained in mmseqs2 docs [here](https://mmseqs.com/latest/userguide.pdf.) | 4.0 | 7.0 |
 | --cluster_remove_singletons | This removes any hits that did not form a cluster. | True | False |
 | --cluster_retain_label | This removes any cluster that only has a certain label in the sample name. For example if you have samples labels with 'S1_metaspades' and 'S1_megahit', you can retain clusters that have samples with suffix '_megahit' by running '--retain_clusters_label megahit'. | '' | 'megahit' |
