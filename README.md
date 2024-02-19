@@ -238,7 +238,7 @@ Example usage (2):
 ampcombi complete \
 --summaries_files path/to/ampcombi_parse_tables/sample_1_ampcombi.tsv path/to/ampcombi_parse_tables/sample_2_ampcombi.tsv/ 
 ```
-In this case we use the `--summaries_files` option, to supply the `ampcombi parse_tables` ampcombi summary files ina  list format.
+In this case we use the `--summaries_files` option, to supply the `ampcombi_parse_tables` AMPcombi summary files in a  list format.
 
 Output:
 
