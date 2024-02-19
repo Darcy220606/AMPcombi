@@ -61,7 +61,7 @@ parse_all_parser.add_argument("--amp_cutoff", dest="p", help="Enter the probabil
                     type=float, default=0.0)
 parse_all_parser.add_argument("--hmm_evalue", dest="hmmevalue", help="Enter the evalue cutoff for AMPs for HMMsearch)  \n (default: %(default)s)",
                     type=float, default=None)
-parse_all_parser.add_argument("--db_evalue", dest="dbevalue", help="Enter the evalue cutoff for AMPs for the database diamond alignment. Any evalue below this value will only remove the DRAMP classification and not the entire hit \n (default: %(default)s)",
+parse_all_parser.add_argument("--db_evalue", dest="dbevalue", help="Enter the E-value cutoff for AMPs for the database diamond alignment. Any E-value below this value will only remove the DRAMP classification and not the entire hit \n (default: %(default)s)",
                     type=float, default=0.05)
 parse_all_parser.add_argument("--aminoacid_length", dest="length", help="Enter the length of the aa sequences required. Any hits below that cutoff will be removed \n (default: %(default)s)",
                     type=int, default=100)
