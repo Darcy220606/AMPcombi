@@ -26,7 +26,7 @@ v<0.2.0>, <09.02.2024>
     -- Added the tool AMPgram
     -- Fixed hmmsearch to now parse both single and multi models
     -- Fixed the dependencies in the environment.yml file
-    -- Added a log file for each sample, besides the main log for the complete summary. Beneficial when used in pipelines like nfcore/funcscan
+    -- Added a log file for each sample, besides the main log for the complete summary. Beneficial when used in pipelines like nf-core/funcscan
     -- Added the parameter '--sample_metadata' an optional flag to add a file with sample metadata
     -- Added the parameter '--contig_metadata' an optional flag to add a file with contig metadata
     -- Removed tooldictionary parameter '--tooldict' and added a parameter for each tool instead '--<tool>_file' to assign the extension of the files per tool
