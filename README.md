@@ -340,7 +340,7 @@ The output will be written into your working directory, containing the following
 
 ## Example runs using test files:
 
-To test the function and outpur for AMPcombi, we provide test files that can be found in `test_faa`, `test_gbk` and `test_files`.
+To test the function and output for AMPcombi, we provide test files that can be downloaded as described below, distributed in the three packages named `test_faa`, `test_gbk` and `test_files`.
 
 Step1: Download the test directories and unzip :
 ```
