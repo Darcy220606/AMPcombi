@@ -175,7 +175,7 @@ Optional arguments:
 | ------------- | ------------- | ------------- | ------------- |
 | --amp_cutoff  | Probability cutoff to filter AMPs by probability (not applicable for hmmsearch) | 0.0 | 0.5 |
 | --hmm_evalue  | Probability cutoff to filter AMPs by E-value (only applicable for HMMsearch) | None | 0.05 |
-| --db_evalue  | Probability cutoff to filter database classifications by evalue -any hit with value below this will have it's database classification removed | None | 0.05 |
+| --db_evalue  | Probability cutoff to filter database classifications by E-value - any hit with an E-value below this will have it's database classification removed | None | 0.05 |
 | --aminoacid_length  | Probability cutoff to filter AMP hits by the length of the amino acid sequence| 100 | 60 |
 | --window_size_stop_codon  | The length of the window size required to look for stop codons downstream and upstream of the CDS hits | 60 | 40 |
 | --window_size_transporter  | The length of the window size required to look for a 'transporter' e.g. ABC transporter downstream and upstream of the CDS hits | 11 | 20 |
