@@ -1,6 +1,6 @@
 #!/bin/python3
 
-# TITLE: Estimate aminoacid sequnce functionality: hydrophobicity, mwt, isoelectric point, etc.
+# TITLE: Estimate aminoacid sequence functionality: hydrophobicity, mwt, isoelectric point, etc.
 
 import os
 import re
