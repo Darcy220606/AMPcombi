@@ -48,7 +48,7 @@ AMPcombi and its submodules provide a command-line interface to parse the result
 | ------------- | ------------- |
 | [MMseqs2](https://github.com/soedinglab/MMseqs2) | 15.6f452 | 
 
-<span style="color:green"> (F) For signal peptide detection: Signal peptides can be predicted from AMPs clustered given the user installs SignalP seperately. For licensing issues, SignalP can only be downloaded and used by academic users; other users are requested to contact DTU Health Technology Software Package before using it. Please refer to [SignalP documentation](https://services.healthtech.dtu.dk/services/SignalP-6.0/). For obtaining SignalP please follow:
+<span style="color:green"> (F) For signal peptide detection: Signal peptides can be predicted from clustered AMPs  given the user installs SignalP separately. For licensing issues, SignalP can only be downloaded and used by academic users; other users are requested to contact DTU Health Technology Software Package before using it. Please refer to [SignalP documentation](https://services.healthtech.dtu.dk/services/SignalP-6.0/). For obtaining SignalP please follow:
 
 | Tool | Version |
 | ------------- | ------------- |
