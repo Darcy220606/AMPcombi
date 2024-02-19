@@ -69,7 +69,7 @@ parse_all_parser.add_argument("--window_size_stop_codon", dest="stopwindowsize",
                     type=int, default=60)
 parse_all_parser.add_argument("--window_size_transporter", dest="transporterwindowsize", help="Enter the length of the window size required to look for a 'transporter' e.g. ABC transporter downstream and upstream of the CDS hits. \n (default: %(default)s)",
                     type=int, default=11)
-parse_all_parser.add_argument("--remove_stop_codons", dest="removestops", help="Removes any hits/CDSs that dont have a stop codon found in the window below or upstream of the CDS assigned by '--window_size_stop_codon'. Must be turned on if hits are to be removed. \n (default: %(default)s)",
+parse_all_parser.add_argument("--remove_stop_codons", dest="removestops", help="Removes any hits/CDSs that don't have a stop codon found in the window below or upstream of the CDS assigned by '--window_size_stop_codon'. Must be turned on if hits are to be removed. \n (default: %(default)s)",
                     type=bool, default=False)
 parse_all_parser.add_argument("--faa", dest="faa", help="Enter the path to the folder containing the reference .faa files or to one .faa file (running only one sample). Filenames have to contain the corresponding sample-name, i.e. sample_1.faa \n (default: %(default)s)",
                     type=str, default='./test_faa/')
