@@ -298,7 +298,7 @@ The output will be written into your working directory, containing the following
 ---
 `ampcombi signal_peptide`
 
-This subcommand predicts whether a signal peptide was found on the filtered and clustered AMP hits. This is only given the user installs SignalP seperately. For licensing issues, SignalP can only be downloaded and used by academic users; other users are requested to contact DTU Health Technology Software Package before using it. Please refer to [SignalP documentation](https://services.healthtech.dtu.dk/services/SignalP-6.0/).
+This subcommand predicts whether a signal peptide was found on the filtered and clustered AMP hits. This only works if the user installs SignalP separately. For licensing issues, SignalP can only be downloaded and used by academic users; other users are requested to contact DTU Health Technology Software Package before using it. Please refer to [SignalP documentation](https://services.healthtech.dtu.dk/services/SignalP-6.0/).
 
 To get a full list of options available and their defaults please please refer to the help documentation of the submodule
 
