@@ -9,3 +9,4 @@ matplotlib-inline==0.1.6
 urllib3==1.26.13
 ipython
 py3Dmol
+kaleido
