@@ -10,3 +10,6 @@ Ampcombi.log
 app_orig.py
 modules_orig.py
 plots_orig.py
+
+__pycache__/
+ampcombi/__pycache__/
