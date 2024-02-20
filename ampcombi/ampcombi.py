@@ -59,7 +59,7 @@ parse_all_parser.add_argument("--path_list", dest="files", nargs='*', action='ap
                     default=[])
 parse_all_parser.add_argument("--amp_cutoff", dest="p", help="Enter the probability cutoff for AMPs for all tools except for HMMsearch \n (default: %(default)s)",
                     type=float, default=0.0)
-parse_all_parser.add_argument("--hmm_evalue", dest="hmmevalue", help="Enter the evalue cutoff for AMPs for HMMsearch)  \n (default: %(default)s)",
+parse_all_parser.add_argument("--hmm_evalue", dest="hmmevalue", help="Enter the E-value cutoff for AMPs for HMMsearch \n (default: %(default)s)",
                     type=float, default=None)
 parse_all_parser.add_argument("--db_evalue", dest="dbevalue", help="Enter the E-value cutoff for AMPs for the database diamond alignment. Any E-value below this value will only remove the DRAMP classification and not the entire hit \n (default: %(default)s)",
                     type=float, default=0.05)
