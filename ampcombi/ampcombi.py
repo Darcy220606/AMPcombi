@@ -44,7 +44,7 @@ parser.add_argument('--version', action='version', version='%(prog)s ' + __versi
 #########################################
 # SUBPARSERS
 #########################################
-subparsers = parser.add_subparsers() #dest='command'
+subparsers = parser.add_subparsers() 
 
 #########################################
 # SUBPARSERS : PARSE AND ALIGN AND FILTER
