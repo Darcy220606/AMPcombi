@@ -55,7 +55,7 @@ parse_all_parser.add_argument("--amp_results", dest="amp", nargs='?', help="Ente
                     type=str, default='./test_files/')
 parse_all_parser.add_argument("--sample_list", dest="samples", nargs='*', help="Enter a list of sample-names, e.g. sample_1 sample_2 sample_n. \n If not given, the sample-names will be inferred from the folder structure",
                     default=[])
-parse_all_parser.add_argument("--path_list", dest="files", nargs='*', action='append', help="Enter the list of paths to the files to be summarized as a list of lists, e.g. --path_list path/to/my/sample1.ampir.tsv path/to/my/sample1.amplify.tsv --path_list path/to/my/sample2.ampir.tsv path/to/my/sample2.amplify.tsv. \n If not given, the file-paths will be inferred from the folder structure",
+parse_all_parser.add_argument("--path_list", dest="files", nargs='*', action='append', help="Enter the list of paths to the files to be summarized as a list of lists, e.g. --path_list path/to/tool1/sample1/sample1.tsv path/to/tool2/sample1/sample1.tsv --path_list path/to/tool1/sample2.tsv path/to/tool2/sample2.tsv. \n If not given, the file-paths will be inferred from the folder structure",
                     default=[])
 parse_all_parser.add_argument("--amp_cutoff", dest="p", help="Enter the probability cutoff for AMPs for all tools except for HMMsearch \n (default: %(default)s)",
                     type=float, default=0.0)
