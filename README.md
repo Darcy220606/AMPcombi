@@ -333,7 +333,7 @@ The output will be written into your working directory, containing the following
 ```
 
 - **Ampcombi_summary_cluster_SP.tsv** includes the contents of the cluster summary plus a column with yes/no indicating the presence of a signal peptide sequence. 
-- **Ampcombi_summary_cluster_SP_onlyclusterswithSP.tsv** contains the contents of the cluster summary plus a column with yes/no indicating the presence of a signal peptide sequence. But in this case clusters were retained only if they conatianed a hit or more with a signaling peptide.
+- **Ampcombi_summary_cluster_SP_onlyclusterswithSP.tsv** includes the contents of the cluster summary plus a column with yes/no indicating the presence of a signal peptide sequence. But in this case clusters are retained only if they contain a hit or more with a signaling peptide.
 - **signalp** contains the results from the tool signalp in `*.png` format showing the location of the predicted signaling peptide and the `prediction_results.tsv` contains a table with the location of the signaling peptide and the identity. The `prediction_results_index.tsv` contains a table that gives an index number to every hit found in `./AMPcombi_summary_ao_human_nonhuman_clusters_SP_onlyclusterswithSP.tsv`. This can be used to rename the [localcolabfold](https://github.com/YoshitakaMo/localcolabfold) results downstream in the workflow. 
 
 ---
