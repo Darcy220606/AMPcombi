@@ -1,0 +1,12 @@
+build/
+AMPcombi.egg-info/
+
+amp_ref_database/
+sample_1/
+sample_2/
+AMPcombi_summary.tsv
+Ampcombi.log
+
+app_orig.py
+modules_orig.py
+plots_orig.py

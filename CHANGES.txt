@@ -18,3 +18,28 @@ v<0.1.7>, <03.11.2022>
     -- Included the possibility of only submitting one .faa file instead of the faa-folder path (in case of summarizing only one single sample)
 v<0.1.8>, <14.02.2023>
     -- Linked to Zenodo archive
+v<0.2.0>, <09.02.2024>
+    -- Change the output extension from `.csv` to `.tsv`
+    -- Added a new feature to estimate the isoelectric point, mwt, structure fraction and hydrophobicity
+    -- The DRAMP db `.tsv` was filtered to retain only necessary columns
+    -- Added the tool AMPtransformer
+    -- Added the tool AMPgram
+    -- Fixed hmmsearch to now parse both single and multi models
+    -- Fixed the dependencies in the environment.yml file
+    -- Added a log file for each sample, besides the main log for the complete summary. Beneficial when used in pipelines like nf-core/funcscan
+    -- Added the parameter '--sample_metadata' an optional flag to add a file with sample metadata
+    -- Added the parameter '--contig_metadata' an optional flag to add a file with contig metadata
+    -- Removed tooldictionary parameter '--tooldict' and added a parameter for each tool instead '--<tool>_file' to assign the extension of the files per tool
+    -- Added the parameter `--hmm_evalue` to filter the hmm results in the table based on E-value
+    -- Added the parameter `--aminoacid_length` to retain hits with a specific length
+    -- Added the parameter `--db_evalue` to filter out classification hits below specific diamond E-values
+    -- Renamed the parameter `--cutoff` to `--amp_cutoff`
+    -- Added the parameter '--gbk' to add gbk files as input for parsing to include contig ids and other important values
+    -- Added the parameter '--window_size_stop_codon' that adjusts the window size to look for stop codons
+    -- Added the parameter '--remove_stop_codons' that removes hits with no stop codons found in the vicinity
+    -- Added the parameter '--window_size_transporter' that adjusts the window size to look for 'transporter' proteins
+    -- Added a new output directory per sample that holds the gbk files for the contigs with hits
+    -- Added the submodule to cluster the AMP hits with the parameters to modify the clustering using [MMSeqs2](https://github.com/soedinglab/MMseqs2) for e.g., '--cluster_cov_mode' '--cluster_mode' '--cluster_coverage' '--cluster_seq_id' '--cluster_sensitivity' '--cluster_remove_singletons' '--cluster_retain_label' '--cluster_min_member'
+    -- Added the submodule to predict signaling peptide using [SignalP-6.0h](https://services.healthtech.dtu.dk/services/SignalP-6.0/)
+    -- Removed the HTML output for the complete summary and replaced it with  shiny for python app that can be viewed using the commandline
+    -- Updated AMPcombi to use subcommands for ease of use with standardized and portable piplines

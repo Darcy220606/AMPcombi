@@ -1,0 +1,12 @@
+pandas
+shiny==0.7.1
+shinyswatch==0.4.2
+UpSetPlot==0.9.0
+plotly==5.18.0
+matplotlib
+matplotlib==3.8.2
+matplotlib-inline==0.1.6
+urllib3==1.26.13
+ipython
+py3Dmol
+kaleido
