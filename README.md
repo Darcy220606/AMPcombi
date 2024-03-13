@@ -66,32 +66,24 @@ AMPcombi and its submodules provide a command-line interface to parse the result
 
 To install AMPcombi:
 
-First, install the dependencies of the tool ⬇ then carry on with the AMPcombi tool installation
-- `python` > 3.0
-- `biopython` 
-- `pandas` 
-- `diamond`
-- `mmseqs2` == 15.6f
-- `shiny`
-
-Then, install AMPcombi using:
-
- - pip installation
+- Using **conda**:
 ```
-pip install AMPcombi
+conda create -n ampcombi python==3.11 diamond==2.0.15 mmseqs==15.6f452 ampcombi
 ```
- - git repository
+or 
+```
+conda env create -f ./ampcombi/environment.yml
+```
+
+- Using **singularity and docker**:
+```
+
+```
+
+- From git repository:
  ```
  git clone https://github.com/Darcy220606/AMPcombi.git
  ```
- - conda
-```
-conda env create -f ampcombi/environment.yml
-```
-or
-```
- conda install -c bioconda AMPcombi
-```
 ---
 ## Usage and Output:
 
@@ -385,7 +377,7 @@ The user can upload the `Ampcombi_summary_cluster_SP.tsv` to generate tables and
 
 ---
 
-## References for tools and databases used in AMPcombi:
+## References for tools, packages and databases used in AMPcombi:
 
 - Steinegger M and Soeding J. MMseqs2 enables sensitive protein sequence searching for the analysis of massive data sets. Nature Biotechnology, doi: 10.1038/nbt.3988 (2017).
 
@@ -400,6 +392,14 @@ The user can upload the `Ampcombi_summary_cluster_SP.tsv` to generate tables and
 - Buchfink B, Reuter K, Drost HG, Sensitive protein alignments at tree-of-life scale using DIAMOND. Nature Methods 18, 366–368 doi:10.1038/s41592-021-01101-x  (2021).
 
 - Shi G., Kang X., Dong F., Liu Y., Zhu N., Hu Y., Xu H., Lao X., Zheng H., DRAMP 3.0: an enhanced comprehensive data repository of antimicrobial peptides, Nucleic Acids Research, 50,D1, doi: 10.1093/nar/gkab651 (2022).
+
+- The Shiny development team, Shiny for Python, https://shiny.posit.co/py/, license:https://github.com/posit-dev/py-shiny/blob/main/LICENSE v.0.8.0
+
+- Inc., P. T. Collaborative data science. Montreal, QC: Plotly Technologies Inc. Retrieved from https://plot.ly (2015)
+
+- Upsetplot, https://github.com/jnothman/UpSetPlot license: https://github.com/jnothman/UpSetPlot/blob/master/LICENSE v.0.9.0
+
+- py3Dmol, https://github.com/avirshup/py3dmol license: https://github.com/avirshup/py3dmol/blob/master/LICENSE.txt
 
 ---
 

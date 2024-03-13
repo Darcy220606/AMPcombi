@@ -263,8 +263,6 @@ def parse_tables(args):
                     sample_summary_df = pd.merge(summary_df, diamond_df, on = 'contig_id', how='left')
                     # Insert column with sample name on position 0
                     sample_summary_df.insert(0, 'name', samplelist[i])
-                    # Remove the temp directory
-                    # shutil.rmtree('./temp')
                     # Estimate the aa functions: chemical and physical
                     print(f'The estimation of functional and structural properties for {samplelist[i]} in progress ....')
                     sample_summary_df_functions = functionality(sample_summary_df)
@@ -287,7 +285,9 @@ def parse_tables(args):
                     sample_summary_df = sample_summary_df.drop_duplicates()
                     # Write sample summary into sample output folder
                     sample_summary_df.to_csv(samplelist[i] +'/'+samplelist[i]+'_ampcombi.tsv', sep='\t', index=False)
-                    print(f'The summary file for {samplelist[i]} was saved to {samplelist[i]}/.')
+                    print(f'The summary file for {samplelist[i]} was saved to {samplelist[i]}.tsv.')
+                    # Remove the temp directory
+                    # shutil.rmtree('./temp')
                     # Write the log file in the respective sample directory
                     shutil.move(f'{samplelist[i]}_ampcombi.log', samplelist[i] + '/' + samplelist[i]+'_ampcombi.log')
         else:
@@ -337,8 +337,11 @@ def parse_tables(args):
             sample_summary_df = sample_summary_df.drop_duplicates()
             # Write sample summary into sample output folder
             sample_summary_df.to_csv(samplelist[i] +'/'+samplelist[i]+'_ampcombi.tsv', sep='\t', index=False)
-            print(f'The summary file for {samplelist[i]} was saved to {samplelist[i]}/.tsv')
-            
+            print(f'The summary file for {samplelist[i]} was saved to {samplelist[i]}.tsv')
+    
+    # Remove the temp directory
+    shutil.rmtree('./temp')
+  
 #########################################
 # FUNCTION : CONCATENATING
 ######################################### 
