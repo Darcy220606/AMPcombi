@@ -5,7 +5,7 @@ with open('README.md') as fh:
 
 setup(
     name='AMPcombi',
-    version='0.2.0',
+    version='0.2.1',
     author='Anan Ibrahim, Louisa Perelo',
     author_email='ananhamido@hotmail.com, louperelo@gmail.com',
     packages=['ampcombi'],
@@ -32,9 +32,10 @@ setup(
     long_description_content_type='text/markdown',
     keywords=["Proteomics", "Antimicrobial peptides", "Diamond", "MMSeqs2"
               "Standardization", "Formatting","Functional annotation"],
-    install_requires=['pandas',
-                      'biopython',
+    install_requires=['pandas==1.5.2',
+                      'biopython==1.80',
                       'requests'],
+    python_requires='==3.11.*',
     entry_points={  
         'console_scripts': [
             'ampcombi = ampcombi:main',
@@ -48,10 +49,7 @@ setup(
         "Operating System :: MacOS",
         "Operating System :: POSIX",
         "Operating System :: POSIX :: Linux",
-        "Programming Language :: Python :: 3",
-        "Programming Language :: Python :: 3.7",
-        "Programming Language :: Python :: 3.8",
-        "Programming Language :: Python :: 3.9",
+        "Programming Language :: Python :: 3.11",
         "Intended Audience :: Science/Research",
         "Intended Audience :: Healthcare Industry",
         "Topic :: Scientific/Engineering :: Bio-Informatics",

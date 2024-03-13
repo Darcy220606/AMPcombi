@@ -221,7 +221,7 @@ def summary(df_list, samplename, faa_path, aa_len):
     merge_df['p_sum']= merge_df.sum(axis=1)#.sort_values(ascending=False)
     merge_df = merge_df.sort_values('p_sum', ascending=False).drop(['p_sum', 'aa_lengths'], axis=1).reset_index()
     # cleanup remove temp dir
-    shutil.rmtree('./temp')
+    # shutil.rmtree('./temp')
     return merge_df
 
 #########################################

@@ -43,3 +43,8 @@ v<0.2.0>, <09.02.2024>
     -- Added the submodule to predict signaling peptide using [SignalP-6.0h](https://services.healthtech.dtu.dk/services/SignalP-6.0/)
     -- Removed the HTML output for the complete summary and replaced it with  shiny for python app that can be viewed using the commandline
     -- Updated AMPcombi to use subcommands for ease of use with standardized and portable piplines
+v<0.2.1>, <14.03.2024>
+    -- Fixed the package versions in setup
+    -- Adjusted readme for installation setup
+    -- Fixed the `./temp` dir removal step at the end of the process
+    -- Changed the default matrix in diamond blastp to PAM250
