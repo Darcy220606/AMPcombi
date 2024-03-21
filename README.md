@@ -77,7 +77,7 @@ conda env create -f ./ampcombi/environment.yml
 
 - Using **singularity and docker**:
 ```
-
+singularity pull ampcombi:0.2.2--pyhdfd78af_0
 ```
 
 - From git repository:

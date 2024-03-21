@@ -339,8 +339,9 @@ def parse_tables(args):
             sample_summary_df.to_csv(samplelist[i] +'/'+samplelist[i]+'_ampcombi.tsv', sep='\t', index=False)
             print(f'The summary file for {samplelist[i]} was saved to {samplelist[i]}.tsv')
     
-    # Remove the temp directory
-    shutil.rmtree('./temp')
+    # Remove the temp directory if it exists
+    if os.path.exists('./temp'):
+        shutil.rmtree('./temp')
   
 #########################################
 # FUNCTION : CONCATENATING
