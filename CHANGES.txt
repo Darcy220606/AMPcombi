@@ -4,7 +4,7 @@ v<0.1.2>, <date> -- minor changes.
 v<0.1.3>, <10.10.2022> -- PyPi package and conda-recipe / biocontainer release.
 v<0.1.4>, <18.10.2022>
     -- Included a new optional argument "--complete_summary" to concatenate the results from multiple samples in one table
-    -- Added a universal log file, to append to an existing log file rather than creating multiple new ones every time a sample is run.
+    -- Added a universal log file, to append to an existing log file rather than creating multiple new ones every time a sample is run
     -- The "--path_list" can be called multiple times to include a list of files from individual samples in multiple lists
 v<0.1.5>, <27.10.2022> -- Initial release.
     -- adapt reading of hmmer_hmmsearch output to deal with varying header lines
@@ -49,5 +49,7 @@ v<0.2.1>, <14.03.2024>
     -- Fixed the `./temp` dir removal step at the end of the process
     -- Changed the default matrix in diamond blastp to PAM250
 v<0.2.2>, <21.03.2024>
-    -- Added a check if ./temp dir is found before removal. This caused problems with pipeline setups.
+    -- Added a check if ./temp dir is found before removal. This caused problems with pipeline setups
+v<2.0.0>, <XX.05.2024>
+    -- Added the function to use the output from [InterProScan]() if supplied with `--use_interproscan` and `--interproscan_output` to remove any ribosomal proteins
 

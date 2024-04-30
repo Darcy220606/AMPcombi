@@ -51,3 +51,35 @@ def contig_metadata_addition(merged_df, cmetadata):
         else:
             df2 = merged_df
         return df2
+
+##########################################
+#  FUNCTION: Parse interproscan file 
+##########################################
+def parse_interproscan(summary_df, interpro_name, interpro_filter_values):
+    """
+    Merges the ouput from interproscan only when turned on.
+    IMPORTANT: It parses ONLY the output from interproscan using:
+    ' --applications PANTHER,ProSiteProfiles,ProSitePatterns,Pfam '
+    If more applications are used please adapt the column headers here.
+    The 'filter_values' are values defined by the user that should be in the description for the hit to be removed.
+    """
+    if interpro_name != None :
+        print(f'Adding ingterproscan and removing hits with {interpro_filter_values} ...')
+        # read in the tsv and add column headers to the output
+        interpro_headers = ['contig_id','MD5sums','lengths','analysis','accession','description','start','stop','evalue','exists','date','interpro_accession','interpro_description','unknown_1','unknown_2']
+        interpro_df = pd.read_csv(interpro_name, sep='\t', names=interpro_headers)
+        # remove unnecessary interpro headers
+        interpro_noncolumns = ['MD5sums','lengths','analysis','start','stop','evalue','exists','date','unknown_1','unknown_2']
+        interpro_df.drop(interpro_noncolumns, axis=1, inplace=True)
+        # group the columns by unique cds_id using aggregate
+        concatenate_columns = ['accession','description','interpro_accession','interpro_description']
+        interpro_df_grouped = interpro_df.groupby('contig_id')[concatenate_columns].agg(', '.join).reset_index() # contig_id means here cds_ID but that changes only with gbk file
+        # merge interpro results
+        ampcombi_df_interpro = pd.merge(summary_df, interpro_df_grouped, on='contig_id', how='left')
+        # remove ribosomal proteins or any value given in a list (def non AMPs)
+        values_to_remove = interpro_filter_values.split(",")
+        ampcombi_df_interpro['interpro_description'] = ampcombi_df_interpro['interpro_description'].astype(str)
+        ampcombi_df_interpro_filt = ampcombi_df_interpro[~ampcombi_df_interpro['interpro_description'].str.contains('|'.join(values_to_remove), case=False)]        
+        return ampcombi_df_interpro_filt
+    else:
+        return summary_df
