@@ -78,8 +78,8 @@ def parse_interproscan(summary_df, interpro_name, interpro_filter_values):
         ampcombi_df_interpro = pd.merge(summary_df, interpro_df_grouped, on='contig_id', how='left')
         # remove ribosomal proteins or any value given in a list (def non AMPs)
         values_to_remove = interpro_filter_values.split(",")
-        ampcombi_df_interpro['interpro_description'] = ampcombi_df_interpro['interpro_description'].astype(str)
-        ampcombi_df_interpro_filt = ampcombi_df_interpro[~ampcombi_df_interpro['interpro_description'].str.contains('|'.join(values_to_remove), case=False)]        
+        ampcombi_df_interpro['description'] = ampcombi_df_interpro['description'].astype(str)
+        ampcombi_df_interpro_filt = ampcombi_df_interpro[~ampcombi_df_interpro['description'].str.contains('|'.join(values_to_remove), case=False)]        
         return ampcombi_df_interpro_filt
     else:
         return summary_df
