@@ -93,6 +93,10 @@ parse_all_parser.add_argument("--amptransformer_file", dest="amptransformer", na
                     type=str, default=None)
 parse_all_parser.add_argument("--amp_database", dest="ref_db", nargs='?', help="Enter the path to the folder containing the reference database files (.fa and .tsv); a fasta file and the corresponding table with functional and taxonomic classifications. \n (default: DRAMP database)",
                     type=str, default=None)
+parse_all_parser.add_argument("--interproscan_output", dest="interpro", help="Enter the path to the folder containing the output obtained from interproscan (i.e., in '*.faa.tsv'). NOTE: ONLY tested against output from applications:[PANTHER,ProSiteProfiles,ProSitePatterns,Pfam]. \n (default: %(default)s)",
+                    type=str, default=None)
+parse_all_parser.add_argument("--interproscan_filter", dest="interpro_remove", help="Enter a comma seperated list of all keywords that describes the protein that is not required in the analysis. This is case insensitive. \n (default: %(default)s)",
+                    type=str, default='ribosomal protein,ribosomal proteins,ribosome protein,ribosomal rna,Ribosomal protein,RIBOSOMAL PROTEIN')
 parse_all_parser.add_argument("--sample_metadata", dest="samplemetadata", help="Path to a tsv-file containing sample metadata, e,g, 'path/to/sample_metadata.tsv'. The metadata table can have more information for sample identification that will be added to the output summary. The table needs to contain the sample names in the first column. \n (default: %(default)s)",
                     type=str, default=None)
 parse_all_parser.add_argument("--contig_metadata", dest="contigmetadata", help="Path to a tsv-file containing contig metadata, e,g, 'path/to/contig_metadata.tsv'. The metadata table can have more information for contig classification that will be added to the output summary. The table needs to contain the sample names in the first column and the contig_ID in the second column. This can be the output from MMseqs2, pydamage and MetaWrap. \n (default: %(default)s)",
@@ -189,6 +193,8 @@ def parse_tables(args):
     hmmer_file = args.hmmsearch
     amppred_file = args.amppred
     database = args.ref_db
+    interpro_dir = args.interpro
+    interpro_filter_values = args.interpro_remove
     add_samplemetadata = args.samplemetadata
     add_contigmetadata = args.contigmetadata
     threads = args.cores
@@ -248,11 +254,14 @@ def parse_tables(args):
                     # get the path to the samples' corresponding faa/gbk file
                     faa_name = check_faa_path(faa_path, samplelist[i])
                     gbk_name = check_gbk_path(gbk_dir, samplelist[i])
+                    interpro_name = check_interpro_path(interpro_dir, samplelist[i])
                     # use main_list to create the summary file for sample i
                     summary_df = summary(main_list, samplelist[i], faa_name, aa_len)
+                    # add the interproscan for removal of ribosomal peptides
+                    summary_df_filtered = parse_interproscan(summary_df, interpro_name, interpro_filter_values)
                     # Generate the AMP-faa.fasta for sample i
                     out_path = samplelist[i] +'/'+samplelist[i]+'_amp.faa'
-                    amp_fasta(summary_df, faa_name, out_path)
+                    amp_fasta(summary_df_filtered, faa_name, out_path)
                     amp_faa_paths.append(out_path)
                     print(f'The fasta containing AMP sequences for {samplelist[i]} was saved to {samplelist[i]}/ \n')
                     amp_matches = samplelist[i] +'/'+samplelist[i]+'_diamond_matches.txt'
@@ -260,7 +269,7 @@ def parse_tables(args):
                     diamond_df = diamond_alignment(db, amp_faa_paths, amp_matches, threads, dbevalue)
                     print(f'The diamond alignment for {samplelist[i]} was saved to {samplelist[i]}/.')
                     # Merge summary_df and diamond_df
-                    sample_summary_df = pd.merge(summary_df, diamond_df, on = 'contig_id', how='left')
+                    sample_summary_df = pd.merge(summary_df_filtered, diamond_df, on = 'contig_id', how='left')
                     # Insert column with sample name on position 0
                     sample_summary_df.insert(0, 'name', samplelist[i])
                     # Estimate the aa functions: chemical and physical
@@ -300,11 +309,14 @@ def parse_tables(args):
             # get the path to the samples' corresponding faa/gbk file
             faa_name = check_faa_path(faa_path, samplelist[i])
             gbk_name = check_gbk_path(gbk_dir, samplelist[i])
+            interpro_name = check_interpro_path(interpro_dir, samplelist[i])
             # use main_list to create the summary file for sample i
             summary_df = summary(main_list, samplelist[i], faa_name, aa_len)
+            # add the interproscan for removal of ribosomal peptides
+            summary_df_filtered = parse_interproscan(summary_df, interpro_name, interpro_filter_values)
             # Generate the AMP-faa.fasta for sample i
             out_path = samplelist[i] +'/'+samplelist[i]+'_amp.faa'
-            amp_fasta(summary_df, faa_name, out_path)
+            amp_fasta(summary_df_filtered, faa_name, out_path)
             amp_faa_paths.append(out_path)
             print(f'The fasta containing AMP sequences for {samplelist[i]} was saved to {samplelist[i]}/ \n')
             amp_matches = samplelist[i] +'/'+samplelist[i]+'_diamond_matches.txt'
@@ -312,7 +324,7 @@ def parse_tables(args):
             diamond_df = diamond_alignment(db, amp_faa_paths, amp_matches, threads, dbevalue)
             print(f'The diamond alignment for {samplelist[i]} was saved to {samplelist[i]}/.')
             # Merge summary_df and diamond_df
-            sample_summary_df = pd.merge(summary_df, diamond_df, on = 'contig_id', how='left')
+            sample_summary_df = pd.merge(summary_df_filtered, diamond_df, on = 'contig_id', how='left')
             # Insert column with sample name on position 0
             sample_summary_df.insert(0, 'name', samplelist[i])
             # Estimate the aa functions: chemical and physical

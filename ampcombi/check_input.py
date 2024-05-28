@@ -56,6 +56,21 @@ def check_gbk_path(gbk_path, samplename):
     else:
         sys.exit(f'AMPcombi interrupted: The input given with --gbk does not seem to be a valid directory or file. Please check.')
 
+def check_interpro_path(interpro_path, samplename):
+    if interpro_path != None:
+        if os.path.isdir(interpro_path):
+            path_list = list(pathlib.Path(interpro_path).rglob(f"*{samplename}*.faa.tsv"))
+            if len(path_list) > 1:
+                sys.exit(f'AMPcombi interrupted: There is more than one .tsv file for {samplename} in the folder given with --interproscan_output')
+            elif not path_list:
+                sys.exit(f'AMPcombi interrupted: There is no .tsv file containing {samplename} in the folder given with --interproscan_output')
+            return path_list[0]
+        elif os.path.isfile(interpro_path):
+            return interpro_path
+    else:
+        print("No InterproScan files were provided. Workflow continuing ....")
+        return None
+  
 def check_ref_database(database):
     if((database==None) and (not os.path.exists('amp_ref_database'))):
         print('<--AMP_database> was not given, the current DRAMP general-AMP database will be downloaded and used')

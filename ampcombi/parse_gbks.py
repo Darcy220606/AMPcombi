@@ -18,7 +18,7 @@ def ampcombi_input(sample_ampcombi_file):
     """
     # ampcombi_summary file input
     ampcombi_main = sample_ampcombi_file
-    grab_col = ['name', 'contig_id']
+    grab_col = ['name', 'contig_id'] # contig_id is CDS_id in this case
     ampcombi = ampcombi_main[grab_col]
     # create a dictionary wih the table contents
     ampcombi_dict = ampcombi.to_dict(orient='records')
