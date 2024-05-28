@@ -51,5 +51,5 @@ v<0.2.1>, <14.03.2024>
 v<0.2.2>, <21.03.2024>
     -- Added a check if ./temp dir is found before removal. This caused problems with pipeline setups
 v<2.0.0>, <XX.05.2024>
-    -- Added the function to use the output from [InterProScan]() if supplied with `--use_interproscan` and `--interproscan_output` to remove any ribosomal proteins
+    -- Added the function to use the output from [InterProScan](https://github.com/ebi-pf-team/interproscan) if supplied with `--use_interproscan` and `--interproscan_output` to remove any ribosomal proteins
 
