@@ -1,2 +1,6 @@
 sphinx>=4.0.0
 myst-parser>=0.15.0
+sphinx-rtd-theme
+#https://myst-parser.readthedocs.io/en/latest/intro.html
+#https://github.com/coleifer/peewee/tree/master/docs
+#https://docs.peewee-orm.com/en/latest/index.html
