@@ -85,9 +85,9 @@ def macrel(path, p):
 #########################################
 def neubi(path, p):
     neubi_seq = SeqIO.parse(open(path), 'fasta')
-    #initiate the dataframe containing contig ids, aa-sequences and probability in three columns
+    # initiate the dataframe containing contig ids, aa-sequences and probability in three columns
     neubi_df = pd.DataFrame(columns=['contig_id', 'aa_sequence', 'prob_neubi'])
-    #append contig information to df (p is last value in header following '|' symbol)
+    # append contig information to df (p is last value in header following '|' symbol)
     for contig in neubi_seq:
         contig_id, sequence, description = contig.id, str(contig.seq), float(contig.description.split("|",1)[1])
         neubi_df = neubi_df.append({'contig_id':contig_id, 'aa_sequence':sequence, 'prob_neubi':description}, ignore_index=True)
@@ -99,7 +99,7 @@ def neubi(path, p):
     #  AMP_ampgram
 #########################################
 def ampgram(path, p): 
-    # Dictionary to rename columns
+    # dictionary to rename columns
     ampgram_dict = {'single_prot_pred':'prob_ampgram'}
     # read file as df and rename columns
     ampgram_df = pd.read_csv(path, sep='\t').rename(columns=ampgram_dict) 
@@ -201,15 +201,15 @@ def read_path(df_list, file_list, p, hmmevalue, dict, faa_path, samplename):
 #########################################
 # merge dataframes from list to summary output per sample
 def summary(df_list, samplename, faa_path, aa_len):
-    #initiate merge_df
+    # initiate merge_df
     merge_df = pd.DataFrame(columns=['contig_id'])
-    #merge all dfs in the df-list on contig_id
+    # merge all dfs in the df-list on contig_id
     for df in df_list:
         merge_df = pd.merge(merge_df, pd.DataFrame(df) , how='outer', on='contig_id')
-    #replace all NAs (where a tool did not identify the contig as AMP) with 0
+    # replace all NAs (where a tool did not identify the contig as AMP) with 0
     merge_df = merge_df.fillna(0)
-    #add amino-acid sequences
-    faa_df = faa2table(faa_path)
+    # add amino-acid sequences
+    faa_df = faa2table(faa_path)     
     merge_df = merge_df.merge(faa_df, how='inner', on='contig_id')
     # remove hits that have a hit lengths <100aa: TODO!!!
     # count the number of letters across the aa_sequence
@@ -229,11 +229,11 @@ def summary(df_list, samplename, faa_path, aa_len):
 #########################################
 # transform faa to dataframe with two columns
 def faa2table(faa_path):
-    #read the amino-acid fasta with SeqIO
+    # read the amino-acid fasta with SeqIO
     faa_seq = SeqIO.parse(open(faa_path), 'fasta')
-    #initiate the dataframe containing contig ids and aa-sequences in two columns
+    # initiate the dataframe containing contig ids and aa-sequences in two columns
     fasta_df = pd.DataFrame(columns=['contig_id', 'aa_sequence'])
-    #append contig information to df
+    # append contig information to df
     for contig in faa_seq:
         contig_id, sequence = contig.id, str(contig.seq)
         fasta_df = fasta_df.append({'contig_id':contig_id, 'aa_sequence':sequence}, ignore_index=True)

@@ -76,5 +76,3 @@ with open(out, "w") as o:
 		for subject in records[key]: # Go through all subject sequences for this record
 			output = (",".join(subject) + "\n")
 			o.write(output)
-
-### Finished processing		

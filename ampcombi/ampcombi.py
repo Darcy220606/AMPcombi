@@ -4,12 +4,14 @@ import os
 import sys
 import argparse
 import warnings
-from contextlib import redirect_stdout, redirect_stderr
-from version import __version__
-import json
 import os.path
 import shutil
 import glob
+
+from contextlib import redirect_stdout, redirect_stderr
+from version import __version__
+from colorama import Fore, Style, init
+from joblib import Parallel, delayed
 
 # import functions from sub-scripts to main:
 from reformat_tables import *
@@ -35,7 +37,8 @@ parser = argparse.ArgumentParser(prog = 'ampcombi', formatter_class=argparse.Raw
     .............................................................................
                 This tool parses the results of amp prediction tools 
     and aligns the hits against reference databases for functional classification.
-            For detailed usage documentation please refer to <github_repo>
+            For detailed usage documentation please refer to the github repo:
+            <https://github.com/Darcy220606/AMPcombi/blob/main/README.md>
     .............................................................................'''),
                                 epilog='''Thank you for running AMP-combi!''',
                                 add_help=True)
@@ -91,14 +94,10 @@ parse_all_parser.add_argument("--ampgram_file", dest="ampgram", nargs='?', help=
                     type=str, default=None)
 parse_all_parser.add_argument("--amptransformer_file", dest="amptransformer", nargs='?', help="If AMPtransformer was used, enter the ending of the input files (as they appear in the directory tree), e.g. 'amptransformer.txt'",
                     type=str, default=None)
-#parse_all_parser.add_argument("--amp_database", dest="ref_db", nargs='?', help="Enter the path to the folder containing the reference database files (.fa and .tsv); a fasta file and the corresponding table with functional and taxonomic classifications. \n (default: DRAMP database)",
-#                    type=str, default=None)
-
 parse_all_parser.add_argument("--amp_database_dir", dest="ref_db_dir", nargs='?', help="Enter the path to the folder containing the reference database files (.fa and .tsv); a fasta file and the corresponding table with functional and taxonomic classifications. \n (default: %(default)s)",
                     type=str, default=None)
 parse_all_parser.add_argument("--amp_database", dest="ref_db", nargs='?', help="Enter the name of the database to be used to classify the AMPs. Can either be APD, DRAMP, or UniRef100 \n (default: %(default)s)",
                     type=str, default='DRAMP')
-
 parse_all_parser.add_argument("--interproscan_output", dest="interpro", help="Enter the path to the folder containing the output obtained from interproscan (i.e., in '*.faa.tsv'). NOTE: ONLY tested against output from applications:[PANTHER,ProSiteProfiles,ProSitePatterns,Pfam]. \n (default: %(default)s)",
                     type=str, default=None)
 parse_all_parser.add_argument("--interproscan_filter", dest="interpro_remove", help="Enter a comma seperated list of all keywords that describes the protein that is not required in the analysis. This is case insensitive. \n (default: %(default)s)",
@@ -172,6 +171,12 @@ signalp_parser.add_argument('--version', action='version', version='ampcombi' + 
 # FUNCTION : PARSING
 #########################################
 def parse_tables(args):
+    """
+    ampcombi parse_tables: This is to parse, filter and align the antimicrobial peptides. 
+    It extensively uses pandas, BioPython to parse tables and retrieve details like physiochemical
+    properties, the vicinity of the AMP and so forth.
+    The chunk of the code can be found in function process_sample below.
+    """
     # supress panda warnings
     warnings.simplefilter(action='ignore', category=FutureWarning)
     # supress bipython warnings
@@ -198,11 +203,8 @@ def parse_tables(args):
     amptransformer_file = args.amptransformer
     hmmer_file = args.hmmsearch
     amppred_file = args.amppred
-    #database = args.ref_db
-        
     database_dir = args.ref_db_dir
     database = args.ref_db
-
     interpro_dir = args.interpro
     interpro_filter_values = args.interpro_remove
     add_samplemetadata = args.samplemetadata
@@ -232,8 +234,6 @@ def parse_tables(args):
     tools = [key for key in tooldict]
     # extract list of tool-output file-endings. If not given, default dict contains default endings.
     fileending = [val for val in tooldict.values()]
-    #print(tooldict)
-    #print(tools, fileending)
     
     # print AMPcombi header
     print_header()
@@ -244,130 +244,115 @@ def parse_tables(args):
     # check input filepaths and create list of list of filepaths per sample if input empty
     filepaths = check_pathlist(filepaths_in, samplelist, fileending, path)
     # check amp_ref_database filepaths and create a directory if input empty
-    #db = check_ref_database(database)
-    
-    db = check_ref_database(database)
-    
+    db = check_ref_database(database, database_dir, threads)
     # generate summary for each sample
     amp_faa_paths = []
-    create_diamond_ref_db(db,threads)
-    for i in range(0, len(samplelist)):
-        # create log for each sample if true
-        if args.log_file:
-            with open(f'{samplelist[i]}_ampcombi.log', 'w') as f:
-                with redirect_stdout(f):
-                    print_header()
-                    main_list = []
-                    print('\n ########################################################## ')
-                    print(f'Processing AMP-files from sample: {samplelist[i]}')
-                    os.makedirs(samplelist[i], exist_ok=True)
-                    # fill main_list with tool-output filepaths for sample i
-                    read_path(main_list, filepaths[i], p, hmmevalue, tooldict, faa_path, samplelist[i])
-                    # get the path to the samples' corresponding faa/gbk file
-                    faa_name = check_faa_path(faa_path, samplelist[i])
-                    gbk_name = check_gbk_path(gbk_dir, samplelist[i])
-                    interpro_name = check_interpro_path(interpro_dir, samplelist[i])
-                    # use main_list to create the summary file for sample i
-                    summary_df = summary(main_list, samplelist[i], faa_name, aa_len)
-                    # add the interproscan for removal of ribosomal peptides
-                    summary_df_filtered = parse_interproscan(summary_df, interpro_name, interpro_filter_values)
-                    # Generate the AMP-faa.fasta for sample i
-                    out_path = samplelist[i] +'/'+samplelist[i]+'_amp.faa'
-                    amp_fasta(summary_df_filtered, faa_name, out_path)
-                    amp_faa_paths.append(out_path)
-                    print(f'The fasta containing AMP sequences for {samplelist[i]} was saved to {samplelist[i]}/ \n')
-                    amp_matches = samplelist[i] +'/'+samplelist[i]+'_diamond_matches.txt'
-                    # Align to database TODO!!!!!!!
-                    print(f'The diamond alignment for {samplelist[i]} in progress ....')
-                    diamond_df = diamond_alignment(db, amp_faa_paths, amp_matches, threads, dbevalue)
-                    print(f'The diamond alignment for {samplelist[i]} was saved to {samplelist[i]}/.')
-                    # Merge summary_df and diamond_df
-                    sample_summary_df = pd.merge(summary_df_filtered, diamond_df, on = 'contig_id', how='left')
-                    # Insert column with sample name on position 0
-                    sample_summary_df.insert(0, 'name', samplelist[i])
-                    # Estimate the aa functions: chemical and physical
-                    print(f'The estimation of functional and structural properties for {samplelist[i]} in progress ....')
-                    sample_summary_df_functions = functionality(sample_summary_df)
-                    sample_summary_df = sample_summary_df_functions
-                    # Add contig_ids and filter by stop codon presence and extract new gbks
-                    outgbk = samplelist[i] + '/contig_gbks'
-                    # Create the new gbks dir
-                    os.makedirs(outgbk, exist_ok=True)
-                    print(f'Parsing of the corresponding genebank file for {samplelist[i]} in progress ....')
-                    sample_summary_df = gbkparsing(sample_summary_df, gbk_name, stop_codon_window, transporter_window, filter_stop_codon, outgbk)
-                    # Merge sample metadata if present
-                    sample_metadata_df = sample_metadata_addition(sample_summary_df, add_samplemetadata)
-                    sample_summary_df = sample_metadata_df
-                    # Merge contig metadata if present
-                    contig_metadata_df = contig_metadata_addition(sample_summary_df, add_contigmetadata)
-                    sample_summary_df = contig_metadata_df
-                    # Fix the column names to match other summary files 
-                    sample_summary_df.rename(columns={'name': 'sample_id', 'contig_id':'CDS_id', 'contig_name':'contig_id' }, inplace=True)
-                    # Remove duplicates
-                    sample_summary_df = sample_summary_df.drop_duplicates()
-                    # Write sample summary into sample output folder
-                    sample_summary_df.to_csv(samplelist[i] +'/'+samplelist[i]+'_ampcombi.tsv', sep='\t', index=False)
-                    print(f'The summary file for {samplelist[i]} was saved to {samplelist[i]}.tsv.')
-                    # Remove the temp directory
-                    # shutil.rmtree('./temp')
-                    # Write the log file in the respective sample directory
-                    shutil.move(f'{samplelist[i]}_ampcombi.log', samplelist[i] + '/' + samplelist[i]+'_ampcombi.log')
-        else:
-            main_list = []
-            print('\n ########################################################## ')
-            print(f'Processing AMP-files from sample: {samplelist[i]}')
-            os.makedirs(samplelist[i], exist_ok=True)
-            # fill main_list with tool-output filepaths for sample i
-            read_path(main_list, filepaths[i], p, hmmevalue, tooldict, faa_path, samplelist[i])
-            # get the path to the samples' corresponding faa/gbk file
-            faa_name = check_faa_path(faa_path, samplelist[i])
-            gbk_name = check_gbk_path(gbk_dir, samplelist[i])
-            interpro_name = check_interpro_path(interpro_dir, samplelist[i])
-            # use main_list to create the summary file for sample i
-            summary_df = summary(main_list, samplelist[i], faa_name, aa_len)
-            # add the interproscan for removal of ribosomal peptides
-            summary_df_filtered = parse_interproscan(summary_df, interpro_name, interpro_filter_values)
-            # Generate the AMP-faa.fasta for sample i
-            out_path = samplelist[i] +'/'+samplelist[i]+'_amp.faa'
-            amp_fasta(summary_df_filtered, faa_name, out_path)
-            amp_faa_paths.append(out_path)
-            print(f'The fasta containing AMP sequences for {samplelist[i]} was saved to {samplelist[i]}/ \n')
-            amp_matches = samplelist[i] +'/'+samplelist[i]+'_diamond_matches.txt'
-            print(f'The diamond alignment for {samplelist[i]} in progress ....')
-            diamond_df = diamond_alignment(db, amp_faa_paths, amp_matches, threads, dbevalue)
-            print(f'The diamond alignment for {samplelist[i]} was saved to {samplelist[i]}/.')
-            # Merge summary_df and diamond_df
-            sample_summary_df = pd.merge(summary_df_filtered, diamond_df, on = 'contig_id', how='left')
-            # Insert column with sample name on position 0
-            sample_summary_df.insert(0, 'name', samplelist[i])
-            # Estimate the aa functions: chemical and physical
-            print(f'The estimation of functional and structural properties for {samplelist[i]} in progress ....')
-            sample_summary_df_functions = functionality(sample_summary_df)
-            sample_summary_df = sample_summary_df_functions
-            # Add contig_ids and filter by stop codon presence and extract new gbks
-            outgbk = samplelist[i] + '/contig_gbks'
-            # Create the new gbks dir
-            os.makedirs(outgbk, exist_ok=True)
-            print(f'Parsing of the corresponding genebank file for {samplelist[i]} in progress ....')
-            sample_summary_df = gbkparsing(sample_summary_df, gbk_name, stop_codon_window, transporter_window, filter_stop_codon, outgbk)
-            # Merge sample metadata if present
-            sample_metadata_df = sample_metadata_addition(sample_summary_df, add_samplemetadata)
-            sample_summary_df = sample_metadata_df
-            # Merge contig metadata if present
-            contig_metadata_df = contig_metadata_addition(sample_summary_df, add_contigmetadata)
-            sample_summary_df = contig_metadata_df
-            # Fix the column names to match other summary files 
-            sample_summary_df.rename(columns={'name': 'sample_id', 'contig_id':'CDS_id', 'contig_name':'contig_id' }, inplace=True)
-            # Remove duplicates
-            sample_summary_df = sample_summary_df.drop_duplicates()
-            # Write sample summary into sample output folder
-            sample_summary_df.to_csv(samplelist[i] +'/'+samplelist[i]+'_ampcombi.tsv', sep='\t', index=False)
-            print(f'The summary file for {samplelist[i]} was saved to {samplelist[i]}.tsv')
+    create_mmseqs_ref_db(db)
     
-    # Remove the temp directory if it exists
+    # main loop
+    for i, sample in enumerate(samplelist):
+        log_file_t = f'{sample}_ampcombi.log' if args.log_file else None
+        if args.log_file:
+            with open(log_file_t, 'w') as f, redirect_stdout(f):
+                print_header()
+                process_sample(
+                    sample, filepaths[i], amp_faa_paths, db, threads, dbevalue, p, 
+                    hmmevalue, tooldict, faa_path, gbk_dir, interpro_dir, interpro_filter_values, 
+                    aa_len, stop_codon_window, transporter_window, filter_stop_codon, add_samplemetadata, 
+                    add_contigmetadata)
+            shutil.move(log_file_t, os.path.join(sample, log_file_t))
+        else:
+            process_sample(
+                sample, filepaths[i], amp_faa_paths, db, threads, dbevalue, p, 
+                hmmevalue, tooldict, faa_path, gbk_dir, interpro_dir, interpro_filter_values, 
+                aa_len, stop_codon_window, transporter_window, filter_stop_codon, add_samplemetadata, 
+                add_contigmetadata)
+
+    # remove the temp directory if it exists
     if os.path.exists('./temp'):
         shutil.rmtree('./temp')
-  
+
+def process_sample(
+    sample, filepaths, amp_faa_paths, db, threads, dbevalue, p, hmmevalue, tooldict, faa_path, gbk_dir, 
+    interpro_dir, interpro_filter_values, aa_len, stop_codon_window, transporter_window, filter_stop_codon, 
+    add_samplemetadata, add_contigmetadata):
+    """
+    This parses, filters and aligns the antimicrobial peptides sample by sample. 
+    It extensively uses pandas, BioPython to parse tables and retrieve details like physiochemical
+    properties, the vicinity of the AMP and so forth.
+    The chunk of the code can be found in function process_sample below.
+    """
+    main_list = []
+    print('\n ########################################################## ')
+    print(f'Processing AMP-files from sample: {sample}')
+
+    os.makedirs(sample, exist_ok=True)
+
+    # fill main_list with tool-output file paths for sample
+    read_path(main_list, filepaths, p, hmmevalue, tooldict, faa_path, sample)
+
+    # retrieve paths for the corresponding faa/gbk/(interpro if provided) files
+    faa_name = check_faa_path(faa_path, sample)
+    gbk_name = check_gbk_path(gbk_dir, sample)
+    interpro_name = check_interpro_path(interpro_dir, sample)
+
+    # create summary file for the sample
+    summary_df = summary(main_list, sample, faa_name, aa_len)
+    summary_df_filtered = parse_interproscan(summary_df, interpro_name, interpro_filter_values)
+
+    #skip sample if no AMP hits found
+    if summary_df_filtered.empty:
+        # skip the sample since no AMP hits are found
+        print(f'Skipping {sample} because no AMP hits were found with the given thresholds.')
+        return
+    
+    # generate the AMP-faa.fasta file
+    out_path = os.path.join(sample, f'{sample}_amp.faa')
+    amp_fasta(summary_df_filtered, faa_name, out_path)
+    amp_faa_paths.append(out_path)
+    print(f'The fasta containing AMP sequences for {sample} was saved to {sample}/ \n')
+
+    # align to the database
+    amp_matches = os.path.join(sample, f'{sample}_mmseqs_matches.tsv')
+    print(f'The mmseqs alignment for {sample} in progress ....')
+    mmseqs_df = mmseq_alignment_merge(db, amp_faa_paths, amp_matches, threads, dbevalue, summary_df_filtered, sample)
+    print(f'The mmseqs alignment for {sample} was saved to {sample}/.')
+
+    # merge summary_df with alignment results
+    if (not summary_df_filtered.equals(mmseqs_df)):
+        sample_summary_df = pd.merge(summary_df_filtered, mmseqs_df, left_on='contig_id', right_on='query', how='left')
+    else:
+        sample_summary_df = summary_df_filtered
+    # insert column with sample name in position 1
+    sample_summary_df.insert(0, 'name', sample)
+
+    # estimate functional and structural properties
+    print(f'Estimating functional and structural properties for {sample} ....')
+    sample_summary_df_functions = functionality(sample_summary_df)
+    sample_summary_df = sample_summary_df_functions
+
+    # parse gene bank file and filter for contig IDs with stop codons, if applicable (grabs contig IDs, and extract filetred gbks)
+    outgbk = os.path.join(sample, 'contig_gbks')
+    os.makedirs(outgbk, exist_ok=True)
+    print(f'Parsing the corresponding gene bank file for {sample} ....')
+    sample_summary_df = gbkparsing(sample_summary_df, gbk_name, stop_codon_window, transporter_window, filter_stop_codon, outgbk)
+
+    # merge additional metadata if present
+    sample_metadata_df = sample_metadata_addition(sample_summary_df, add_samplemetadata)
+    sample_summary_df = sample_metadata_df
+    contig_metadata_df = contig_metadata_addition(sample_summary_df, add_contigmetadata)
+    sample_summary_df = contig_metadata_df
+
+    # standardize column names and remove duplicates
+    sample_summary_df.rename(columns={'name': 'sample_id', 'contig_id': 'CDS_id', 'contig_name': 'contig_id'}, inplace=True)
+    sample_summary_df.drop_duplicates(keep='first', inplace=True)
+
+    # save the summary DataFrame to a file
+    sample_summary_df.to_csv(os.path.join(sample, f'{sample}_ampcombi.tsv'), sep='\t', index=False)
+    print(f'The summary file for {sample} was saved to {sample}/{sample}.tsv.')
+
+    return f'{sample}_ampcombi.log'
+
 #########################################
 # FUNCTION : CONCATENATING
 ######################################### 
@@ -475,19 +460,25 @@ def log_output(log_file_name, args, func):
 
 #########################################
 # FUNCTION : MAIN FUNCTIONS
-#########################################        
+#########################################
+init()
+
 def parse_table_log(args):
     log_output('Ampcombi_parse_tables.log', args, parse_tables)
+    print(Fore.BLUE + "Success: 'ampcombi parse_tables' completed successfully ! Now run ampcombi complete !" + Style.RESET_ALL)
 
 def complete_log(args):
     log_output('Ampcombi_complete.log', args, complete)
+    print(Fore.BLUE + "Success: 'ampcombi complete' completed successfully ! Now run ampcombi cluster !" + Style.RESET_ALL)
 
 def cluster_log(args):
     log_output('Ampcombi_cluster.log', args, cluster)
+    print(Fore.BLUE + "Success: 'ampcombi cluster' completed successfully ! Now run ampcombi signalpeptide !" + Style.RESET_ALL)
 
 def signalpep_log(args):
     log_output('Ampcombi_signalpeptide.log', args, signalpeptide)
-        
+    print(Fore.BLUE + "Success: 'ampcombi cluster' completed successfully ! Enjoy further downstream analysis ;)" + Style.RESET_ALL)
+
 #########################################
 # SUBPARSERS : DEFAULT
 ######################################### 

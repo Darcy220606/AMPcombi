@@ -7,8 +7,7 @@ from Bio import SeqIO
 def amp_fasta(summary_df, faa, out_path):
     #get contig ids from summary_df 
     arg_contigs = summary_df['contig_id'].drop_duplicates().to_list()
-    # filter contig sequence information from original faa file
-    #filter faa for AMP-contigs of interest for taxonomic analysis (Diamond, MMSeq)
+    #filter faa for AMP-contigs of interest for AMP protein analysis (MMSeq)
     faa_sequences = SeqIO.parse(open(faa),'fasta')
     with open(out_path, 'w') as out_file:
         for faa in faa_sequences:
@@ -16,4 +15,4 @@ def amp_fasta(summary_df, faa, out_path):
             for contig in arg_contigs:
                 if (id==contig):
                     out_file.write('>'+ id + '\n' + sequence + '\n')
-    return out_path # path for input to Diamond, MMSeq
+    return out_path # path for input to MMSeq
