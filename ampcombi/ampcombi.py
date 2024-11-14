@@ -91,8 +91,14 @@ parse_all_parser.add_argument("--ampgram_file", dest="ampgram", nargs='?', help=
                     type=str, default=None)
 parse_all_parser.add_argument("--amptransformer_file", dest="amptransformer", nargs='?', help="If AMPtransformer was used, enter the ending of the input files (as they appear in the directory tree), e.g. 'amptransformer.txt'",
                     type=str, default=None)
-parse_all_parser.add_argument("--amp_database", dest="ref_db", nargs='?', help="Enter the path to the folder containing the reference database files (.fa and .tsv); a fasta file and the corresponding table with functional and taxonomic classifications. \n (default: DRAMP database)",
+#parse_all_parser.add_argument("--amp_database", dest="ref_db", nargs='?', help="Enter the path to the folder containing the reference database files (.fa and .tsv); a fasta file and the corresponding table with functional and taxonomic classifications. \n (default: DRAMP database)",
+#                    type=str, default=None)
+
+parse_all_parser.add_argument("--amp_database_dir", dest="ref_db_dir", nargs='?', help="Enter the path to the folder containing the reference database files (.fa and .tsv); a fasta file and the corresponding table with functional and taxonomic classifications. \n (default: %(default)s)",
                     type=str, default=None)
+parse_all_parser.add_argument("--amp_database", dest="ref_db", nargs='?', help="Enter the name of the database to be used to classify the AMPs. Can either be APD, DRAMP, or UniRef100 \n (default: %(default)s)",
+                    type=str, default='DRAMP')
+
 parse_all_parser.add_argument("--interproscan_output", dest="interpro", help="Enter the path to the folder containing the output obtained from interproscan (i.e., in '*.faa.tsv'). NOTE: ONLY tested against output from applications:[PANTHER,ProSiteProfiles,ProSitePatterns,Pfam]. \n (default: %(default)s)",
                     type=str, default=None)
 parse_all_parser.add_argument("--interproscan_filter", dest="interpro_remove", help="Enter a comma seperated list of all keywords that describes the protein that is not required in the analysis. This is case insensitive. \n (default: %(default)s)",
@@ -192,7 +198,11 @@ def parse_tables(args):
     amptransformer_file = args.amptransformer
     hmmer_file = args.hmmsearch
     amppred_file = args.amppred
+    #database = args.ref_db
+        
+    database_dir = args.ref_db_dir
     database = args.ref_db
+
     interpro_dir = args.interpro
     interpro_filter_values = args.interpro_remove
     add_samplemetadata = args.samplemetadata
@@ -234,6 +244,8 @@ def parse_tables(args):
     # check input filepaths and create list of list of filepaths per sample if input empty
     filepaths = check_pathlist(filepaths_in, samplelist, fileending, path)
     # check amp_ref_database filepaths and create a directory if input empty
+    #db = check_ref_database(database)
+    
     db = check_ref_database(database)
     
     # generate summary for each sample
@@ -265,6 +277,7 @@ def parse_tables(args):
                     amp_faa_paths.append(out_path)
                     print(f'The fasta containing AMP sequences for {samplelist[i]} was saved to {samplelist[i]}/ \n')
                     amp_matches = samplelist[i] +'/'+samplelist[i]+'_diamond_matches.txt'
+                    # Align to database TODO!!!!!!!
                     print(f'The diamond alignment for {samplelist[i]} in progress ....')
                     diamond_df = diamond_alignment(db, amp_faa_paths, amp_matches, threads, dbevalue)
                     print(f'The diamond alignment for {samplelist[i]} was saved to {samplelist[i]}/.')

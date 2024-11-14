@@ -59,7 +59,7 @@ def check_gbk_path(gbk_path, samplename):
 def check_interpro_path(interpro_path, samplename):
     if interpro_path != None:
         if os.path.isdir(interpro_path):
-            path_list = list(pathlib.Path(interpro_path).rglob(f"*{samplename}*.faa.tsv"))
+            path_list = list(pathlib.Path(interpro_path).rglob(f"*{samplename}*.tsv"))
             if len(path_list) > 1:
                 sys.exit(f'AMPcombi interrupted: There is more than one .tsv file for {samplename} in the folder given with --interproscan_output')
             elif not path_list:
@@ -71,27 +71,49 @@ def check_interpro_path(interpro_path, samplename):
         print("No InterproScan files were provided. Workflow continuing ....")
         return None
   
-def check_ref_database(database):
-    if((database==None) and (not os.path.exists('amp_ref_database'))):
-        print('<--AMP_database> was not given, the current DRAMP general-AMP database will be downloaded and used')
-        database = 'amp_ref_database'
-        os.makedirs(database, exist_ok=True)
-        db = database
-        download_DRAMP(db)
-        return db    
-    elif ((not database==None)):
-        if (os.path.exists(database)):
-            db = database
-            print(f'<--AMP_database> = ${db} is found and will be used')
+#def check_ref_database(database):
+#    if((database==None) and (not os.path.exists('amp_ref_database'))):
+#        print('<--AMP_database> was not given, the current DRAMP general-AMP database will be downloaded and used')
+#        database = 'amp_ref_database'
+#        os.makedirs(database, exist_ok=True)
+#        db = database
+#        download_DRAMP(db)
+#        return db    
+#    elif ((not database==None)):
+#        if (os.path.exists(database)):
+#            db = database
+#            print(f'<--AMP_database> = ${db} is found and will be used')
+#            return db
+#        if (not os.path.exists(database)):
+#            sys.exit(f'Reference amp database path {database} does not exist, please check the path.')
+#    elif((database==None) and (os.path.exists('amp_ref_database'))):
+#        print('<--AMP_database> = DRAMP is already downloaded and will be reused')
+#        database = 'amp_ref_database'
+#        db = database
+#        return db
+
+def check_ref_database(database, database_dir):
+    valid_databases = ['DRAMP', 'APD', 'UniRef100']
+    local_db_path = f'amp_{database}_database'
+    if database not in valid_databases:
+        sys.exit(f"AMPcombi interrupted: {database} is not a valid AMP database. Choose from {valid_databases}.")    
+    elif ((database == 'DRAMP') and (database_dir != None)):
+        if (os.path.exists(database_dir)):
+            db = database_dir
+            print(f'<--AMP_database> = {db} is found and will be used')
             return db
-        if (not os.path.exists(database)):
-            sys.exit(f'Reference amp database path {database} does not exist, please check the path.')
-    elif((database==None) and (os.path.exists('amp_ref_database'))):
-        print('<--AMP_database> = DRAMP is already downloaded and will be reused')
+        else: 
+            sys.exit(f'AMPcombi interrupted: Please check the path again to the database folder provided in --amp_database_dir {db}')
+    elif((database in valid_databases) and (database_dir is None)):
+        print(f'<--AMP_database> = ${database} will be downloaded and used')
+        db = database
+        return db
+    elif((database in valid_databases) and (os.path.exists(local_db_path))):
+        print(f'<--AMP_database> = {database} is already downloaded and will be reused')
         database = 'amp_ref_database'
         db = database
         return db
-
+    
 def check_path(path):
     return os.path.exists(path) #returns True or False
 

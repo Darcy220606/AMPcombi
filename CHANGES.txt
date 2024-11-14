@@ -50,6 +50,11 @@ v<0.2.1>, <14.03.2024>
     -- Changed the default matrix in diamond blastp to PAM250
 v<0.2.2>, <21.03.2024>
     -- Added a check if ./temp dir is found before removal. This caused problems with pipeline setups
-v<2.0.0>, <XX.05.2024>
-    -- Added the function to use the output from [InterProScan](https://github.com/ebi-pf-team/interproscan) if supplied with `--use_interproscan` and `--interproscan_output` to remove any ribosomal proteins
-
+v<2.0.0>, <XX.11.2024>
+    -- Added the function to use the output from [InterProScan](https://github.com/ebi-pf-team/interproscan) if supplied with `--use_interproscan` and `--interproscan_output` to remove any AMPs classified as ribosomal proteins
+    -- Updated README file accordingly and added read the docs
+    -- Fix DRAMP download script to remove any non aminoacid characters  
+    -- Added APD and UniRef100 databases to identify the AMP classes
+    -- Removed DIAMOND alignment and replaced it by MMseqs2 search
+    -- Fixed error 'Nonetype' when no AMP hits are retrieved by teh set thresholds or no AMP hits aligned to the database chosen
+    -- Created Read the Docs for AMPcombi

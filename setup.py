@@ -1,4 +1,4 @@
-from setuptools import setup
+from setuptools import setup, find_packages
 
 with open('README.md') as fh:
     long_description = fh.read()
@@ -8,7 +8,8 @@ setup(
     version='2.0.0dev',
     author='Anan Ibrahim, Louisa Perelo',
     author_email='ananhamido@hotmail.com, louperelo@gmail.com',
-    packages=['ampcombi'],
+    #packages=['ampcombi'],
+    packages=find_packages(),
     scripts=['ampcombi/ampcombi.py',
              'ampcombi/amp_database.py',
              'ampcombi/amp_fasta.py',
@@ -33,6 +34,7 @@ setup(
     keywords=["Proteomics", "Antimicrobial peptides", "Diamond", "MMSeqs2"
               "Standardization", "Formatting","Functional annotation"],
     install_requires=['pandas==1.5.2',
+                      'numpy==1.26.4',
                       'biopython==1.80',
                       'requests'],
     python_requires='==3.11.*',
