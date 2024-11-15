@@ -42,7 +42,7 @@ v<0.2.0>, <09.02.2024>
     -- Added the submodule to cluster the AMP hits with the parameters to modify the clustering using [MMSeqs2](https://github.com/soedinglab/MMseqs2) for e.g., '--cluster_cov_mode' '--cluster_mode' '--cluster_coverage' '--cluster_seq_id' '--cluster_sensitivity' '--cluster_remove_singletons' '--cluster_retain_label' '--cluster_min_member'
     -- Added the submodule to predict signaling peptide using [SignalP-6.0h](https://services.healthtech.dtu.dk/services/SignalP-6.0/)
     -- Removed the HTML output for the complete summary and replaced it with  shiny for python app that can be viewed using the commandline
-    -- Updated AMPcombi to use subcommands for ease of use with standardized and portable piplines
+    -- Updated AMPcombi to use subcommands for ease of use with standardized and portable pipelines
 v<0.2.1>, <14.03.2024>
     -- Fixed the package versions in setup
     -- Adjusted readme for installation setup
@@ -52,9 +52,8 @@ v<0.2.2>, <21.03.2024>
     -- Added a check if ./temp dir is found before removal. This caused problems with pipeline setups
 v<2.0.0>, <XX.11.2024>
     -- Added the function to use the output from [InterProScan](https://github.com/ebi-pf-team/interproscan) if supplied with `--use_interproscan` and `--interproscan_output` to remove any AMPs classified as ribosomal proteins
-    -- Updated README file accordingly and added read the docs
     -- Fix DRAMP download script to remove any non aminoacid characters  
     -- Added APD and UniRef100 databases to identify the AMP classes
     -- Removed DIAMOND alignment and replaced it by MMseqs2 search
     -- Fixed error 'Nonetype' when no AMP hits are retrieved by teh set thresholds or no AMP hits aligned to the database chosen
-    -- Created Read the Docs for AMPcombi
+    -- Created Read the Docs for AMPcombi documentation

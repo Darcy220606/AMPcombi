@@ -16,8 +16,7 @@ import sys
 project = "AMPcombi"
 copyright = "2024, Anan Ibrahim"
 author = "Anan Ibrahim (@darcy220606)"
-version = "2.0.0"
-release = "2.0.0"
+version = release = "2.0.0"
 
 # -- General configuration ---------------------------------------------------
 
@@ -63,6 +62,8 @@ today_fmt = "%B %d, %Y"
 #source_encoding = "utf-8-sig"
 # The master toctree document.
 master_doc = "index"
+
+pygments_style = 'sphinx'
 
 # -- Options for HTML output -------------------------------------------------
 

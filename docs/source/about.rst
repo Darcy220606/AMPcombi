@@ -50,8 +50,11 @@ AMPcombi is developed by an interdisciplinary team to:
 
         💡 If no database is provided by the user, AMPcombi will automatically download the `DRAMP db <https://github.com/CPU-DRAMP/DRAMP-3.0>`_ and use the files for classification.
 
-        💡 All databases undergo a cleaning step after downloading that ensures no non amino acid alphabet remains in the final fasta file used for alignment.
-  
+        .. warning::
+          
+           All databases undergo a cleaning step after downloading that ensures no non amino acid alphabet remains in the final fasta file used for alignment.
+          
+
  ‣ Estimate the corresponding molecular weight, iso.electric point, hydrophobicity, pH, and the fraction of helix turns and beta sheets were calculated using:
 
         .. list-table::
