@@ -53,9 +53,9 @@ Additionally, it estimates the physiochemical properties of the entire prepropep
 We have set many filtering parameters to defaults according to our development process, however do feel free to adjust them according to your dataset specific thresholds.
 To get a full list of options available and their defaults please refer to the help documentation of the submodule
 
-  .. code-block:: bash
+.. code-block:: bash
 
-     ampcombi parse_tables --help
+    ampcombi parse_tables --help
 
 **Example Usage (1)**
 

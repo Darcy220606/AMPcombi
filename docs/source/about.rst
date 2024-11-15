@@ -8,93 +8,92 @@ Functionality
 
 AMPcombi is developed by an interdisciplinary team to: 
 
- ‣ Parse and filter the output of the following **AMP prediction tools**:
+‣ Parse and filter the output of the following **AMP prediction tools**:
  
-        .. list-table::
-          :widths: 25 25
-          :header-rows: 1
+    .. list-table::
+      :widths: 25 25
+      :header-rows: 1  
 
-          * - Tool
-            - Version
-          * - `Ampir <https://github.com/Legana/ampir>`_
-            - 1.1.0
-          * - `AMPlify <https://github.com/bcgsc/AMPlify>`_
-            - 1.0.3
-          * - `Macrel <https://github.com/BigDataBiology/macrel>`_
-            - 1.1.0
-          * - `HMMsearch <https://github.com/EddyRivasLab/hmmer>`_
-            - 3.3.2
-          * - `EnsembleAMPpred <https://pubmed.ncbi.nlm.nih.gov/33494403/>`_
-            - latest
-          * - `NeuBI <https://github.com/nafizh/NeuBI>`_
-            - latest
-          * - `AMPgram <https://github.com/michbur/AmpGram>`_
-            - latest
-          * - `AMPtransformer <https://github.com/Brendan-P-Moore/AMPTransformer>`_
-            - latest
+      * - Tool
+        - Version
+      * - `Ampir <https://github.com/Legana/ampir>`_
+        - 1.1.0
+      * - `AMPlify <https://github.com/bcgsc/AMPlify>`_
+        - 1.0.3
+      * - `Macrel <https://github.com/BigDataBiology/macrel>`_
+        - 1.1.0
+      * - `HMMsearch <https://github.com/EddyRivasLab/hmmer>`_
+        - 3.3.2
+      * - `EnsembleAMPpred <https://pubmed.ncbi.nlm.nih.gov/33494403/>`_
+        - latest
+      * - `NeuBI <https://github.com/nafizh/NeuBI>`_
+        - latest
+      * - `AMPgram <https://github.com/michbur/AmpGram>`_
+        - latest
+      * - `AMPtransformer <https://github.com/Brendan-P-Moore/AMPTransformer>`_
+        - latest    
+  
+‣ Annotate the recovered AMPs by alignment to curated or experimentally validated **AMP reference database** using `MMSeqs2 search v.15.6f452 <https://www.nature.com/articles/nbt.3988>`_:
 
- ‣ Annotate the recovered AMPs by alignment to curated or experimentally validated **AMP reference database** using `MMSeqs2 search v.15.6f452 <https://www.nature.com/articles/nbt.3988>`_:
+    .. list-table::
+       :widths: 25 25
+       :header-rows: 1    
 
-        .. list-table::
-           :widths: 25 25
-           :header-rows: 1
+       * - Tool
+         - Version
+       * - `DRAMP <http://dramp.cpu-bioinfor.org/>`_
+         - 4.0 (general AMPs)
+       * - `APD <https://aps.unmc.edu/>`_
+         - 09142020
+       * - `UniRef100 <https://academic.oup.com/bioinformatics/article/23/10/1282/197795>`_
+         - 2024_05 (mmseqs version)   
+    
+    💡 If no database is provided by the user, AMPcombi will automatically download the `DRAMP db <https://github.com/CPU-DRAMP/DRAMP-3.0>`_ and use the files for classification.    
+    
+    .. warning::
 
-           * - Tool
-             - Version
-           * - `DRAMP <http://dramp.cpu-bioinfor.org/>`_
-             - 4.0 (general AMPs)
-           * - `APD <https://aps.unmc.edu/>`_
-             - 09142020
-           * - `UniRef100 <https://academic.oup.com/bioinformatics/article/23/10/1282/197795>`_
-             - 2024_05 (mmseqs version)
-
-        💡 If no database is provided by the user, AMPcombi will automatically download the `DRAMP db <https://github.com/CPU-DRAMP/DRAMP-3.0>`_ and use the files for classification.
-
-        .. warning::
+       All databases undergo a cleaning step after downloading that ensures no non amino acid alphabet remains in the final fasta file used for alignment.
           
-           All databases undergo a cleaning step after downloading that ensures no non amino acid alphabet remains in the final fasta file used for alignment.
-          
 
- ‣ Estimate the corresponding molecular weight, iso.electric point, hydrophobicity, pH, and the fraction of helix turns and beta sheets were calculated using:
+‣ Estimate the corresponding molecular weight, iso.electric point, hydrophobicity, pH, and the fraction of helix turns and beta sheets were calculated using:
 
-        .. list-table::
-           :widths: 25 25
-           :header-rows: 1
+    .. list-table::
+       :widths: 25 25
+       :header-rows: 1
 
-           * - Tool
-             - Version
-           * - BioPython - ProteinAnalysis
-             - 1.80
+       * - Tool
+         - Version
+       * - BioPython - ProteinAnalysis
+         - 1.80
 
-        💡 Any transporter gene present in the vicinity of the AMP on the contig is also reported.
+    💡 Any transporter gene present in the vicinity of the AMP on the contig is also reported.
 
- ‣ Extensively filter the recovered AMP hits based on their lengths, probability scores, E-values, and the presence of stop-codons downstream and upstream of the AMP hit on the contig.
+‣ Extensively filter the recovered AMP hits based on their lengths, probability scores, E-values, and the presence of stop-codons downstream and upstream of the AMP hit on the contig.
 
-        💡 If extra contig or sample metadata is available, these can further be added to the final filtered table, for example, sample metadata, pydamage, contig taxonomic classification, etc.
+    💡 If extra contig or sample metadata is available, these can further be added to the final filtered table, for example, sample metadata, pydamage, contig taxonomic classification, etc.   
+    💡 If the user provides output files generated by `interproscan <https://github.com/ebi-pf-team/interproscan>`_, hits with specific domains found can further be removed from the final table. An example for how to run InterProscan can be found in (XXX).
 
-        💡 If the user provides output files generated by `interproscan <https://github.com/ebi-pf-team/interproscan>`_, hits with specific domains found can further be removed from the final table. An example for how to run InterProscan can be found in (XXX).
+‣ Cluster the predicted AMPs and remove singletons and clusters with a minimum number of members or clusters from one label. This is primarily carried out using:
 
- ‣ Cluster the predicted AMPs and remove singletons and clusters with a minimum number of members or clusters from one label. This is primarily carried out using:
-
-        .. list-table::
-           :widths: 25 25
-           :header-rows: 1
+    .. list-table::
+       :widths: 25 25
+       :header-rows: 1
         
-           * - Tool
-             - Version
-           * - `MMseqs2 <https://github.com/soedinglab/MMseqs2>`_
-             - 15.6f452
+       * - Tool
+         - Version
+       * - `MMseqs2 <https://github.com/soedinglab/MMseqs2>`_
+         - 15.6f452
 
- ‣ Predicted extracellular AMPs, provided the user installs SignalP separately. For licensing issues, SignalP can only be downloaded and used by academic users; other users are requested to contact DTU Health Technology Software Package before using it. Please refer to the `SignalP documentation <https://services.healthtech.dtu.dk/services/SignalP-6.0/>`_ for further details.
+‣ Predicted extracellular AMPs, provided the user installs SignalP separately. For licensing issues, SignalP can only be downloaded and used by academic users; other users are requested to contact DTU Health Technology Software Package before using it. Please refer to the `SignalP documentation <https://services.healthtech.dtu.dk/services/SignalP-6.0/>`_ for further details.
 
-        .. list-table::
-           :widths: 25 25
-           :header-rows: 1
+    .. list-table::
+       :widths: 25 25
+       :header-rows: 1
         
-           * - Tool
-             - Version
-           * - `SignalP <https://services.healthtech.dtu.dk/services/SignalP-6.0/>`_
-             - 6.0
+       * - Tool
+         - Version
+       * - `SignalP <https://services.healthtech.dtu.dk/services/SignalP-6.0/>`_
+         - 6.0
 
 For visualization: a Shiny app is accessible through ``./pyshiny``. This is a visualisation dashboard that renders the AMPcombi final summary table, allowing for data exploration and visualization.
 
@@ -107,10 +106,14 @@ For visualization: a Shiny app is accessible through ``./pyshiny``. This is a vi
            * - `Shiny <https://shiny.posit.co/py/>`_
              - 0.7.1
 
-Authors and credits
--------------------
+
+
+Authors
+-------
 
 The tool was initiated by @louperelo and expanded by @darcy220606 with major design and scientific contributions from @RosaLuzia.
+
+
 
 Funding
 -------
