@@ -1,4 +1,5 @@
-.. _visual:
+.. _visualization:
+
 
 Visualization
 =============

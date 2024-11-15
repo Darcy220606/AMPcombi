@@ -24,9 +24,6 @@ AMPcombi source code is hosted on `Github repository <https://github.com/Darcy22
 If you plan to use AMPcombi for your research please don't forget to **cite** us 💙
 
 
-.. Table of Contents:
-.. ------------------
-
 .. toctree::
    :maxdepth: 2
    :caption: Table of Contents:
@@ -34,8 +31,8 @@ If you plan to use AMPcombi for your research please don't forget to **cite** us
 
    about
    usage
-   test
-   visual
+   tests
+   visualization
    references
    contributing
    changes
