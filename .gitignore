@@ -20,3 +20,6 @@ README_original.md
 
 temp
 docs/_build/
+
+__pycache__/
+ampcombi/__pycache__/
