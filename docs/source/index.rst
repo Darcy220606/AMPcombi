@@ -20,12 +20,12 @@ AMPcombi source code is hosted on `Github repository <https://github.com/Darcy22
 If you plan to use AMPcombi for your research please don't forget to **cite** us 💙
 
 
-Table of Contents:
-------------------
+.. Table of Contents:
+.. ------------------
 
 .. toctree::
    :maxdepth: 2
-   :caption: Contents:
+   :caption: Table of Contents:
    :glob:
 
    about
