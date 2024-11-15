@@ -103,5 +103,5 @@ def remove_clusters_no_sp(rep_seqs_signal):
     ampcombi_filtered = rep_seqs_signal[rep_seqs_signal['cluster_id'].isin(cluster_ids)]
     
     # remove duplicates 
-    ampcombi_filtered = ampcombi_filtered.drop_duplicates()
+    ampcombi_filtered = ampcombi_filtered.drop_duplicates(keep='first')
     ampcombi_filtered.to_csv("Ampcombi_summary_cluster_SP_onlyclusterswithSP.tsv",sep='\t', index=False)

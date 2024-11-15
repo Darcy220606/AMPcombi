@@ -19,3 +19,46 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
+
+A list of all licenses of packages installed or used in AMPcombi:
+
+ Name                           Version      License                                                                                           URL                                                      
+ AMPcombi                       2.0.0.dev0   MIT License                                                                                       http://pypi.python.org/pypi/AMPcombi/                    
+ Jinja2                         3.1.4        BSD License                                                                                       https://github.com/pallets/jinja/                        
+ MarkupSafe                     3.0.2        BSD License                                                                                       https://github.com/pallets/markupsafe/                   
+ PyYAML                         6.0.2        MIT License                                                                                       https://pyyaml.org/                                      
+ Pygments                       2.18.0       BSD License                                                                                       https://pygments.org                                     
+ Sphinx                         8.1.3        BSD License                                                                                       https://www.sphinx-doc.org/                              
+ alabaster                      1.0.0        BSD License                                                                                       https://alabaster.readthedocs.io/                        
+ babel                          2.16.0       BSD License                                                                                       https://babel.pocoo.org/                                 
+ biopython                      1.80         Freely Distributable                                                                              https://biopython.org/                                   
+ certifi                        2024.8.30    Mozilla Public License 2.0 (MPL 2.0)                                                              https://github.com/certifi/python-certifi                
+ charset-normalizer             3.4.0        MIT License                                                                                       https://github.com/Ousret/charset_normalizer             
+ colorama                       0.4.6        BSD License                                                                                       https://github.com/tartley/colorama                      
+ docutils                       0.21.2       BSD License; GNU General Public License (GPL); Public Domain; Python Software Foundation License  https://docutils.sourceforge.io                          
+ idna                           3.10         BSD License                                                                                       https://github.com/kjd/idna                              
+ imagesize                      1.4.1        MIT License                                                                                       https://github.com/shibukawa/imagesize_py                
+ iniconfig                      2.0.0        MIT License                                                                                       https://github.com/pytest-dev/iniconfig                  
+ joblib                         1.4.2        BSD License                                                                                       https://joblib.readthedocs.io                            
+ markdown-it-py                 3.0.0        MIT License                                                                                       https://github.com/executablebooks/markdown-it-py        
+ mdit-py-plugins                0.4.2        MIT License                                                                                       https://github.com/executablebooks/mdit-py-plugins       
+ mdurl                          0.1.2        MIT License                                                                                       https://github.com/executablebooks/mdurl                 
+ myst-parser                    4.0.0        MIT License                                                                                       https://github.com/executablebooks/MyST-Parser           
+ numpy                          1.26.4       BSD License                                                                                       https://numpy.org                                        
+ packaging                      24.2         Apache Software License; BSD License                                                              https://github.com/pypa/packaging                        
+ pandas                         1.5.2        BSD License                                                                                       https://pandas.pydata.org                                
+ pluggy                         1.5.0        MIT License                                                                                       https://github.com/pytest-dev/pluggy                     
+ python-dateutil                2.9.0.post0  Apache Software License; BSD License                                                              https://github.com/dateutil/dateutil                     
+ pytz                           2024.2       MIT License                                                                                       http://pythonhosted.org/pytz                             
+ requests                       2.32.3       Apache Software License                                                                           https://requests.readthedocs.io                          
+ six                            1.16.0       MIT License                                                                                       https://github.com/benjaminp/six                         
+ snowballstemmer                2.2.0        BSD License                                                                                       https://github.com/snowballstem/snowball                 
+ sphinx-rtd-theme               3.0.2        MIT License                                                                                       https://github.com/readthedocs/sphinx_rtd_theme          
+ sphinxcontrib-applehelp        2.0.0        BSD License                                                                                       https://www.sphinx-doc.org/                              
+ sphinxcontrib-devhelp          2.0.0        BSD License                                                                                       https://www.sphinx-doc.org/                              
+ sphinxcontrib-htmlhelp         2.1.0        BSD License                                                                                       https://www.sphinx-doc.org/                              
+ sphinxcontrib-jquery           4.1          BSD License                                                                                       https://github.com/sphinx-contrib/jquery/                
+ sphinxcontrib-jsmath           1.0.1        BSD License                                                                                       http://sphinx-doc.org/                                   
+ sphinxcontrib-qthelp           2.0.0        BSD License                                                                                       https://www.sphinx-doc.org/                              
+ sphinxcontrib-serializinghtml  2.0.0        BSD License                                                                                       https://www.sphinx-doc.org/                              
+ urllib3                        2.2.3        MIT License                                                                                       https://github.com/urllib3/urllib3/blob/main/CHANGES.rst 

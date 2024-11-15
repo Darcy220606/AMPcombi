@@ -1,20 +1,19 @@
-from setuptools import setup
+from setuptools import setup, find_packages
 
 with open('README.md') as fh:
     long_description = fh.read()
 
 setup(
     name='AMPcombi',
-    version='0.2.2',
+    version='2.0.0',
     author='Anan Ibrahim, Louisa Perelo',
     author_email='ananhamido@hotmail.com, louperelo@gmail.com',
-    packages=['ampcombi'],
+    #packages=['ampcombi'],
+    packages=find_packages(),
     scripts=['ampcombi/ampcombi.py',
              'ampcombi/amp_database.py',
              'ampcombi/amp_fasta.py',
              'ampcombi/check_input.py',
-             'ampcombi/diamond_alignment.sh',
-             'ampcombi/diamond_makedb.sh',
              'ampcombi/reformat_tables.py',
              'ampcombi/functionality.py',
              'ampcombi/optional_inputs.py',
@@ -30,9 +29,10 @@ setup(
     description='A parsing tool for AMP tools.',
     long_description=long_description,
     long_description_content_type='text/markdown',
-    keywords=["Proteomics", "Antimicrobial peptides", "Diamond", "MMSeqs2"
+    keywords=["Proteomics", "Antimicrobial peptides", "MMSeqs2"
               "Standardization", "Formatting","Functional annotation"],
     install_requires=['pandas==1.5.2',
+                      'numpy==1.26.4',
                       'biopython==1.80',
                       'requests'],
     python_requires='==3.11.*',
