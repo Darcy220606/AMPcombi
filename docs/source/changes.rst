@@ -1,6 +1,6 @@
 .. _change:
 
-Chnagelog
+Changelog
 =========
 
 v0.1.0

@@ -1,8 +1,10 @@
 AMPcombi documentation
 ======================
+.. raw:: html
 
-.. image:: https://raw.githubusercontent.com/Darcy220606/AMPcombi/main/docs/amp-combi-logo.png
-   :alt: ampcombi icon
+   <img src="https://raw.githubusercontent.com/Darcy220606/AMPcombi/main/docs/amp-combi-logo.png" alt="ampcombi icon" width="300" height="250">
+
+
 
 .. image:: https://img.shields.io/badge/License-MIT-yellow.svg
    :alt: license icon
@@ -10,6 +12,8 @@ AMPcombi documentation
    :alt: downloads icon
 .. image:: https://anaconda.org/bioconda/ampcombi/badges/version.svg
    :alt: version icon
+.. image:: https://img.shields.io/pypi/dm/ampcombi
+   :alt: Downloads
 
 **AMPcombi** and its submodules provide a command-line interface to parse the results of antimicrobial peptide (AMP) prediction tools into a single table, aligns the AMP hits against reference AMP databases for functional and structural classifications, filters the AMP hits according to their physiochemical properties, clusters the filtered hits and predicts signaling peptides if present.
 
