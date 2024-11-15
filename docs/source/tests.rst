@@ -38,7 +38,7 @@ Download the interproscan datasets as described `in the user documents <https://
             --enable-tsv-residue-annot \
             --formats tsv  ; done
 
-Example run
+Full run
 -----------
 
 To test the functionality of AMPcombi, we provide test files for the required and optional inputs. 

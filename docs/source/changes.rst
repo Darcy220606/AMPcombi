@@ -74,7 +74,7 @@ v0.2.2, 21.03.2024
 ------------------
 - Added a check for ./temp dir before attempting removal to prevent issues with pipelines.
 
-v2.0.0, <XX.11.2024>
+v2.0.0, <18.11.2024>
 --------------------
 - Added support for using InterProScan output (`--use_interproscan` and `--interproscan_output`) to remove AMPs classified as ribosomal proteins.
 - Updated README and added documentation on Read the Docs.
