@@ -3,8 +3,8 @@
 About
 =====
 
-What does AMPcombi do?
------------------------
+Functionality
+-------------
 
 AMPcombi is developed by an interdisciplinary team to: 
 
