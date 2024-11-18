@@ -16,7 +16,7 @@ import sys
 project = "AMPcombi"
 copyright = "2024, Anan Ibrahim"
 author = "Anan Ibrahim (@darcy220606)"
-version = release = "2.0.0"
+version = release = "2.0.1"
 
 # -- General configuration ---------------------------------------------------
 
