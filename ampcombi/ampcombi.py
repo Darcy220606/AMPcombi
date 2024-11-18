@@ -11,7 +11,7 @@ import glob
 from contextlib import redirect_stdout, redirect_stderr
 from version import __version__
 from colorama import Fore, Style, init
-from joblib import Parallel, delayed
+#from joblib import Parallel, delayed
 
 # import functions from sub-scripts to main:
 from reformat_tables import *

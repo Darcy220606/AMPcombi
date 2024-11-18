@@ -5,7 +5,7 @@ with open('README.md') as fh:
 
 setup(
     name='AMPcombi',
-    version='2.0.0',
+    version='2.0.1',
     author='Anan Ibrahim, Louisa Perelo',
     author_email='ananhamido@hotmail.com, louperelo@gmail.com',
     #packages=['ampcombi'],
@@ -34,6 +34,7 @@ setup(
     install_requires=['pandas==1.5.2',
                       'numpy==1.26.4',
                       'biopython==1.80',
+                      'colorama==0.4.6',
                       'requests'],
     python_requires='==3.11.*',
     entry_points={  
