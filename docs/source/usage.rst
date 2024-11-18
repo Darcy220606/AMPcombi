@@ -6,7 +6,7 @@ Usage
 Installation
 ------------
 
-⚙️ To use AMPcombi, first install it using pip:
+⚙️ To use AMPcombi, first install it using:
 
 - Using **conda**:
 
