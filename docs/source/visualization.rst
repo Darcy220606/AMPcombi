@@ -30,16 +30,19 @@ This can be accessed by running the following from the CLI:
         `MMseqs2 taxonomy module <https://mmseqs.com/latest/userguide.pdf>`_ ,which can also be generated when running `nf-core/funcscan <https://github.com/nf-core/funcscan>`_ 
         with the AMP and taxonomy workflows.
 
+Example table: 
 
 .. image:: https://raw.githubusercontent.com/Darcy220606/AMPcombi/main/docs/ampcombi_interface_screenshot.png
    :alt: ampcombi screenshot
-   :width: 400
-   :height: 400
+   :width: 800
+   :height: 370
+
+Example upset plot:
 
 .. image:: https://raw.githubusercontent.com/Darcy220606/AMPcombi/main/docs/ampcombi_interface_screenshot2.png
    :alt: ampcombi screenshot 2
-   :width: 400
-   :height: 400
+   :width: 800
+   :height: 370
    
 ----
 
