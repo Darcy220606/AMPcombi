@@ -74,7 +74,7 @@ v0.2.2, 21.03.2024
 ------------------
 - Added a check for ./temp dir before attempting removal to prevent issues with pipelines.
 
-v2.0.0, <15.11.2024>
+v2.0.0, 15.11.2024
 --------------------
 - Added support for using InterProScan output (`--use_interproscan` and `--interproscan_output`) to remove AMPs classified as ribosomal proteins.
 - Updated README and added documentation on Read the Docs.
@@ -84,7 +84,7 @@ v2.0.0, <15.11.2024>
 - Fixed "NoneType" error when no AMP hits are retrieved or alignments fail to meet thresholds.
 - Created Read the Docs for AMPcombi documentation.
 
-v2.0.1, <18.11.2024>
+v2.0.1, 18.11.2024
 --------------------
 - Fixed the python dependencies
 - Updated version numbers
